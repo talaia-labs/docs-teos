@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>common.tools &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="common.logger" href="common.logger.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="common.appointment.html">common.appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.blob.html">common.blob</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.config_loader.html">common.config_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.cryptographer.html">common.cryptographer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.encrypted_blob.html">common.encrypted_blob</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.logger.html">common.logger</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">common.tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="common.html">common package</a> &raquo;</li>
+        
+      <li>common.tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/common.tools.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-common.tools">
+<span id="common-tools"></span><h1>common.tools<a class="headerlink" href="#module-common.tools" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="common.tools.check_locator_format">
+<code class="sig-name descname">check_locator_format</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#check_locator_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.check_locator_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given value is a 16-byte hex encoded string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the value to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the value matches the format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.tools.check_sha256_hex_format">
+<code class="sig-name descname">check_sha256_hex_format</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#check_sha256_hex_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.check_sha256_hex_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given value is a 32-byte hex encoded string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the value to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the value matches the format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.tools.compute_locator">
+<code class="sig-name descname">compute_locator</code><span class="sig-paren">(</span><em class="sig-param">tx_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#compute_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.compute_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes an appointment locator given a transaction id.
+:param tx_id: the transaction id used to compute the locator.
+:type tx_id: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The computed locator.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.tools.setup_data_folder">
+<code class="sig-name descname">setup_data_folder</code><span class="sig-paren">(</span><em class="sig-param">data_folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#setup_data_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.setup_data_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a data folder for either the client or the server side if the folder does not exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_folder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path of the folder</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.tools.setup_logging">
+<code class="sig-name descname">setup_logging</code><span class="sig-paren">(</span><em class="sig-param">log_file_path</em>, <em class="sig-param">log_name_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.setup_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setups a couple of loggers (console and file) given a prefix and a file path. The log names are:</p>
+<p>prefix | _file_log and prefix | _console_log</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_file_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path of the file to output the file log.</p></li>
+<li><p><strong>log_name_prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the prefix to identify the log.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="common.logger.html" class="btn btn-neutral float-left" title="common.logger" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

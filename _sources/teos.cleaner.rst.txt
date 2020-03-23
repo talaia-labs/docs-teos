@@ -1,0 +1,7 @@
+teos.cleaner
+============
+
+.. automodule:: teos.cleaner
+   :members:
+   :undoc-members:
+   :show-inheritance:

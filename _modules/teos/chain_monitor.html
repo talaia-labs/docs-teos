@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.chain_monitor &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.chain_monitor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.chain_monitor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">zmq</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Condition</span>
+
+<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
+<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;ChainMonitor&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ChainMonitor"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor">[docs]</a><span class="k">class</span> <span class="nc">ChainMonitor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`ChainMonitor` is the class in charge of monitoring the blockchain (via ``bitcoind``) to detect new</span>
+<span class="sd">    blocks on top of the best chain. If a new best block is spotted, the chain monitor will notify the</span>
+<span class="sd">    :obj:`Watcher &lt;teos.watcher.Watcher&gt;` and the :obj:`Responder &lt;teos.responder.Responder&gt;` using ``Queues``.</span>
+
+<span class="sd">    The :class:`ChainMonitor` monitors the chain using two methods: ``zmq`` and ``polling``. Blocks are only notified</span>
+<span class="sd">    once per queue and the notification is triggered by the method that detects the block faster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        watcher_queue (:obj:`Queue`): the queue to be used to send blocks hashes to the ``Watcher``.</span>
+<span class="sd">        responder_queue (:obj:`Queue`): the queue to be used to send blocks hashes to the ``Responder``.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a blockProcessor instance.</span>
+<span class="sd">        bitcoind_feed_params (:obj:`dict`): a dict with the feed (ZMQ) connection parameters.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        best_tip (:obj:`str`): a block hash representing the current best tip.</span>
+<span class="sd">        last_tips (:obj:`list`): a list of last chain tips. Used as a sliding window to avoid notifying about old tips.</span>
+<span class="sd">        terminate (:obj:`bool`): a flag to signal the termination of the :class:`ChainMonitor` (shutdown the tower).</span>
+<span class="sd">        check_tip (:obj:`Event`): an event that&#39;s triggered at fixed time intervals and controls the polling thread.</span>
+<span class="sd">        lock (:obj:`Condition`): a lock used to protect concurrent access to the queues and ``best_tip`` by the zmq and</span>
+<span class="sd">            polling threads.</span>
+<span class="sd">        zmqSubSocket (:obj:`socket`): a socket to connect to ``bitcoind`` via ``zmq``.</span>
+<span class="sd">        watcher_queue (:obj:`Queue`): a queue to send new best tips to the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`.</span>
+<span class="sd">        responder_queue (:obj:`Queue`): a queue to send new best tips to the</span>
+<span class="sd">            :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+
+<span class="sd">        polling_delta (:obj:`int`): time between polls (in seconds).</span>
+<span class="sd">        max_block_window_size (:obj:`int`): max size of last_tips.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a blockProcessor instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watcher_queue</span><span class="p">,</span> <span class="n">responder_queue</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">,</span> <span class="n">bitcoind_feed_params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_tip</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_tips</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_tip</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmqContext</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmqSubSocket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmqContext</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmqSubSocket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">RCVHWM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmqSubSocket</span><span class="o">.</span><span class="n">setsockopt_string</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="s2">&quot;hashblock&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmqSubSocket</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span>
+                <span class="n">bitcoind_feed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FEED_PROTOCOL&quot;</span><span class="p">),</span>
+                <span class="n">bitcoind_feed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FEED_CONNECT&quot;</span><span class="p">),</span>
+                <span class="n">bitcoind_feed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FEED_PORT&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher_queue</span> <span class="o">=</span> <span class="n">watcher_queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responder_queue</span> <span class="o">=</span> <span class="n">responder_queue</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">polling_delta</span> <span class="o">=</span> <span class="mi">60</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_block_window_size</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">block_processor</span>
+
+<div class="viewcode-block" id="ChainMonitor.notify_subscribers"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.notify_subscribers">[docs]</a>    <span class="k">def</span> <span class="nf">notify_subscribers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Notifies the subscribers (``Watcher`` and ``Responder``) about a new block. It does so by putting the hash in</span>
+<span class="sd">        the corresponding queue(s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_hash (:obj:`str`): the new block hash to be sent to the subscribers.</span>
+<span class="sd">            block_hash (:obj:`str`): the new block hash to be sent to the subscribers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responder_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ChainMonitor.update_state"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.update_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the state of the ``ChainMonitor``. The state is represented as the ``best_tip`` and the list of</span>
+<span class="sd">        ``last_tips``. ``last_tips`` is bounded to ``max_block_window_size``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_hash (:obj:`block_hash`): the new best tip.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (:obj:`bool`): ``True`` is the state was successfully updated, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">block_hash</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_tip</span> <span class="ow">and</span> <span class="n">block_hash</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_tips</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_tips</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_tip</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_tip</span> <span class="o">=</span> <span class="n">block_hash</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_tips</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_block_window_size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_tips</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ChainMonitor.monitor_chain_polling"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.monitor_chain_polling">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_chain_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Monitors ``bitcoind`` via polling. Once the method is fired, it keeps monitoring as long as ``terminate`` is not</span>
+<span class="sd">        set. Polling is performed once every ``polling_delta`` seconds. If a new best tip if found, the shared lock is</span>
+<span class="sd">        acquired, the state is updated and the subscribers are notified, and finally the lock is released.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_tip</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polling_delta</span><span class="p">)</span>
+
+            <span class="c1"># Terminate could have been set while the thread was blocked in wait</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+                <span class="n">current_tip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_best_block_hash</span><span class="p">()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">current_tip</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">notify_subscribers</span><span class="p">(</span><span class="n">current_tip</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New block received via polling&quot;</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="n">current_tip</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChainMonitor.monitor_chain_zmq"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.monitor_chain_zmq">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_chain_zmq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Monitors ``bitcoind`` via zmq. Once the method is fired, it keeps monitoring as long as ``terminate`` is not</span>
+<span class="sd">        set. If a new best tip if found, the shared lock is acquired, the state is updated and the subscribers are</span>
+<span class="sd">        notified, and finally the lock is released.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmqSubSocket</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">()</span>
+
+            <span class="c1"># Terminate could have been set while the thread was blocked in recv</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">:</span>
+                <span class="n">topic</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">body</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">topic</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;hashblock&quot;</span><span class="p">:</span>
+                    <span class="n">block_hash</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">block_hash</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">notify_subscribers</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New block received via zmq&quot;</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="n">block_hash</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChainMonitor.monitor_chain"><a class="viewcode-back" href="../../teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.monitor_chain">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main :class:`ChainMonitor` method. It initializes the ``best_tip`` to the current one (by querying the</span>
+<span class="sd">        :obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`) and creates two threads, one per each monitoring</span>
+<span class="sd">        approach (``zmq`` and ``polling``).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_tip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_best_block_hash</span><span class="p">()</span>
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor_chain_polling</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor_chain_zmq</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

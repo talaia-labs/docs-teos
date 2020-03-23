@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>common.config_loader &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="common.cryptographer" href="common.cryptographer.html" />
+    <link rel="prev" title="common.blob" href="common.blob.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="common.appointment.html">common.appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.blob.html">common.blob</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">common.config_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.cryptographer.html">common.cryptographer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.encrypted_blob.html">common.encrypted_blob</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.logger.html">common.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.tools.html">common.tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="common.html">common package</a> &raquo;</li>
+        
+      <li>common.config_loader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/common.config_loader.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-common.config_loader">
+<span id="common-config-loader"></span><h1>common.config_loader<a class="headerlink" href="#module-common.config_loader" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="common.config_loader.ConfigLoader">
+<em class="property">class </em><code class="sig-name descname">ConfigLoader</code><span class="sig-paren">(</span><em class="sig-param">data_dir</em>, <em class="sig-param">conf_file_name</em>, <em class="sig-param">default_conf</em>, <em class="sig-param">command_line_conf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/config_loader.html#ConfigLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.config_loader.ConfigLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<blockquote>
+<div><p>The <a class="reference internal" href="#common.config_loader.ConfigLoader" title="common.config_loader.ConfigLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigLoader</span></code></a> class is in charge of loading all the configuration parameters to create a config dict
+that can be used to set all configurable parameters of the system.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dir</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path to the data directory where the configuration file may be found.</p></li>
+<li><p><strong>default_conf</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – <p>a dictionary populated with the default configuration params and the expected types.
+The format is as follows:</p>
+<p>{“field0”: {“value”: value_from_conf_file, “type”: expected_type, …}}</p>
+</p></li>
+<li><p><strong>command_line_conf</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing the command line parameters that may replace the
+ones in default / config file.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="common.config_loader.ConfigLoader.data_dir">
+<code class="sig-name descname">data_dir</code><a class="headerlink" href="#common.config_loader.ConfigLoader.data_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>the path to the data directory where the configuration file may be found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="common.config_loader.ConfigLoader.conf_file_path">
+<code class="sig-name descname">conf_file_path</code><a class="headerlink" href="#common.config_loader.ConfigLoader.conf_file_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>the path to the config file (the file may not exist).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="common.config_loader.ConfigLoader.conf_fields">
+<code class="sig-name descname">conf_fields</code><a class="headerlink" href="#common.config_loader.ConfigLoader.conf_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>a dictionary populated with the configuration params and the expected types.
+follows the same format as default_conf.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="common.config_loader.ConfigLoader.command_line_conf">
+<code class="sig-name descname">command_line_conf</code><a class="headerlink" href="#common.config_loader.ConfigLoader.command_line_conf" title="Permalink to this definition">¶</a></dt>
+<dd><p>a dictionary containing the command line parameters that may replace the
+ones in default / config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.config_loader.ConfigLoader.build_config">
+<code class="sig-name descname">build_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/config_loader.html#ConfigLoader.build_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.config_loader.ConfigLoader.build_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a config dictionary from command line, config file and default configuration parameters.</p>
+<dl class="simple">
+<dt>The priority if as follows:</dt><dd><ul class="simple">
+<li><p>command line</p></li>
+<li><p>config file</p></li>
+<li><p>defaults</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><cite>dict</cite>: a dictionary containing all the configuration parameters.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>obj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.config_loader.ConfigLoader.create_config_dict">
+<code class="sig-name descname">create_config_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/config_loader.html#ConfigLoader.create_config_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.config_loader.ConfigLoader.create_config_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the configuration fields (self.conf_fields) have the right type and creates a config dict if so.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary with the same keys as the provided one, but containing only the “value” field as
+value if the provided <code class="docutils literal notranslate"><span class="pre">conf_fields</span></code> where correct.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If any of the dictionary elements does not have the expected type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="common.config_loader.ConfigLoader.extend_paths">
+<code class="sig-name descname">extend_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/config_loader.html#ConfigLoader.extend_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.config_loader.ConfigLoader.extend_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the relative paths of  the <code class="docutils literal notranslate"><span class="pre">conf_fields</span></code> dictionary with <code class="docutils literal notranslate"><span class="pre">data_dir</span></code>.</p>
+<p>If an absolute path is given, it’ll remain the same.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="common.cryptographer.html" class="btn btn-neutral float-right" title="common.cryptographer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="common.blob.html" class="btn btn-neutral float-left" title="common.blob" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

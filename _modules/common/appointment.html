@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>common.appointment &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>common.appointment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for common.appointment</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">unhexlify</span>
+
+<span class="kn">from</span> <span class="nn">common.encrypted_blob</span> <span class="kn">import</span> <span class="n">EncryptedBlob</span>
+
+
+<div class="viewcode-block" id="Appointment"><a class="viewcode-back" href="../../common.appointment.html#common.appointment.Appointment">[docs]</a><span class="k">class</span> <span class="nc">Appointment</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Appointment` contains the information regarding an appointment between a client and the Watchtower.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        locator (:mod:`str`): A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a trigger</span>
+<span class="sd">            for the tower to decrypt and broadcast the penalty transaction.</span>
+<span class="sd">        start_time (:mod:`int`): The block height where the tower is hired to start watching for breaches.</span>
+<span class="sd">        end_time (:mod:`int`): The block height where the tower will stop watching for breaches.</span>
+<span class="sd">        to_self_delay (:mod:`int`): The ``to_self_delay`` encoded in the ``csv`` of the ``htlc`` that this appointment is</span>
+<span class="sd">            covering.</span>
+<span class="sd">        encrypted_blob (:obj:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;`): An ``EncryptedBlob`` object</span>
+<span class="sd">            containing an encrypted penalty transaction. The tower will decrypt it and broadcast the penalty transaction</span>
+<span class="sd">            upon seeing a breach on the blockchain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># DISCUSS: 35-appointment-checks</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">,</span> <span class="n">encrypted_blob</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locator</span> <span class="o">=</span> <span class="n">locator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span>  <span class="c1"># ToDo: #4-standardize-appointment-fields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span>  <span class="c1"># ToDo: #4-standardize-appointment-fields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_self_delay</span> <span class="o">=</span> <span class="n">to_self_delay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encrypted_blob</span> <span class="o">=</span> <span class="n">EncryptedBlob</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Appointment.from_dict"><a class="viewcode-back" href="../../common.appointment.html#common.appointment.Appointment.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">appointment_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds an appointment from a dictionary.</span>
+
+<span class="sd">        This method is useful to load data from a database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            appointment_data (:mod:`dict`): a dictionary containing the following keys:</span>
+<span class="sd">                ``{locator, start_time, end_time, to_self_delay, encrypted_blob}``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`Appointment &lt;teos.appointment.Appointment&gt;`: An appointment initialized using the provided data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If one of the mandatory keys is missing in ``appointment_data``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">locator</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">)</span>  <span class="c1"># ToDo: #4-standardize-appointment-fields</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">)</span>  <span class="c1"># ToDo: #4-standardize-appointment-fields</span>
+        <span class="n">to_self_delay</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;to_self_delay&quot;</span><span class="p">)</span>
+        <span class="n">encrypted_blob_data</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">locator</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">,</span> <span class="n">encrypted_blob_data</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong appointment data, some fields are missing&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">appointment</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">,</span> <span class="n">encrypted_blob_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">appointment</span></div>
+
+<div class="viewcode-block" id="Appointment.to_dict"><a class="viewcode-back" href="../../common.appointment.html#common.appointment.Appointment.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports an appointment as a dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary containing the appointment attributes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># ToDO: #3-improve-appointment-structure</span>
+        <span class="n">appointment</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span>
+            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
+            <span class="s2">&quot;to_self_delay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_self_delay</span><span class="p">,</span>
+            <span class="s2">&quot;encrypted_blob&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">appointment</span></div>
+
+<div class="viewcode-block" id="Appointment.to_json"><a class="viewcode-back" href="../../common.appointment.html#common.appointment.Appointment.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports an appointment as a deterministic json encoded string.</span>
+
+<span class="sd">        This method ensures that multiple invocations with the same data yield the same value. This is the format used</span>
+<span class="sd">        to store appointments in the database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str`: A json-encoded str representing the appointment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Appointment.serialize"><a class="viewcode-back" href="../../common.appointment.html#common.appointment.Appointment.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes an appointment to be signed.</span>
+
+<span class="sd">        The serialization follows the same ordering as the fields in the appointment:</span>
+<span class="sd">            locator:start_time:end_time:to_self_delay:encrypted_blob</span>
+
+<span class="sd">        All values are big endian.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">              :mod:`bytes`: The serialized data to be signed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">unhexlify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locator</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;I&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;I&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;I&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_self_delay</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">unhexlify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

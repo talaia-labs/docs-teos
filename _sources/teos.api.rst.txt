@@ -1,0 +1,7 @@
+teos.api
+========
+
+.. automodule:: teos.api
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.cleaner &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.db_manager" href="teos.db_manager.html" />
+    <link rel="prev" title="teos.chain_monitor" href="teos.chain_monitor.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.cleaner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.cleaner.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.cleaner">
+<span id="teos-cleaner"></span><h1>teos.cleaner<a class="headerlink" href="#module-teos.cleaner" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.cleaner.Cleaner">
+<em class="property">class </em><code class="sig-name descname">Cleaner</code><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.cleaner.Cleaner" title="teos.cleaner.Cleaner"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cleaner</span></code></a> is the class in charge of removing expired/completed data from the tower.</p>
+<p>Mutable objects (like dicts) are passed-by-reference in Python, so no return is needed for the Cleaner.</p>
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.delete_appointment_from_db">
+<em class="property">static </em><code class="sig-name descname">delete_appointment_from_db</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.delete_appointment_from_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.delete_appointment_from_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an appointment from the appointments database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the appointment to be deleted.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.delete_appointment_from_memory">
+<em class="property">static </em><code class="sig-name descname">delete_appointment_from_memory</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">appointments</em>, <em class="sig-param">locator_uuid_map</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.delete_appointment_from_memory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.delete_appointment_from_memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an appointment from memory (appointments and locator_uuid_map dictionaries). If the given appointment
+does not share locator with any other, the map will completely removed, otherwise, the uuid will be removed from
+the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the appointment to be deleted.</p></li>
+<li><p><strong>appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – the appointments dictionary from where the appointment should be removed.</p></li>
+<li><p><strong>locator_uuid_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – the locator:uuid map from where the appointment should also be removed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.delete_completed_appointments">
+<em class="property">static </em><code class="sig-name descname">delete_completed_appointments</code><span class="sig-paren">(</span><em class="sig-param">completed_appointments</em>, <em class="sig-param">appointments</em>, <em class="sig-param">locator_uuid_map</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.delete_completed_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.delete_completed_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a completed appointment from memory (<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) and disk.</p>
+<p>Currently, an appointment is only completed if it cannot make it to the (<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>),
+otherwise, it will be flagged as triggered and removed once the tracker is completed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>completed_appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of appointments to be deleted.</p></li>
+<li><p><strong>appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing all the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>locator_uuid_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map for the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.delete_completed_trackers">
+<em class="property">static </em><code class="sig-name descname">delete_completed_trackers</code><span class="sig-paren">(</span><em class="sig-param">completed_trackers</em>, <em class="sig-param">height</em>, <em class="sig-param">trackers</em>, <em class="sig-param">tx_tracker_map</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.delete_completed_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.delete_completed_trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a completed tracker both from memory (<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>) and disk (from the
+Responder’s and Watcher’s databases).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trackers</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing all the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>
+trackers.</p></li>
+<li><p><strong>tx_tracker_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a <code class="docutils literal notranslate"><span class="pre">penalty_txid:uuid</span></code> map for the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> trackers.</p></li>
+<li><p><strong>completed_trackers</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dict of completed trackers to be deleted (<a class="reference external" href="uuid:confirmations">uuid:confirmations</a>).</p></li>
+<li><p><strong>height</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the trackers were completed.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.delete_expired_appointments">
+<em class="property">static </em><code class="sig-name descname">delete_expired_appointments</code><span class="sig-paren">(</span><em class="sig-param">expired_appointments</em>, <em class="sig-param">appointments</em>, <em class="sig-param">locator_uuid_map</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.delete_expired_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.delete_expired_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes appointments which <code class="docutils literal notranslate"><span class="pre">end_time</span></code> has been reached (with no trigger) both from memory
+(<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) and disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expired_appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of appointments to be deleted.</p></li>
+<li><p><strong>appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing all the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>locator_uuid_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map for the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.flag_triggered_appointments">
+<em class="property">static </em><code class="sig-name descname">flag_triggered_appointments</code><span class="sig-paren">(</span><em class="sig-param">triggered_appointments</em>, <em class="sig-param">appointments</em>, <em class="sig-param">locator_uuid_map</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.flag_triggered_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.flag_triggered_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a list of  triggered appointment from memory (<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) and flags them as
+triggered on disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triggered_appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of appointments to be flagged as triggered on the database.</p></li>
+<li><p><strong>appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing all the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>locator_uuid_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map for the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>
+appointments.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.cleaner.Cleaner.update_delete_db_locator_map">
+<em class="property">static </em><code class="sig-name descname">update_delete_db_locator_map</code><span class="sig-paren">(</span><em class="sig-param">uuids</em>, <em class="sig-param">locator</em>, <em class="sig-param">db_manager</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/cleaner.html#Cleaner.update_delete_db_locator_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.cleaner.Cleaner.update_delete_db_locator_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the locator:uuid map of a given locator from the database by removing a given uuid. If the uuid is the
+only element of the map, the map is deleted, otherwise the uuid is simply removed and the database is updated.</p>
+<p>If either the uuid of the locator are not found, the data is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of identifiers to be removed from the map.</p></li>
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the map to be either updated or deleted.</p></li>
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.db_manager.html" class="btn btn-neutral float-right" title="teos.db_manager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.chain_monitor.html" class="btn btn-neutral float-left" title="teos.chain_monitor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

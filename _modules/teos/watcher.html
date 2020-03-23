@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.watcher &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.watcher</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.watcher</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+
+<span class="kn">import</span> <span class="nn">common.cryptographer</span>
+<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">compute_locator</span>
+<span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+<span class="kn">from</span> <span class="nn">common.cryptographer</span> <span class="kn">import</span> <span class="n">Cryptographer</span>
+
+<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
+<span class="kn">from</span> <span class="nn">teos.cleaner</span> <span class="kn">import</span> <span class="n">Cleaner</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Watcher&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+<span class="n">common</span><span class="o">.</span><span class="n">cryptographer</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Cryptographer&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Watcher"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher">[docs]</a><span class="k">class</span> <span class="nc">Watcher</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Watcher` is the class in charge to watch for channel breaches for the appointments accepted by the</span>
+<span class="sd">    tower.</span>
+
+<span class="sd">    The :class:`Watcher` keeps track of the accepted appointments in ``appointments`` and, for new received block,</span>
+<span class="sd">    checks if any breach has happened by comparing the txids with the appointment locators. If a breach is seen, the</span>
+<span class="sd">    :obj:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;` of the corresponding appointment is decrypted and the data</span>
+<span class="sd">    is passed to the :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+
+<span class="sd">    If an appointment reaches its end with no breach, the data is simply deleted.</span>
+
+<span class="sd">    The :class:`Watcher` receives information about new received blocks via the ``block_queue`` that is populated by the</span>
+<span class="sd">    :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_manager (:obj:`DBManager &lt;teos.db_manager&gt;`): a ``DBManager`` instance to interact with the database.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a ``BlockProcessor`` instance to</span>
+<span class="sd">            get block from bitcoind.</span>
+<span class="sd">        responder (:obj:`Responder &lt;teos.responder.Responder&gt;`): a ``Responder`` instance.</span>
+<span class="sd">        sk_der (:obj:`bytes`): a DER encoded private key used to sign appointment receipts (signaling acceptance).</span>
+<span class="sd">        max_appointments (:obj:`int`): the maximum ammount of appointments accepted by the ``Watcher`` at the same time.</span>
+<span class="sd">        expiry_delta (:obj:`int`): the additional time the ``Watcher`` will keep an expired appointment around.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        appointments (:obj:`dict`): a dictionary containing a simplification of the appointments (:obj:`Appointment</span>
+<span class="sd">            &lt;teos.appointment.Appointment&gt;` instances) accepted by the tower (``locator`` and ``end_time``).</span>
+<span class="sd">            It&#39;s populated trough ``add_appointment``.</span>
+<span class="sd">        locator_uuid_map (:obj:`dict`): a ``locator:uuid`` map used to allow the :obj:`Watcher` to deal with several</span>
+<span class="sd">            appointments with the same ``locator``.</span>
+<span class="sd">        block_queue (:obj:`Queue`): A queue used by the :obj:`Watcher` to receive block hashes from ``bitcoind``. It is</span>
+<span class="sd">        populated by the :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</span>
+<span class="sd">        db_manager (:obj:`DBManager &lt;teos.db_manager&gt;`): A db manager instance to interact with the database.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a ``BlockProcessor`` instance to</span>
+<span class="sd">            get block from bitcoind.</span>
+<span class="sd">        responder (:obj:`Responder &lt;teos.responder.Responder&gt;`): a ``Responder`` instance.</span>
+<span class="sd">        signing_key (:mod:`PrivateKey`): a private key used to sign accepted appointments.</span>
+<span class="sd">        max_appointments (:obj:`int`): the maximum ammount of appointments accepted by the ``Watcher`` at the same time.</span>
+<span class="sd">        expiry_delta (:obj:`int`): the additional time the ``Watcher`` will keep an expired appointment around.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `teos_sk_file` is not found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">,</span> <span class="n">responder</span><span class="p">,</span> <span class="n">sk_der</span><span class="p">,</span> <span class="n">max_appointments</span><span class="p">,</span> <span class="n">expiry_delta</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">db_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">block_processor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responder</span> <span class="o">=</span> <span class="n">responder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_appointments</span> <span class="o">=</span> <span class="n">max_appointments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expiry_delta</span> <span class="o">=</span> <span class="n">expiry_delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signing_key</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_private_key_der</span><span class="p">(</span><span class="n">sk_der</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Watcher.awake"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher.awake">[docs]</a>    <span class="k">def</span> <span class="nf">awake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">watcher_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_watch</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">watcher_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">watcher_thread</span></div>
+
+<div class="viewcode-block" id="Watcher.add_appointment"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher.add_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">add_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">appointment</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a new appointment to the ``appointments`` dictionary if ``max_appointments`` has not been reached.</span>
+
+<span class="sd">        ``add_appointment`` is the entry point of the Watcher. Upon receiving a new appointment it will start monitoring</span>
+<span class="sd">        the blockchain (``do_watch``) until ``appointments`` is empty.</span>
+
+<span class="sd">        Once a breach is seen on the blockchain, the :obj:`Watcher` will decrypt the corresponding</span>
+<span class="sd">        :obj:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;` and pass the information to the</span>
+<span class="sd">        :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+
+<span class="sd">        The tower may store multiple appointments with the same ``locator`` to avoid DoS attacks based on data</span>
+<span class="sd">        rewriting. `locators`` should be derived from the ``dispute_txid``, but that task is performed by the user, and</span>
+<span class="sd">        the tower has no way of verifying whether or not they have been properly derived. Therefore, appointments are</span>
+<span class="sd">        identified by ``uuid`` and stored in ``appointments`` and ``locator_uuid_map``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            appointment (:obj:`Appointment &lt;teos.appointment.Appointment&gt;`): the appointment to be added to the</span>
+<span class="sd">                :obj:`Watcher`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`tuple`: A tuple signaling if the appointment has been added or not (based on ``max_appointments``).</span>
+<span class="sd">            The structure looks as follows:</span>
+
+<span class="sd">            - ``(True, signature)`` if the appointment has been accepted.</span>
+<span class="sd">            - ``(False, None)`` otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_appointments</span><span class="p">:</span>
+
+            <span class="n">uuid</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">appointment</span><span class="o">.</span><span class="n">end_time</span><span class="p">}</span>
+
+            <span class="k">if</span> <span class="n">appointment</span><span class="o">.</span><span class="n">locator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uuid</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_watcher_appointment</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointment</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">create_append_locator_map</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
+
+            <span class="n">appointment_added</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">signature</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">signing_key</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New appointment accepted&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">appointment_added</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">signature</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum appointments reached, appointment rejected&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">appointment_added</span><span class="p">,</span> <span class="n">signature</span></div>
+
+<div class="viewcode-block" id="Watcher.do_watch"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher.do_watch">[docs]</a>    <span class="k">def</span> <span class="nf">do_watch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Monitors the blockchain whilst there are pending appointments.</span>
+
+<span class="sd">        This is the main method of the :obj:`Watcher` and the one in charge to pass appointments to the</span>
+<span class="sd">        :obj:`Responder &lt;teos.responder.Responder&gt;` upon detecting a breach.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">block_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New block received&quot;</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="n">block_hash</span><span class="p">,</span> <span class="n">prev_block_hash</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;previousblockhash&quot;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">txids</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tx&quot;</span><span class="p">)</span>
+
+                <span class="n">expired_appointments</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">uuid</span>
+                    <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">appointment_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">expiry_delta</span>
+                <span class="p">]</span>
+
+                <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_expired_appointments</span><span class="p">(</span>
+                    <span class="n">expired_appointments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span>
+                <span class="p">)</span>
+
+                <span class="n">valid_breaches</span><span class="p">,</span> <span class="n">invalid_breaches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_valid_breaches</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_breaches</span><span class="p">(</span><span class="n">txids</span><span class="p">))</span>
+
+                <span class="n">triggered_flags</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">appointments_to_delete</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">breach</span> <span class="ow">in</span> <span class="n">valid_breaches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Notifying responder and deleting appointment&quot;</span><span class="p">,</span>
+                        <span class="n">penalty_txid</span><span class="o">=</span><span class="n">breach</span><span class="p">[</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">],</span>
+                        <span class="n">locator</span><span class="o">=</span><span class="n">breach</span><span class="p">[</span><span class="s2">&quot;locator&quot;</span><span class="p">],</span>
+                        <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="n">receipt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">handle_breach</span><span class="p">(</span>
+                        <span class="n">uuid</span><span class="p">,</span>
+                        <span class="n">breach</span><span class="p">[</span><span class="s2">&quot;locator&quot;</span><span class="p">],</span>
+                        <span class="n">breach</span><span class="p">[</span><span class="s2">&quot;dispute_txid&quot;</span><span class="p">],</span>
+                        <span class="n">breach</span><span class="p">[</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">],</span>
+                        <span class="n">breach</span><span class="p">[</span><span class="s2">&quot;penalty_rawtx&quot;</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">),</span>
+                        <span class="n">block_hash</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># FIXME: Only necessary because of the triggered appointment approach. Fix if it changes.</span>
+
+                    <span class="k">if</span> <span class="n">receipt</span><span class="o">.</span><span class="n">delivered</span><span class="p">:</span>
+                        <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_appointment_from_memory</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">)</span>
+                        <span class="n">triggered_flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">appointments_to_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+                <span class="c1"># Appointments are only flagged as triggered if they are delivered, otherwise they are just deleted.</span>
+                <span class="n">appointments_to_delete</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">invalid_breaches</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">batch_create_triggered_appointment_flag</span><span class="p">(</span><span class="n">triggered_flags</span><span class="p">)</span>
+
+                <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_completed_appointments</span><span class="p">(</span>
+                    <span class="n">appointments_to_delete</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">appointments</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No more pending appointments&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Register the last processed block for the watcher</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_last_block_hash_watcher</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Watcher.get_breaches"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher.get_breaches">[docs]</a>    <span class="k">def</span> <span class="nf">get_breaches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a list of channel breaches given the list of transaction ids.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            txids (:obj:`list`): the list of transaction ids included in the last received block.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary (``locator:txid``) with all the breaches found. An empty dictionary if none are</span>
+<span class="sd">            found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">potential_locators</span> <span class="o">=</span> <span class="p">{</span><span class="n">compute_locator</span><span class="p">(</span><span class="n">txid</span><span class="p">):</span> <span class="n">txid</span> <span class="k">for</span> <span class="n">txid</span> <span class="ow">in</span> <span class="n">txids</span><span class="p">}</span>
+
+        <span class="c1"># Check is any of the tx_ids in the received block is an actual match</span>
+        <span class="n">intersection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">potential_locators</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">breaches</span> <span class="o">=</span> <span class="p">{</span><span class="n">locator</span><span class="p">:</span> <span class="n">potential_locators</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span> <span class="k">for</span> <span class="n">locator</span> <span class="ow">in</span> <span class="n">intersection</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">breaches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;List of breaches&quot;</span><span class="p">,</span> <span class="n">breaches</span><span class="o">=</span><span class="n">breaches</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No breaches found&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">breaches</span></div>
+
+<div class="viewcode-block" id="Watcher.filter_valid_breaches"><a class="viewcode-back" href="../../teos.watcher.html#teos.watcher.Watcher.filter_valid_breaches">[docs]</a>    <span class="k">def</span> <span class="nf">filter_valid_breaches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">breaches</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters what of the found breaches contain valid transaction data.</span>
+
+<span class="sd">        The :obj:`Watcher` cannot if a given :obj:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;` contains a valid</span>
+<span class="sd">        transaction until a breach if seen. Blobs that contain arbitrary data are dropped and not sent to the</span>
+<span class="sd">        :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            breaches (:obj:`dict`): a dictionary containing channel breaches (``locator:txid``).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary containing all the breaches flagged either as valid or invalid.</span>
+<span class="sd">            The structure is as follows:</span>
+
+<span class="sd">            ``{locator, dispute_txid, penalty_txid, penalty_rawtx, valid_breach}``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">valid_breaches</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">invalid_breaches</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># A cache of the already decrypted blobs so replicate decryption can be avoided</span>
+        <span class="n">decrypted_blobs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span> <span class="ow">in</span> <span class="n">breaches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">locator</span><span class="p">]:</span>
+                <span class="n">appointment</span> <span class="o">=</span> <span class="n">Appointment</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_watcher_appointment</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span> <span class="ow">in</span> <span class="n">decrypted_blobs</span><span class="p">:</span>
+                    <span class="n">penalty_tx</span><span class="p">,</span> <span class="n">penalty_rawtx</span> <span class="o">=</span> <span class="n">decrypted_blobs</span><span class="p">[</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">penalty_rawtx</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">)</span>
+
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">penalty_rawtx</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="n">penalty_tx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">decode_raw_transaction</span><span class="p">(</span><span class="n">penalty_rawtx</span><span class="p">)</span>
+                    <span class="n">decrypted_blobs</span><span class="p">[</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">penalty_tx</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">penalty_tx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">valid_breaches</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span>
+                        <span class="s2">&quot;dispute_txid&quot;</span><span class="p">:</span> <span class="n">dispute_txid</span><span class="p">,</span>
+                        <span class="s2">&quot;penalty_txid&quot;</span><span class="p">:</span> <span class="n">penalty_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;txid&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;penalty_rawtx&quot;</span><span class="p">:</span> <span class="n">penalty_rawtx</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Breach found for locator&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">penalty_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;txid&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">invalid_breaches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">valid_breaches</span><span class="p">,</span> <span class="n">invalid_breaches</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.carrier &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.carrier</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.carrier</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
+<span class="kn">from</span> <span class="nn">teos.rpc_errors</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">teos.tools</span> <span class="kn">import</span> <span class="n">bitcoin_cli</span>
+<span class="kn">from</span> <span class="nn">teos.utils.auth_proxy</span> <span class="kn">import</span> <span class="n">JSONRPCException</span>
+<span class="kn">from</span> <span class="nn">teos.errors</span> <span class="kn">import</span> <span class="n">UNKNOWN_JSON_RPC_EXCEPTION</span><span class="p">,</span> <span class="n">RPC_TX_REORGED_AFTER_BROADCAST</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Carrier&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+<span class="c1"># FIXME: This class is not fully covered by unit tests</span>
+
+
+<div class="viewcode-block" id="Receipt"><a class="viewcode-back" href="../../teos.carrier.html#teos.carrier.Receipt">[docs]</a><span class="k">class</span> <span class="nc">Receipt</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Receipt` class represent the interaction between the :obj:`Carrier` and ``bitcoind`` when broadcasting</span>
+<span class="sd">    transactions. It is used to signal whether or not a transaction has been successfully broadcast and why.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        delivered (:obj:`bool`): whether or not the transaction has been successfully broadcast.</span>
+<span class="sd">        confirmations (:obj:`int`): the number of confirmations of the transaction to broadcast. In certain situations</span>
+<span class="sd">            the :obj:`Carrier` may fail to broadcast a transaction because it was already in the blockchain.</span>
+<span class="sd">            This attribute signals those situations.</span>
+<span class="sd">        reason (:obj:`int`): an error code describing why the transaction broadcast failed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         :obj:`Receipt`: A receipt describing whether or not the transaction was delivered. Notice that transactions</span>
+<span class="sd">         that are already on chain are flagged as delivered with a ``confirmations &gt; 0`` whereas new transactions are so</span>
+<span class="sd">         with ``confirmations = 0``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delivered</span><span class="p">,</span> <span class="n">confirmations</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delivered</span> <span class="o">=</span> <span class="n">delivered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confirmations</span> <span class="o">=</span> <span class="n">confirmations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">reason</span></div>
+
+
+<div class="viewcode-block" id="Carrier"><a class="viewcode-back" href="../../teos.carrier.html#teos.carrier.Carrier">[docs]</a><span class="k">class</span> <span class="nc">Carrier</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Carrier` is the class in charge of interacting with ``bitcoind`` to send/get transactions. It uses</span>
+<span class="sd">    :obj:`Receipt` objects to report about the sending outcome.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        btc_connect_params (:obj:`dict`): a dictionary with the parameters to connect to bitcoind</span>
+<span class="sd">            (rpc user, rpc passwd, host and port)</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        issued_receipts (:obj:`dict`): a dictionary of issued receipts to prevent resending the same transaction over</span>
+<span class="sd">            and over. It should periodically be reset to prevent it from growing unbounded.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">btc_connect_params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">btc_connect_params</span> <span class="o">=</span> <span class="n">btc_connect_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">issued_receipts</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># NOTCOVERED</span>
+<div class="viewcode-block" id="Carrier.send_transaction"><a class="viewcode-back" href="../../teos.carrier.html#teos.carrier.Carrier.send_transaction">[docs]</a>    <span class="k">def</span> <span class="nf">send_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rawtx</span><span class="p">,</span> <span class="n">txid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tries to send a given raw transaction to the Bitcoin network using ``bitcoind``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rawtx (:obj:`str`): a (potentially) signed raw transaction ready to be broadcast.</span>
+<span class="sd">            txid  (:obj:`str`): the transaction id corresponding to ``rawtx``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`Receipt`: A receipt reporting whether the transaction was successfully delivered or not and why.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">txid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">issued_receipts</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transaction already sent&quot;</span><span class="p">,</span> <span class="n">txid</span><span class="o">=</span><span class="n">txid</span><span class="p">)</span>
+            <span class="n">receipt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">issued_receipts</span><span class="p">[</span><span class="n">txid</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="n">receipt</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Pushing transaction to the network&quot;</span><span class="p">,</span> <span class="n">txid</span><span class="o">=</span><span class="n">txid</span><span class="p">,</span> <span class="n">rawtx</span><span class="o">=</span><span class="n">rawtx</span><span class="p">)</span>
+            <span class="n">bitcoin_cli</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btc_connect_params</span><span class="p">)</span><span class="o">.</span><span class="n">sendrawtransaction</span><span class="p">(</span><span class="n">rawtx</span><span class="p">)</span>
+
+            <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">errno</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+            <span class="c1"># Since we&#39;re pushing a raw transaction to the network we can face several rejections</span>
+            <span class="k">if</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">RPC_VERIFY_REJECTED</span><span class="p">:</span>
+                <span class="c1"># DISCUSS: 37-transaction-rejection</span>
+                <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">RPC_VERIFY_REJECTED</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Transaction couldn&#39;t be broadcast&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">RPC_VERIFY_ERROR</span><span class="p">:</span>
+                <span class="c1"># DISCUSS: 37-transaction-rejection</span>
+                <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">RPC_VERIFY_ERROR</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Transaction couldn&#39;t be broadcast&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">RPC_VERIFY_ALREADY_IN_CHAIN</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transaction is already in the blockchain. Getting confirmation count&quot;</span><span class="p">,</span> <span class="n">txid</span><span class="o">=</span><span class="n">txid</span><span class="p">)</span>
+
+                <span class="c1"># If the transaction is already in the chain, we get the number of confirmations and watch the tracker</span>
+                <span class="c1"># until the end of the appointment</span>
+                <span class="n">tx_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transaction</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">tx_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">confirmations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tx_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confirmations&quot;</span><span class="p">))</span>
+                    <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">confirmations</span><span class="o">=</span><span class="n">confirmations</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">RPC_VERIFY_ALREADY_IN_CHAIN</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># There&#39;s a really unlikely edge case where a transaction can be reorged between receiving the</span>
+                    <span class="c1"># notification and querying the data. Notice that this implies the tx being also kicked off the</span>
+                    <span class="c1"># mempool, which again is really unlikely.</span>
+                    <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">RPC_TX_REORGED_AFTER_BROADCAST</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">RPC_DESERIALIZATION_ERROR</span><span class="p">:</span>
+                <span class="c1"># Adding this here just for completeness. We should never end up here. The Carrier only sends txs</span>
+                <span class="c1"># handed by the Responder, who receives them from the Watcher, who checks that the tx can be properly</span>
+                <span class="c1"># deserialized</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transaction cannot be deserialized&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">txid</span><span class="p">))</span>
+                <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">RPC_DESERIALIZATION_ERROR</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If something else happens (unlikely but possible) log it so we can treat it in future releases</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;JSONRPCException&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Carrier.send_transaction&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+                <span class="n">receipt</span> <span class="o">=</span> <span class="n">Receipt</span><span class="p">(</span><span class="n">delivered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">UNKNOWN_JSON_RPC_EXCEPTION</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">issued_receipts</span><span class="p">[</span><span class="n">txid</span><span class="p">]</span> <span class="o">=</span> <span class="n">receipt</span>
+
+        <span class="k">return</span> <span class="n">receipt</span></div>
+
+<div class="viewcode-block" id="Carrier.get_transaction"><a class="viewcode-back" href="../../teos.carrier.html#teos.carrier.Carrier.get_transaction">[docs]</a>    <span class="k">def</span> <span class="nf">get_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Queries transaction data to ``bitcoind`` given a transaction id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            txid (:obj:`str`): a 32-byte hex-formatted string representing the transaction id.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict` or :obj:`None`: A dictionary with the transaction data if the transaction can be found on the</span>
+<span class="sd">            chain.</span>
+<span class="sd">            Returns ``None`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tx_info</span> <span class="o">=</span> <span class="n">bitcoin_cli</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btc_connect_params</span><span class="p">)</span><span class="o">.</span><span class="n">getrawtransaction</span><span class="p">(</span><span class="n">txid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">tx_info</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># While it&#39;s quite unlikely, the transaction that was already in the blockchain could have been</span>
+            <span class="c1"># reorged while we were querying bitcoind to get the confirmation count. In such a case we just</span>
+            <span class="c1"># restart the tracker</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">RPC_INVALID_ADDRESS_OR_KEY</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transaction not found in mempool nor blockchain&quot;</span><span class="p">,</span> <span class="n">txid</span><span class="o">=</span><span class="n">txid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If something else happens (unlikely but possible) log it so we can treat it in future releases</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;JSONRPCException&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Carrier.get_transaction&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">tx_info</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

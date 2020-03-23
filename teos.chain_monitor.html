@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.chain_monitor &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.cleaner" href="teos.cleaner.html" />
+    <link rel="prev" title="teos.carrier" href="teos.carrier.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.chain_monitor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.chain_monitor.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.chain_monitor">
+<span id="teos-chain-monitor"></span><h1>teos.chain_monitor<a class="headerlink" href="#module-teos.chain_monitor" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.chain_monitor.ChainMonitor">
+<em class="property">class </em><code class="sig-name descname">ChainMonitor</code><span class="sig-paren">(</span><em class="sig-param">watcher_queue</em>, <em class="sig-param">responder_queue</em>, <em class="sig-param">block_processor</em>, <em class="sig-param">bitcoind_feed_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.chain_monitor.ChainMonitor" title="teos.chain_monitor.ChainMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMonitor</span></code></a> is the class in charge of monitoring the blockchain (via <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code>) to detect new
+blocks on top of the best chain. If a new best block is spotted, the chain monitor will notify the
+<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> using <code class="docutils literal notranslate"><span class="pre">Queues</span></code>.</p>
+<p>The <a class="reference internal" href="#teos.chain_monitor.ChainMonitor" title="teos.chain_monitor.ChainMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMonitor</span></code></a> monitors the chain using two methods: <code class="docutils literal notranslate"><span class="pre">zmq</span></code> and <code class="docutils literal notranslate"><span class="pre">polling</span></code>. Blocks are only notified
+once per queue and the notification is triggered by the method that detects the block faster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>watcher_queue</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code>) – the queue to be used to send blocks hashes to the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code>.</p></li>
+<li><p><strong>responder_queue</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code>) – the queue to be used to send blocks hashes to the <code class="docutils literal notranslate"><span class="pre">Responder</span></code>.</p></li>
+<li><p><strong>block_processor</strong> (<a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a>) – a blockProcessor instance.</p></li>
+<li><p><strong>bitcoind_feed_params</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dict with the feed (ZMQ) connection parameters.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.best_tip">
+<code class="sig-name descname">best_tip</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.best_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>a block hash representing the current best tip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.last_tips">
+<code class="sig-name descname">last_tips</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.last_tips" title="Permalink to this definition">¶</a></dt>
+<dd><p>a list of last chain tips. Used as a sliding window to avoid notifying about old tips.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.terminate">
+<code class="sig-name descname">terminate</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>a flag to signal the termination of the <a class="reference internal" href="#teos.chain_monitor.ChainMonitor" title="teos.chain_monitor.ChainMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMonitor</span></code></a> (shutdown the tower).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.check_tip">
+<code class="sig-name descname">check_tip</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.check_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>an event that’s triggered at fixed time intervals and controls the polling thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Event</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.lock">
+<code class="sig-name descname">lock</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.lock" title="Permalink to this definition">¶</a></dt>
+<dd><p>a lock used to protect concurrent access to the queues and <code class="docutils literal notranslate"><span class="pre">best_tip</span></code> by the zmq and
+polling threads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Condition</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.zmqSubSocket">
+<code class="sig-name descname">zmqSubSocket</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.zmqSubSocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>a socket to connect to <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> via <code class="docutils literal notranslate"><span class="pre">zmq</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">socket</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.watcher_queue">
+<code class="sig-name descname">watcher_queue</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.watcher_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>a queue to send new best tips to the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.responder_queue">
+<code class="sig-name descname">responder_queue</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.responder_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>a queue to send new best tips to the
+<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.polling_delta">
+<code class="sig-name descname">polling_delta</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.polling_delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>time between polls (in seconds).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.max_block_window_size">
+<code class="sig-name descname">max_block_window_size</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.max_block_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>max size of last_tips.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.chain_monitor.ChainMonitor.block_processor">
+<code class="sig-name descname">block_processor</code><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.block_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>a blockProcessor instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.chain_monitor.ChainMonitor.monitor_chain">
+<code class="sig-name descname">monitor_chain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor.monitor_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.monitor_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main <a class="reference internal" href="#teos.chain_monitor.ChainMonitor" title="teos.chain_monitor.ChainMonitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMonitor</span></code></a> method. It initializes the <code class="docutils literal notranslate"><span class="pre">best_tip</span></code> to the current one (by querying the
+<a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a>) and creates two threads, one per each monitoring
+approach (<code class="docutils literal notranslate"><span class="pre">zmq</span></code> and <code class="docutils literal notranslate"><span class="pre">polling</span></code>).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.chain_monitor.ChainMonitor.monitor_chain_polling">
+<code class="sig-name descname">monitor_chain_polling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor.monitor_chain_polling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.monitor_chain_polling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monitors <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> via polling. Once the method is fired, it keeps monitoring as long as <code class="docutils literal notranslate"><span class="pre">terminate</span></code> is not
+set. Polling is performed once every <code class="docutils literal notranslate"><span class="pre">polling_delta</span></code> seconds. If a new best tip if found, the shared lock is
+acquired, the state is updated and the subscribers are notified, and finally the lock is released.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.chain_monitor.ChainMonitor.monitor_chain_zmq">
+<code class="sig-name descname">monitor_chain_zmq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor.monitor_chain_zmq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.monitor_chain_zmq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monitors <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> via zmq. Once the method is fired, it keeps monitoring as long as <code class="docutils literal notranslate"><span class="pre">terminate</span></code> is not
+set. If a new best tip if found, the shared lock is acquired, the state is updated and the subscribers are
+notified, and finally the lock is released.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.chain_monitor.ChainMonitor.notify_subscribers">
+<code class="sig-name descname">notify_subscribers</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor.notify_subscribers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.notify_subscribers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notifies the subscribers (<code class="docutils literal notranslate"><span class="pre">Watcher</span></code> and <code class="docutils literal notranslate"><span class="pre">Responder</span></code>) about a new block. It does so by putting the hash in
+the corresponding queue(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the new block hash to be sent to the subscribers.</p></li>
+<li><p><strong>block_hash</strong> – the new block hash to be sent to the subscribers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.chain_monitor.ChainMonitor.update_state">
+<code class="sig-name descname">update_state</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/chain_monitor.html#ChainMonitor.update_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.chain_monitor.ChainMonitor.update_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the state of the <code class="docutils literal notranslate"><span class="pre">ChainMonitor</span></code>. The state is represented as the <code class="docutils literal notranslate"><span class="pre">best_tip</span></code> and the list of
+<code class="docutils literal notranslate"><span class="pre">last_tips</span></code>. <code class="docutils literal notranslate"><span class="pre">last_tips</span></code> is bounded to <code class="docutils literal notranslate"><span class="pre">max_block_window_size</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">block_hash</span></code>) – the new best tip.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> is the state was successfully updated, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.cleaner.html" class="btn btn-neutral float-right" title="teos.cleaner" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.carrier.html" class="btn btn-neutral float-left" title="teos.carrier" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

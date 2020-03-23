@@ -1,0 +1,7 @@
+common.appointment
+==================
+
+.. automodule:: common.appointment
+   :members:
+   :undoc-members:
+   :show-inheritance:

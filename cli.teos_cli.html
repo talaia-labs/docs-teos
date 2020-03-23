@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cli.teos_cli &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="common package" href="common.html" />
+    <link rel="prev" title="cli package" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">cli package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">cli.teos_cli</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="cli.html">cli package</a> &raquo;</li>
+        
+      <li>cli.teos_cli</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cli.teos_cli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-cli.teos_cli">
+<span id="cli-teos-cli"></span><h1>cli.teos_cli<a class="headerlink" href="#module-cli.teos_cli" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="cli.teos_cli.add_appointment">
+<code class="sig-name descname">add_appointment</code><span class="sig-paren">(</span><em class="sig-param">args</em>, <em class="sig-param">teos_url</em>, <em class="sig-param">config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#add_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.add_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the add_appointment command, from argument parsing, trough sending the appointment to the tower, until
+saving the appointment receipt.</p>
+<dl class="simple">
+<dt>The life cycle of the function is as follows:</dt><dd><ul class="simple">
+<li><p>Load the add_appointment arguments</p></li>
+<li><p>Check that the given commitment_txid is correct (proper format and not missing)</p></li>
+<li><p>Check that the transaction is correct (not missing)</p></li>
+<li><p>Create the appointment locator and encrypted blob from the commitment_txid and the penalty_tx</p></li>
+<li><p>Load the client private key and sign the appointment</p></li>
+<li><p>Send the appointment to the tower</p></li>
+<li><p>Wait for the response</p></li>
+<li><p>Check the tower’s response and signature</p></li>
+<li><p>Store the receipt (appointment + signature) on disk</p></li>
+</ul>
+</dd>
+</dl>
+<p>If any of the above-mentioned steps fails, the method returns false, otherwise it returns true.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of arguments to pass to <code class="docutils literal notranslate"><span class="pre">parse_add_appointment_args</span></code>. Must contain a json encoded
+appointment, or the file option and the path to a file containing a json encoded appointment.</p></li>
+<li><p><strong>teos_url</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the teos base url.</p></li>
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a config dictionary following the format of <a class="reference internal" href="common.config_loader.html#common.config_loader.ConfigLoader.create_config_dict" title="common.config_loader.ConfigLoader.create_config_dict"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_config_dict</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the appointment is accepted by the tower and the receipt is properly stored, false if any
+error occurs during the process.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.get_appointment">
+<code class="sig-name descname">get_appointment</code><span class="sig-paren">(</span><em class="sig-param">locator</em>, <em class="sig-param">get_appointment_endpoint</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#get_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.get_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets information about an appointment from the tower.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the appointment locator used to identify it.</p></li>
+<li><p><strong>get_appointment_endpoint</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the teos endpoint where to get appointments from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dictionary containing thew appointment data if the locator is valid and the tower
+responds. <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.load_keys">
+<code class="sig-name descname">load_keys</code><span class="sig-paren">(</span><em class="sig-param">teos_pk_path</em>, <em class="sig-param">cli_sk_path</em>, <em class="sig-param">cli_pk_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#load_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.load_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all the keys required so sign, send, and verify the appointment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>teos_pk_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – path to the TEOS public key file.</p></li>
+<li><p><strong>cli_sk_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – path to the client private key file.</p></li>
+<li><p><strong>cli_pk_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – path to the client public key file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a three item tuple containing a teos_pk object, cli_sk object and the cli_sk_der
+encoded key if all keys can be loaded. <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.main">
+<code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">args</em>, <em class="sig-param">command_line_conf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.parse_add_appointment_args">
+<code class="sig-name descname">parse_add_appointment_args</code><span class="sig-paren">(</span><em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#parse_add_appointment_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.parse_add_appointment_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the arguments of the add_appointment command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of arguments to pass to <code class="docutils literal notranslate"><span class="pre">parse_add_appointment_args</span></code>. Must contain a json encoded
+appointment, or the file option and the path to a file containing a json encoded appointment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing the appointment data if it can be loaded. <code class="docutils literal notranslate"><span class="pre">None</span></code>
+otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.post_appointment">
+<code class="sig-name descname">post_appointment</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">add_appointment_endpoint</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#post_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.post_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends appointment data to add_appointment endpoint to be processed by the tower.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing three fields: an appointment, the client-side signature, and the
+der-encoded client public key.</p></li>
+<li><p><strong>add_appointment_endpoint</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the teos endpoint where to send appointments to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a json-encoded dictionary with the server response if the data can be posted.
+None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.process_post_appointment_response">
+<code class="sig-name descname">process_post_appointment_response</code><span class="sig-paren">(</span><em class="sig-param">response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#process_post_appointment_response"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.process_post_appointment_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the server response to an add_appointment request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>response</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">requests.models.Response</span></code>) – a <code class="docutils literal notranslate"><span class="pre">Response</span></code> object obtained from the sent request.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dictionary containing the tower’s response data if it can be properly parsed and
+the response type is <code class="docutils literal notranslate"><span class="pre">HTTP_OK</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cli.teos_cli.save_appointment_receipt">
+<code class="sig-name descname">save_appointment_receipt</code><span class="sig-paren">(</span><em class="sig-param">appointment</em>, <em class="sig-param">signature</em>, <em class="sig-param">config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cli/teos_cli.html#save_appointment_receipt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cli.teos_cli.save_appointment_receipt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves an appointment receipt to disk. A receipt consists in an appointment and a signature from the tower.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>appointment</strong> (<a class="reference internal" href="common.appointment.html#common.appointment.Appointment" title="common.appointment.Appointment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code></a>) – the appointment to be saved on disk.</p></li>
+<li><p><strong>signature</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the signature of the appointment performed by the tower.</p></li>
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a config dictionary following the format of <a class="reference internal" href="common.config_loader.html#common.config_loader.ConfigLoader.create_config_dict" title="common.config_loader.ConfigLoader.create_config_dict"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_config_dict</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the appointment if properly saved, false otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>IOError</strong> – if an error occurs whilst writing the file on disk.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="common.html" class="btn btn-neutral float-right" title="common package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cli.html" class="btn btn-neutral float-left" title="cli package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

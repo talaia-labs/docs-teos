@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.cleaner &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.cleaner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.cleaner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
+
+<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Cleaner&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Cleaner"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner">[docs]</a><span class="k">class</span> <span class="nc">Cleaner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Cleaner` is the class in charge of removing expired/completed data from the tower.</span>
+
+<span class="sd">    Mutable objects (like dicts) are passed-by-reference in Python, so no return is needed for the Cleaner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Cleaner.delete_appointment_from_memory"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.delete_appointment_from_memory">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">delete_appointment_from_memory</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an appointment from memory (appointments and locator_uuid_map dictionaries). If the given appointment</span>
+<span class="sd">        does not share locator with any other, the map will completely removed, otherwise, the uuid will be removed from</span>
+<span class="sd">        the map.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the appointment to be deleted.</span>
+<span class="sd">            appointments (:obj:`dict`): the appointments dictionary from where the appointment should be removed.</span>
+<span class="sd">            locator_uuid_map (:obj:`dict`): the locator:uuid map from where the appointment should also be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Delete the appointment</span>
+        <span class="n">appointments</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="c1"># If there was only one appointment that matches the locator we can delete the whole list</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">locator</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">locator_uuid_map</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Otherwise we just delete the appointment that matches locator:appointment_pos</span>
+            <span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.delete_appointment_from_db"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.delete_appointment_from_db">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">delete_appointment_from_db</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an appointment from the appointments database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the appointment to be deleted.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">delete_watcher_appointment</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">delete_triggered_appointment_flag</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.update_delete_db_locator_map"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.update_delete_db_locator_map">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">update_delete_db_locator_map</span><span class="p">(</span><span class="n">uuids</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the locator:uuid map of a given locator from the database by removing a given uuid. If the uuid is the</span>
+<span class="sd">        only element of the map, the map is deleted, otherwise the uuid is simply removed and the database is updated.</span>
+
+<span class="sd">        If either the uuid of the locator are not found, the data is not modified.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuids (:obj:`list`): a list of identifiers to be removed from the map.</span>
+<span class="sd">            locator (:obj:`str`): the identifier of the map to be either updated or deleted.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">locator_map</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">locator_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span><span class="o">.</span><span class="n">issuperset</span><span class="p">(</span><span class="n">uuids</span><span class="p">):</span>
+                <span class="c1"># Remove the map if all keys are requested to be deleted</span>
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">uuids</span><span class="p">):</span>
+                    <span class="n">db_manager</span><span class="o">.</span><span class="n">delete_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Otherwise remove only the selected keys</span>
+                    <span class="n">locator_map</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">uuids</span><span class="p">))</span>
+                    <span class="n">db_manager</span><span class="o">.</span><span class="n">update_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_map</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Some UUIDs not found in the db&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">all_uuids</span><span class="o">=</span><span class="n">uuids</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Locator map not found in the db&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.delete_expired_appointments"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.delete_expired_appointments">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">delete_expired_appointments</span><span class="p">(</span><span class="n">expired_appointments</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes appointments which ``end_time`` has been reached (with no trigger) both from memory</span>
+<span class="sd">        (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`) and disk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expired_appointments (:obj:`list`): a list of appointments to be deleted.</span>
+<span class="sd">            appointments (:obj:`dict`): a dictionary containing all the :mod:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            locator_uuid_map (:obj:`dict`): a ``locator:uuid`` map for the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">locator_maps_to_update</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">expired_appointments</span><span class="p">:</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End time reached with no breach. Deleting appointment&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_appointment_from_memory</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">locator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="p">:</span>
+                <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">locator</span><span class="p">,</span> <span class="n">uuids</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">update_delete_db_locator_map</span><span class="p">(</span><span class="n">uuids</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">)</span>
+
+        <span class="c1"># Expired appointments are not flagged, so they can be deleted without caring about the db flag.</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">batch_delete_watcher_appointments</span><span class="p">(</span><span class="n">expired_appointments</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.delete_completed_appointments"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.delete_completed_appointments">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">delete_completed_appointments</span><span class="p">(</span><span class="n">completed_appointments</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a completed appointment from memory (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`) and disk.</span>
+
+<span class="sd">        Currently, an appointment is only completed if it cannot make it to the (:obj:`Responder &lt;teos.responder.Responder&gt;`),</span>
+<span class="sd">        otherwise, it will be flagged as triggered and removed once the tracker is completed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            completed_appointments (:obj:`list`): a list of appointments to be deleted.</span>
+<span class="sd">            appointments (:obj:`dict`): a dictionary containing all the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            locator_uuid_map (:obj:`dict`): a ``locator:uuid`` map for the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locator_maps_to_update</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">completed_appointments</span><span class="p">:</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Appointment cannot be completed, it contains invalid data. Deleting&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span>
+            <span class="p">)</span>
+
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_appointment_from_memory</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">locator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="p">:</span>
+                <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">locator</span><span class="p">,</span> <span class="n">uuids</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Update / delete the locator map</span>
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">update_delete_db_locator_map</span><span class="p">(</span><span class="n">uuids</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">)</span>
+
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">batch_delete_watcher_appointments</span><span class="p">(</span><span class="n">completed_appointments</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.flag_triggered_appointments"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.flag_triggered_appointments">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">flag_triggered_appointments</span><span class="p">(</span><span class="n">triggered_appointments</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a list of  triggered appointment from memory (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`) and flags them as</span>
+<span class="sd">        triggered on disk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            triggered_appointments (:obj:`list`): a list of appointments to be flagged as triggered on the database.</span>
+<span class="sd">            appointments (:obj:`dict`): a dictionary containing all the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            locator_uuid_map (:obj:`dict`): a ``locator:uuid`` map for the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`</span>
+<span class="sd">                appointments.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">triggered_appointments</span><span class="p">:</span>
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_appointment_from_memory</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span><span class="p">)</span>
+            <span class="n">db_manager</span><span class="o">.</span><span class="n">create_triggered_appointment_flag</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cleaner.delete_completed_trackers"><a class="viewcode-back" href="../../teos.cleaner.html#teos.cleaner.Cleaner.delete_completed_trackers">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">delete_completed_trackers</span><span class="p">(</span><span class="n">completed_trackers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">trackers</span><span class="p">,</span> <span class="n">tx_tracker_map</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a completed tracker both from memory (:obj:`Responder &lt;teos.responder.Responder&gt;`) and disk (from the</span>
+<span class="sd">        Responder&#39;s and Watcher&#39;s databases).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trackers (:obj:`dict`): a dictionary containing all the :obj:`Responder &lt;teos.responder.Responder&gt;`</span>
+<span class="sd">                trackers.</span>
+<span class="sd">            tx_tracker_map (:obj:`dict`): a ``penalty_txid:uuid`` map for the :obj:`Responder</span>
+<span class="sd">                &lt;teos.responder.Responder&gt;` trackers.</span>
+<span class="sd">            completed_trackers (:obj:`dict`): a dict of completed trackers to be deleted (uuid:confirmations).</span>
+<span class="sd">            height (:obj:`int`): the block height at which the trackers were completed.</span>
+<span class="sd">            db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
+<span class="sd">                database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">locator_maps_to_update</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">confirmations</span> <span class="ow">in</span> <span class="n">completed_trackers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Appointment completed. Appointment ended after reaching enough confirmations&quot;</span><span class="p">,</span>
+                <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span>
+                <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">confirmations</span><span class="o">=</span><span class="n">confirmations</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">penalty_txid</span> <span class="o">=</span> <span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span>
+            <span class="n">locator</span> <span class="o">=</span> <span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
+            <span class="n">trackers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">penalty_txid</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">tx_tracker_map</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">penalty_txid</span><span class="p">)</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No more trackers for penalty transaction&quot;</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">penalty_txid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">penalty_txid</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">locator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="p">:</span>
+                <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">locator_maps_to_update</span><span class="p">[</span><span class="n">locator</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">locator</span><span class="p">,</span> <span class="n">uuids</span> <span class="ow">in</span> <span class="n">locator_maps_to_update</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Update / delete the locator map</span>
+            <span class="n">Cleaner</span><span class="o">.</span><span class="n">update_delete_db_locator_map</span><span class="p">(</span><span class="n">uuids</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">)</span>
+
+        <span class="c1"># Delete appointment from the db (from watchers&#39;s and responder&#39;s db) and remove flag</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">batch_delete_responder_trackers</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">completed_trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">batch_delete_watcher_appointments</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">completed_trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">db_manager</span><span class="o">.</span><span class="n">batch_delete_triggered_appointment_flag</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">completed_trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

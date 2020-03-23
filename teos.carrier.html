@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.carrier &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.chain_monitor" href="teos.chain_monitor.html" />
+    <link rel="prev" title="teos.builder" href="teos.builder.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.carrier</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.carrier.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.carrier">
+<span id="teos-carrier"></span><h1>teos.carrier<a class="headerlink" href="#module-teos.carrier" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.carrier.Carrier">
+<em class="property">class </em><code class="sig-name descname">Carrier</code><span class="sig-paren">(</span><em class="sig-param">btc_connect_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/carrier.html#Carrier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.carrier.Carrier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.carrier.Carrier" title="teos.carrier.Carrier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Carrier</span></code></a> is the class in charge of interacting with <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> to send/get transactions. It uses
+<a class="reference internal" href="#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Receipt</span></code></a> objects to report about the sending outcome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>btc_connect_params</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary with the parameters to connect to bitcoind
+(rpc user, rpc passwd, host and port)</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="teos.carrier.Carrier.issued_receipts">
+<code class="sig-name descname">issued_receipts</code><a class="headerlink" href="#teos.carrier.Carrier.issued_receipts" title="Permalink to this definition">¶</a></dt>
+<dd><p>a dictionary of issued receipts to prevent resending the same transaction over
+and over. It should periodically be reset to prevent it from growing unbounded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.carrier.Carrier.get_transaction">
+<code class="sig-name descname">get_transaction</code><span class="sig-paren">(</span><em class="sig-param">txid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/carrier.html#Carrier.get_transaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.carrier.Carrier.get_transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries transaction data to <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> given a transaction id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 32-byte hex-formatted string representing the transaction id.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the transaction data if the transaction can be found on the
+chain.
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.carrier.Carrier.send_transaction">
+<code class="sig-name descname">send_transaction</code><span class="sig-paren">(</span><em class="sig-param">rawtx</em>, <em class="sig-param">txid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/carrier.html#Carrier.send_transaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.carrier.Carrier.send_transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to send a given raw transaction to the Bitcoin network using <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rawtx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a (potentially) signed raw transaction ready to be broadcast.</p></li>
+<li><p><strong>txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the transaction id corresponding to <code class="docutils literal notranslate"><span class="pre">rawtx</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A receipt reporting whether the transaction was successfully delivered or not and why.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Receipt</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="teos.carrier.Receipt">
+<em class="property">class </em><code class="sig-name descname">Receipt</code><span class="sig-paren">(</span><em class="sig-param">delivered</em>, <em class="sig-param">confirmations=0</em>, <em class="sig-param">reason=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/carrier.html#Receipt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.carrier.Receipt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-class docutils literal notranslate"><span class="pre">Receipt</span></code></a> class represent the interaction between the <a class="reference internal" href="#teos.carrier.Carrier" title="teos.carrier.Carrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Carrier</span></code></a> and <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> when broadcasting
+transactions. It is used to signal whether or not a transaction has been successfully broadcast and why.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delivered</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – whether or not the transaction has been successfully broadcast.</p></li>
+<li><p><strong>confirmations</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the number of confirmations of the transaction to broadcast. In certain situations
+the <a class="reference internal" href="#teos.carrier.Carrier" title="teos.carrier.Carrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Carrier</span></code></a> may fail to broadcast a transaction because it was already in the blockchain.
+This attribute signals those situations.</p></li>
+<li><p><strong>reason</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – an error code describing why the transaction broadcast failed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A receipt describing whether or not the transaction was delivered. Notice that transactions
+that are already on chain are flagged as delivered with a <code class="docutils literal notranslate"><span class="pre">confirmations</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> whereas new transactions are so
+with <code class="docutils literal notranslate"><span class="pre">confirmations</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Receipt</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.chain_monitor.html" class="btn btn-neutral float-right" title="teos.chain_monitor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.builder.html" class="btn btn-neutral float-left" title="teos.builder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

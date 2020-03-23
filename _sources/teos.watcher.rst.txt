@@ -1,0 +1,7 @@
+teos.watcher
+============
+
+.. automodule:: teos.watcher
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.inspector &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.responder" href="teos.responder.html" />
+    <link rel="prev" title="teos.errors" href="teos.errors.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.inspector</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.inspector.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.inspector">
+<span id="teos-inspector"></span><h1>teos.inspector<a class="headerlink" href="#module-teos.inspector" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.inspector.Inspector">
+<em class="property">class </em><code class="sig-name descname">Inspector</code><span class="sig-paren">(</span><em class="sig-param">block_processor</em>, <em class="sig-param">min_to_self_delay</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.inspector.Inspector" title="teos.inspector.Inspector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Inspector</span></code></a> class is in charge of verifying that the appointment data provided by the user is correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block_processor</strong> (<a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">BlockProcessor</span></code> instance.</p></li>
+<li><p><strong>min_to_self_delay</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the minimum to_self_delay accepted in appointments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_appointment_signature">
+<em class="property">static </em><code class="sig-name descname">check_appointment_signature</code><span class="sig-paren">(</span><em class="sig-param">appointment_data</em>, <em class="sig-param">signature</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_appointment_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_appointment_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided user signature is correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>appointment_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – the appointment that was signed by the user.</p></li>
+<li><p><strong>signature</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the user’s signature (hex encoded).</p></li>
+<li><p><strong>pk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the user’s public key (hex encoded).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">signature</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_FORMAT</span></code>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_blob">
+<em class="property">static </em><code class="sig-name descname">check_blob</code><span class="sig-paren">(</span><em class="sig-param">encrypted_blob</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_blob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_blob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided <code class="docutils literal notranslate"><span class="pre">encrypted_blob</span></code> may be correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>encrypted_blob</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the encrypted blob to be checked (hex encoded).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">encrypted_blob</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_FORMAT</span></code>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_end_time">
+<em class="property">static </em><code class="sig-name descname">check_end_time</code><span class="sig-paren">(</span><em class="sig-param">end_time</em>, <em class="sig-param">start_time</em>, <em class="sig-param">block_height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_end_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_end_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided <code class="docutils literal notranslate"><span class="pre">end_time</span></code> is correct.</p>
+<p>End times must be ahead both the <code class="docutils literal notranslate"><span class="pre">start_time</span></code> and the current best chain tip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>end_time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the tower is requested to stop watching for breaches.</p></li>
+<li><p><strong>start_time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the tower is requested to start watching for breaches.</p></li>
+<li><p><strong>block_height</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the chain height.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">end_time</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_FIELD_TOO_SMALL</span></code>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_locator">
+<em class="property">static </em><code class="sig-name descname">check_locator</code><span class="sig-paren">(</span><em class="sig-param">locator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided <code class="docutils literal notranslate"><span class="pre">locator</span></code> is correct.</p>
+<p>Locators must be 16-byte hex encoded strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the locator to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">locator</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>,
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_SIZE</span></code>, and <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_FORMAT</span></code>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_start_time">
+<em class="property">static </em><code class="sig-name descname">check_start_time</code><span class="sig-paren">(</span><em class="sig-param">start_time</em>, <em class="sig-param">block_height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_start_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_start_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided <code class="docutils literal notranslate"><span class="pre">start_time</span></code> is correct.</p>
+<p>Start times must be ahead the current best chain tip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the tower is requested to start watching for breaches.</p></li>
+<li><p><strong>block_height</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the chain height.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">start_time</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<blockquote>
+<div><p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_FIELD_TOO_SMALL</span></code>.</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.check_to_self_delay">
+<code class="sig-name descname">check_to_self_delay</code><span class="sig-paren">(</span><em class="sig-param">to_self_delay</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.check_to_self_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.check_to_self_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the provided <code class="docutils literal notranslate"><span class="pre">to_self_delay</span></code> is correct.</p>
+<p>To self delays must be greater or equal to <code class="docutils literal notranslate"><span class="pre">MIN_TO_SELF_DELAY</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>to_self_delay</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The <code class="docutils literal notranslate"><span class="pre">to_self_delay</span></code> encoded in the <code class="docutils literal notranslate"><span class="pre">csv</span></code> of the <code class="docutils literal notranslate"><span class="pre">htlc</span></code> that this
+appointment is covering.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple (return code, message) as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">None)</span></code> if the <code class="docutils literal notranslate"><span class="pre">to_self_delay</span></code> is correct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span> <span class="pre">(0,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+<p>The possible return errors are: <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_EMPTY_FIELD</span></code>, <code class="docutils literal notranslate"><span class="pre">APPOINTMENT_WRONG_FIELD_TYPE</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">APPOINTMENT_FIELD_TOO_SMALL</span></code>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.inspector.Inspector.inspect">
+<code class="sig-name descname">inspect</code><span class="sig-paren">(</span><em class="sig-param">appointment_data</em>, <em class="sig-param">signature</em>, <em class="sig-param">public_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/inspector.html#Inspector.inspect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.inspector.Inspector.inspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspects whether the data provided by the user is correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>appointment_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing the appointment data.</p></li>
+<li><p><strong>signature</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the appointment signature provided by the user (hex encoded).</p></li>
+<li><p><strong>public_key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the user’s public key (hex encoded).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>An appointment initialized with the
+provided data if it is correct.</p>
+<p>Returns a tuple <code class="docutils literal notranslate"><span class="pre">(return</span> <span class="pre">code,</span> <span class="pre">message)</span></code> describing the error otherwise.</p>
+<p>Errors are defined in <a class="reference internal" href="teos.errors.html#module-teos.errors" title="teos.errors"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Errors</span></code></a>.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.responder.html" class="btn btn-neutral float-right" title="teos.responder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.errors.html" class="btn btn-neutral float-left" title="teos.errors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

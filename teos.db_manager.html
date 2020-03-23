@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.db_manager &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.errors" href="teos.errors.html" />
+    <link rel="prev" title="teos.cleaner" href="teos.cleaner.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.db_manager</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.db_manager.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.db_manager">
+<span id="teos-db-manager"></span><h1>teos.db_manager<a class="headerlink" href="#module-teos.db_manager" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.db_manager.DBManager">
+<em class="property">class </em><code class="sig-name descname">DBManager</code><span class="sig-paren">(</span><em class="sig-param">db_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBManager</span></code></a> is the class in charge of interacting with the appointments database (<code class="docutils literal notranslate"><span class="pre">LevelDB</span></code>).
+Keys and values are stored as bytes in the database but processed as strings by the manager.</p>
+<p>The database is split in six prefixes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">WATCHER_PREFIX</span></code>, defined as <code class="docutils literal notranslate"><span class="pre">b'w</span></code>, is used to store <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> appointments.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RESPONDER_PREFIX</span></code>, defines as <code class="docutils literal notranslate"><span class="pre">b'r</span></code>, is used to store <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> trackers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WATCHER_LAST_BLOCK_KEY</span></code>, defined as <code class="docutils literal notranslate"><span class="pre">b'bw</span></code>, is used to store the last block hash known by the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RESPONDER_LAST_BLOCK_KEY</span></code>, defined as <code class="docutils literal notranslate"><span class="pre">b'br</span></code>, is used to store the last block hash known by the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOCATOR_MAP_PREFIX</span></code>, defined as <code class="docutils literal notranslate"><span class="pre">b'm</span></code>, is used to store the <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> maps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TRIGGERED_APPOINTMENTS_PREFIX</span></code>, defined as <code class="docutils literal notranslate"><span class="pre">b'ta</span></code>, is used to stored triggered appointments (appointments that have been handed to the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.)</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path (relative or absolute) to the system folder containing the database. A fresh
+database will be create if the specified path does not contain one.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the provided <code class="docutils literal notranslate"><span class="pre">db_path</span></code> is not a string.</p></li>
+<li><p><strong>plyvel.Error</strong> – If the db is currently unavailable (being used by another process).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="teos.db_manager.DBManager.batch_create_triggered_appointment_flag">
+<code class="sig-name descname">batch_create_triggered_appointment_flag</code><span class="sig-paren">(</span><em class="sig-param">uuids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.batch_create_triggered_appointment_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.batch_create_triggered_appointment_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a flag that signals that an appointment has been triggered for every appointment in the given list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of identifier for the appointments to flag.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.batch_delete_responder_trackers">
+<code class="sig-name descname">batch_delete_responder_trackers</code><span class="sig-paren">(</span><em class="sig-param">uuids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.batch_delete_responder_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.batch_delete_responder_trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an appointment from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of 16-byte hex-encoded strings identifying the trackers to be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.batch_delete_triggered_appointment_flag">
+<code class="sig-name descname">batch_delete_triggered_appointment_flag</code><span class="sig-paren">(</span><em class="sig-param">uuids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.batch_delete_triggered_appointment_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.batch_delete_triggered_appointment_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a list of flag signaling that some appointment have been triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the identifier of the flag to be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.batch_delete_watcher_appointments">
+<code class="sig-name descname">batch_delete_watcher_appointments</code><span class="sig-paren">(</span><em class="sig-param">uuids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.batch_delete_watcher_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.batch_delete_watcher_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an appointment from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of 16-byte hex-encoded strings identifying the appointments to be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.create_append_locator_map">
+<code class="sig-name descname">create_append_locator_map</code><span class="sig-paren">(</span><em class="sig-param">locator</em>, <em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.create_append_locator_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.create_append_locator_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates (or appends to if already exists) a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map.</p>
+<p>If the map already exists, the new <code class="docutils literal notranslate"><span class="pre">uuid</span></code> is appended to the existing ones (if it is not already there).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string used as the key of the map.</p></li>
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded unique id to create (or add to) the map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.create_entry">
+<code class="sig-name descname">create_entry</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">value</em>, <em class="sig-param">prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.create_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.create_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new entry in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key of the new entry, used to identify it.</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the data stored under the given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an optional prefix added to the <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.create_triggered_appointment_flag">
+<code class="sig-name descname">create_triggered_appointment_flag</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.create_triggered_appointment_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.create_triggered_appointment_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a flag that signals that an appointment has been triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the flag to be created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.delete_entry">
+<code class="sig-name descname">delete_entry</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.delete_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.delete_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an entry from the database given an <code class="docutils literal notranslate"><span class="pre">key</span></code> (and optionally a <code class="docutils literal notranslate"><span class="pre">prefix</span></code>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key that identifies the data to be deleted.</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an optional prefix to be prepended to the <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.delete_locator_map">
+<code class="sig-name descname">delete_locator_map</code><span class="sig-paren">(</span><em class="sig-param">locator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.delete_locator_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.delete_locator_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string identifying the map to delete.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.delete_responder_tracker">
+<code class="sig-name descname">delete_responder_tracker</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.delete_responder_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.delete_responder_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a tracker from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string identifying the tracker to be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.delete_triggered_appointment_flag">
+<code class="sig-name descname">delete_triggered_appointment_flag</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.delete_triggered_appointment_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.delete_triggered_appointment_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a flag that signals that an appointment has been triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the flag to be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.delete_watcher_appointment">
+<code class="sig-name descname">delete_watcher_appointment</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.delete_watcher_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.delete_watcher_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an appointment from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string identifying the appointment to be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.get_last_known_block">
+<code class="sig-name descname">get_last_known_block</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.get_last_known_block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.get_last_known_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the last known block given a key (either <code class="docutils literal notranslate"><span class="pre">WATCHER_LAST_BLOCK_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">RESPONDER_LAST_BLOCK_KEY</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A 16-byte hex-encoded str representing the last known block hash.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if the entry is not found.</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_all_triggered_flags">
+<code class="sig-name descname">load_all_triggered_flags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_all_triggered_flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_all_triggered_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all the appointment triggered flags from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of all the uuids of the triggered appointments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_appointments_db">
+<code class="sig-name descname">load_appointments_db</code><span class="sig-paren">(</span><em class="sig-param">prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_appointments_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_appointments_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all data from the appointments database given a prefix. Two prefixes are defined: <code class="docutils literal notranslate"><span class="pre">WATCHER_PREFIX</span></code> and
+<code class="docutils literal notranslate"><span class="pre">RESPONDER_PREFIX</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the prefix of the data to load.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A dictionary containing the requested data (appointments or trackers) indexed by <code class="docutils literal notranslate"><span class="pre">uuid</span></code>.</p>
+<p>Returns an empty dictionary if no data is found.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_entry">
+<code class="sig-name descname">load_entry</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads an entry from the database given a <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key that identifies the entry to be loaded.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A dictionary containing the requested data (an appointment or a tracker).</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if the entry is not found.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_last_block_hash_responder">
+<code class="sig-name descname">load_last_block_hash_responder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_last_block_hash_responder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_last_block_hash_responder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the last known block hash of the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A 32-byte hex-encoded string representing the last known block hash if found.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_last_block_hash_watcher">
+<code class="sig-name descname">load_last_block_hash_watcher</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_last_block_hash_watcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_last_block_hash_watcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the last known block hash of the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A 32-byte hex-encoded string representing the last known block hash if found.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_locator_map">
+<code class="sig-name descname">load_locator_map</code><span class="sig-paren">(</span><em class="sig-param">locator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_locator_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_locator_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map of a given <code class="docutils literal notranslate"><span class="pre">locator</span></code> from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string representing the appointment locator.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The requested <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map if found.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_responder_tracker">
+<code class="sig-name descname">load_responder_tracker</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_responder_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_responder_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a tracker from the database using <code class="docutils literal notranslate"><span class="pre">RESPONDER_PREFIX</span></code> as a prefix to the given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A dictionary containing the tracker data if they <code class="docutils literal notranslate"><span class="pre">key</span></code> is found.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_responder_trackers">
+<code class="sig-name descname">load_responder_trackers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_responder_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_responder_trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all the trackers from the database (all entries with the <code class="docutils literal notranslate"><span class="pre">RESPONDER_PREFIX</span></code> prefix).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary with all the trackers stored in the database. An empty dictionary is there are
+none.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_watcher_appointment">
+<code class="sig-name descname">load_watcher_appointment</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_watcher_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_watcher_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads an appointment from the database using <code class="docutils literal notranslate"><span class="pre">WATCHER_PREFIX</span></code> as prefix to the given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>A dictionary containing the appointment data if they <code class="docutils literal notranslate"><span class="pre">key</span></code> is found.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.load_watcher_appointments">
+<code class="sig-name descname">load_watcher_appointments</code><span class="sig-paren">(</span><em class="sig-param">include_triggered=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.load_watcher_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.load_watcher_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all the appointments from the database (all entries with the <code class="docutils literal notranslate"><span class="pre">WATCHER_PREFIX</span></code> prefix).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>include_triggered</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to include the appointments flagged as triggered or not. <code class="docutils literal notranslate"><span class="pre">False</span></code>
+by default.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with all the appointments stored in the database. An empty dictionary is there
+are none.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.store_last_block_hash_responder">
+<code class="sig-name descname">store_last_block_hash_responder</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.store_last_block_hash_responder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.store_last_block_hash_responder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores a block hash as the last known block of the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the block hash to be stored (32-byte hex-encoded)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.store_last_block_hash_watcher">
+<code class="sig-name descname">store_last_block_hash_watcher</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.store_last_block_hash_watcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.store_last_block_hash_watcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores a block hash as the last known block of the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the block hash to be stored (32-byte hex-encoded)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.store_responder_tracker">
+<code class="sig-name descname">store_responder_tracker</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">tracker</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.store_responder_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.store_responder_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores a tracker in the database using the <code class="docutils literal notranslate"><span class="pre">RESPONDER_PREFIX</span></code> prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the appointment to be stored.</p></li>
+<li><p><strong>(</strong> (<em>tracker</em>) – obj: <cite>str</cite>): the json encoded tracker to be stored as data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.store_watcher_appointment">
+<code class="sig-name descname">store_watcher_appointment</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">appointment</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.store_watcher_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.store_watcher_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores an appointment in the database using the <code class="docutils literal notranslate"><span class="pre">WATCHER_PREFIX</span></code> prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the identifier of the appointment to be stored.</p></li>
+<li><p><strong>(</strong> (<em>appointment</em>) – obj: <cite>str</cite>): the json encoded appointment to be stored as data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.db_manager.DBManager.update_locator_map">
+<code class="sig-name descname">update_locator_map</code><span class="sig-paren">(</span><em class="sig-param">locator</em>, <em class="sig-param">locator_map</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/db_manager.html#DBManager.update_locator_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.db_manager.DBManager.update_locator_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map in the database by deleting one of it’s uuid. It will only work as long as
+the given <code class="docutils literal notranslate"><span class="pre">locator_map</span></code> is a subset of the current one and it’s not empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a 16-byte hex-encoded string used as the key of the map.</p></li>
+<li><p><strong>locator_map</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of uuids to replace the current one on the db.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.errors.html" class="btn btn-neutral float-right" title="teos.errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.cleaner.html" class="btn btn-neutral float-left" title="teos.cleaner" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

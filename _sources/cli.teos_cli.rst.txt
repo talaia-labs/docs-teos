@@ -1,0 +1,7 @@
+cli.teos\_cli
+=============
+
+.. automodule:: cli.teos_cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

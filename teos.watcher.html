@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.watcher &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cli package" href="cli.html" />
+    <link rel="prev" title="teos.tools" href="teos.tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.watcher</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.watcher.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.watcher">
+<span id="teos-watcher"></span><h1>teos.watcher<a class="headerlink" href="#module-teos.watcher" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.watcher.Watcher">
+<em class="property">class </em><code class="sig-name descname">Watcher</code><span class="sig-paren">(</span><em class="sig-param">db_manager</em>, <em class="sig-param">block_processor</em>, <em class="sig-param">responder</em>, <em class="sig-param">sk_der</em>, <em class="sig-param">max_appointments</em>, <em class="sig-param">expiry_delta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">Watcher</span></code></a> is the class in charge to watch for channel breaches for the appointments accepted by the
+tower.</p>
+<p>The <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">Watcher</span></code></a> keeps track of the accepted appointments in <code class="docutils literal notranslate"><span class="pre">appointments</span></code> and, for new received block,
+checks if any breach has happened by comparing the txids with the appointment locators. If a breach is seen, the
+<a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a> of the corresponding appointment is decrypted and the data
+is passed to the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<p>If an appointment reaches its end with no breach, the data is simply deleted.</p>
+<p>The <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-class docutils literal notranslate"><span class="pre">Watcher</span></code></a> receives information about new received blocks via the <code class="docutils literal notranslate"><span class="pre">block_queue</span></code> that is populated by the
+<a class="reference internal" href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor" title="teos.chain_monitor.ChainMonitor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChainMonitor</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#module-teos.db_manager" title="teos.db_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the database.</p></li>
+<li><p><strong>block_processor</strong> (<a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">BlockProcessor</span></code> instance to
+get block from bitcoind.</p></li>
+<li><p><strong>responder</strong> (<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">Responder</span></code> instance.</p></li>
+<li><p><strong>sk_der</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – a DER encoded private key used to sign appointment receipts (signaling acceptance).</p></li>
+<li><p><strong>max_appointments</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the maximum ammount of appointments accepted by the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> at the same time.</p></li>
+<li><p><strong>expiry_delta</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the additional time the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> will keep an expired appointment around.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.appointments">
+<code class="sig-name descname">appointments</code><a class="headerlink" href="#teos.watcher.Watcher.appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>a dictionary containing a simplification of the appointments (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code> instances) accepted by the tower (<code class="docutils literal notranslate"><span class="pre">locator</span></code> and <code class="docutils literal notranslate"><span class="pre">end_time</span></code>).
+It’s populated trough <code class="docutils literal notranslate"><span class="pre">add_appointment</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.locator_uuid_map">
+<code class="sig-name descname">locator_uuid_map</code><a class="headerlink" href="#teos.watcher.Watcher.locator_uuid_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code> map used to allow the <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> to deal with several
+appointments with the same <code class="docutils literal notranslate"><span class="pre">locator</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.block_queue">
+<code class="sig-name descname">block_queue</code><a class="headerlink" href="#teos.watcher.Watcher.block_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>A queue used by the <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> to receive block hashes from <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code>. It is</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">populated by the :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.db_manager">
+<code class="sig-name descname">db_manager</code><a class="headerlink" href="#teos.watcher.Watcher.db_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>A db manager instance to interact with the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.db_manager.html#module-teos.db_manager" title="teos.db_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.block_processor">
+<code class="sig-name descname">block_processor</code><a class="headerlink" href="#teos.watcher.Watcher.block_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <code class="docutils literal notranslate"><span class="pre">BlockProcessor</span></code> instance to
+get block from bitcoind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlockProcessor</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.responder">
+<code class="sig-name descname">responder</code><a class="headerlink" href="#teos.watcher.Watcher.responder" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <code class="docutils literal notranslate"><span class="pre">Responder</span></code> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.signing_key">
+<code class="sig-name descname">signing_key</code><a class="headerlink" href="#teos.watcher.Watcher.signing_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>a private key used to sign accepted appointments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">PrivateKey</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.max_appointments">
+<code class="sig-name descname">max_appointments</code><a class="headerlink" href="#teos.watcher.Watcher.max_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>the maximum ammount of appointments accepted by the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> at the same time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.watcher.Watcher.expiry_delta">
+<code class="sig-name descname">expiry_delta</code><a class="headerlink" href="#teos.watcher.Watcher.expiry_delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>the additional time the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> will keep an expired appointment around.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if <cite>teos_sk_file</cite> is not found.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="teos.watcher.Watcher.add_appointment">
+<code class="sig-name descname">add_appointment</code><span class="sig-paren">(</span><em class="sig-param">appointment</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher.add_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher.add_appointment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new appointment to the <code class="docutils literal notranslate"><span class="pre">appointments</span></code> dictionary if <code class="docutils literal notranslate"><span class="pre">max_appointments</span></code> has not been reached.</p>
+<p><code class="docutils literal notranslate"><span class="pre">add_appointment</span></code> is the entry point of the Watcher. Upon receiving a new appointment it will start monitoring
+the blockchain (<code class="docutils literal notranslate"><span class="pre">do_watch</span></code>) until <code class="docutils literal notranslate"><span class="pre">appointments</span></code> is empty.</p>
+<p>Once a breach is seen on the blockchain, the <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> will decrypt the corresponding
+<a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a> and pass the information to the
+<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<p>The tower may store multiple appointments with the same <code class="docutils literal notranslate"><span class="pre">locator</span></code> to avoid DoS attacks based on data
+rewriting. <cite>locators`</cite> should be derived from the <code class="docutils literal notranslate"><span class="pre">dispute_txid</span></code>, but that task is performed by the user, and
+the tower has no way of verifying whether or not they have been properly derived. Therefore, appointments are
+identified by <code class="docutils literal notranslate"><span class="pre">uuid</span></code> and stored in <code class="docutils literal notranslate"><span class="pre">appointments</span></code> and <code class="docutils literal notranslate"><span class="pre">locator_uuid_map</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>appointment</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code>) – the appointment to be added to the
+<a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A tuple signaling if the appointment has been added or not (based on <code class="docutils literal notranslate"><span class="pre">max_appointments</span></code>).
+The structure looks as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(True,</span> <span class="pre">signature)</span></code> if the appointment has been accepted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(False,</span> <span class="pre">None)</span></code> otherwise.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.watcher.Watcher.awake">
+<code class="sig-name descname">awake</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher.awake"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher.awake" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="teos.watcher.Watcher.do_watch">
+<code class="sig-name descname">do_watch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher.do_watch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher.do_watch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monitors the blockchain whilst there are pending appointments.</p>
+<p>This is the main method of the <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the one in charge to pass appointments to the
+<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> upon detecting a breach.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.watcher.Watcher.filter_valid_breaches">
+<code class="sig-name descname">filter_valid_breaches</code><span class="sig-paren">(</span><em class="sig-param">breaches</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher.filter_valid_breaches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher.filter_valid_breaches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters what of the found breaches contain valid transaction data.</p>
+<p>The <a class="reference internal" href="#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> cannot if a given <a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a> contains a valid
+transaction until a breach if seen. Blobs that contain arbitrary data are dropped and not sent to the
+<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>breaches</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing channel breaches (<code class="docutils literal notranslate"><span class="pre">locator:txid</span></code>).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A dictionary containing all the breaches flagged either as valid or invalid.
+The structure is as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{locator,</span> <span class="pre">dispute_txid,</span> <span class="pre">penalty_txid,</span> <span class="pre">penalty_rawtx,</span> <span class="pre">valid_breach}</span></code></p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.watcher.Watcher.get_breaches">
+<code class="sig-name descname">get_breaches</code><span class="sig-paren">(</span><em class="sig-param">txids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/watcher.html#Watcher.get_breaches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.watcher.Watcher.get_breaches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of channel breaches given the list of transaction ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>txids</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the list of transaction ids included in the last received block.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary (<code class="docutils literal notranslate"><span class="pre">locator:txid</span></code>) with all the breaches found. An empty dictionary if none are
+found.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cli.html" class="btn btn-neutral float-right" title="cli package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.tools.html" class="btn btn-neutral float-left" title="teos.tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

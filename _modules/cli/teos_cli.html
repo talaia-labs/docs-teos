@@ -1,0 +1,663 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cli.teos_cli &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>cli.teos_cli</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cli.teos_cli</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+<span class="kn">from</span> <span class="nn">coincurve</span> <span class="kn">import</span> <span class="n">PublicKey</span>
+<span class="kn">from</span> <span class="nn">getopt</span> <span class="kn">import</span> <span class="n">getopt</span><span class="p">,</span> <span class="n">GetoptError</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">ConnectTimeout</span><span class="p">,</span> <span class="ne">ConnectionError</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">MissingSchema</span><span class="p">,</span> <span class="n">InvalidSchema</span><span class="p">,</span> <span class="n">InvalidURL</span>
+
+<span class="kn">from</span> <span class="nn">cli.help</span> <span class="kn">import</span> <span class="n">show_usage</span><span class="p">,</span> <span class="n">help_add_appointment</span><span class="p">,</span> <span class="n">help_get_appointment</span>
+<span class="kn">from</span> <span class="nn">cli</span> <span class="kn">import</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span><span class="p">,</span> <span class="n">LOG_PREFIX</span>
+
+<span class="kn">import</span> <span class="nn">common.cryptographer</span>
+<span class="kn">from</span> <span class="nn">common.blob</span> <span class="kn">import</span> <span class="n">Blob</span>
+<span class="kn">from</span> <span class="nn">common</span> <span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+<span class="kn">from</span> <span class="nn">common.config_loader</span> <span class="kn">import</span> <span class="n">ConfigLoader</span>
+<span class="kn">from</span> <span class="nn">common.cryptographer</span> <span class="kn">import</span> <span class="n">Cryptographer</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">setup_data_folder</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">check_sha256_hex_format</span><span class="p">,</span> <span class="n">check_locator_format</span><span class="p">,</span> <span class="n">compute_locator</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Client&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+<span class="n">common</span><span class="o">.</span><span class="n">cryptographer</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Cryptographer&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_keys"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.load_keys">[docs]</a><span class="k">def</span> <span class="nf">load_keys</span><span class="p">(</span><span class="n">teos_pk_path</span><span class="p">,</span> <span class="n">cli_sk_path</span><span class="p">,</span> <span class="n">cli_pk_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads all the keys required so sign, send, and verify the appointment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        teos_pk_path (:obj:`str`): path to the TEOS public key file.</span>
+<span class="sd">        cli_sk_path (:obj:`str`): path to the client private key file.</span>
+<span class="sd">        cli_pk_path (:obj:`str`): path to the client public key file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`tuple` or ``None``: a three item tuple containing a teos_pk object, cli_sk object and the cli_sk_der</span>
+<span class="sd">        encoded key if all keys can be loaded. ``None`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">teos_pk_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;TEOS&#39;s public key file not found. Please check your settings&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">cli_sk_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Client&#39;s private key file not found. Please check your settings&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">cli_pk_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Client&#39;s public key file not found. Please check your settings&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">teos_pk_der</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_key_file</span><span class="p">(</span><span class="n">teos_pk_path</span><span class="p">)</span>
+        <span class="n">teos_pk</span> <span class="o">=</span> <span class="n">PublicKey</span><span class="p">(</span><span class="n">teos_pk_der</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;TEOS public key is invalid or cannot be parsed&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">cli_sk_der</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_key_file</span><span class="p">(</span><span class="n">cli_sk_path</span><span class="p">)</span>
+    <span class="n">cli_sk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_private_key_der</span><span class="p">(</span><span class="n">cli_sk_der</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cli_sk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Client private key is invalid or cannot be parsed&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cli_pk_der</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_key_file</span><span class="p">(</span><span class="n">cli_pk_path</span><span class="p">)</span>
+        <span class="n">PublicKey</span><span class="p">(</span><span class="n">cli_pk_der</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Client public key is invalid or cannot be parsed&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">teos_pk</span><span class="p">,</span> <span class="n">cli_sk</span><span class="p">,</span> <span class="n">cli_pk_der</span></div>
+
+
+<div class="viewcode-block" id="add_appointment"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.add_appointment">[docs]</a><span class="k">def</span> <span class="nf">add_appointment</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">teos_url</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages the add_appointment command, from argument parsing, trough sending the appointment to the tower, until</span>
+<span class="sd">    saving the appointment receipt.</span>
+
+<span class="sd">    The life cycle of the function is as follows:</span>
+<span class="sd">        - Load the add_appointment arguments</span>
+<span class="sd">        - Check that the given commitment_txid is correct (proper format and not missing)</span>
+<span class="sd">        - Check that the transaction is correct (not missing)</span>
+<span class="sd">        - Create the appointment locator and encrypted blob from the commitment_txid and the penalty_tx</span>
+<span class="sd">        - Load the client private key and sign the appointment</span>
+<span class="sd">        - Send the appointment to the tower</span>
+<span class="sd">        - Wait for the response</span>
+<span class="sd">        - Check the tower&#39;s response and signature</span>
+<span class="sd">        - Store the receipt (appointment + signature) on disk</span>
+
+<span class="sd">    If any of the above-mentioned steps fails, the method returns false, otherwise it returns true.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args (:obj:`list`): a list of arguments to pass to ``parse_add_appointment_args``. Must contain a json encoded</span>
+<span class="sd">            appointment, or the file option and the path to a file containing a json encoded appointment.</span>
+<span class="sd">        teos_url (:obj:`str`): the teos base url.</span>
+<span class="sd">        config (:obj:`dict`): a config dictionary following the format of :func:`create_config_dict &lt;common.config_loader.ConfigLoader.create_config_dict&gt;`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`bool`: True if the appointment is accepted by the tower and the receipt is properly stored, false if any</span>
+<span class="sd">        error occurs during the process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Currently the base_url is the same as the add_appointment_endpoint</span>
+    <span class="n">add_appointment_endpoint</span> <span class="o">=</span> <span class="n">teos_url</span>
+
+    <span class="n">teos_pk</span><span class="p">,</span> <span class="n">cli_sk</span><span class="p">,</span> <span class="n">cli_pk_der</span> <span class="o">=</span> <span class="n">load_keys</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_PUBLIC_KEY&quot;</span><span class="p">),</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CLI_PRIVATE_KEY&quot;</span><span class="p">),</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CLI_PUBLIC_KEY&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hex_pk_der</span> <span class="o">=</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">cli_pk_der</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not successfully encode public key as hex&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">teos_pk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Get appointment data from user.</span>
+    <span class="n">appointment_data</span> <span class="o">=</span> <span class="n">parse_add_appointment_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">appointment_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The provided appointment JSON is empty&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">valid_txid</span> <span class="o">=</span> <span class="n">check_sha256_hex_format</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tx_id&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_txid</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The provided txid is not valid&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">tx_id</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tx_id&quot;</span><span class="p">)</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tx&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="kc">None</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">tx_id</span><span class="p">,</span> <span class="n">tx</span><span class="p">]:</span>
+        <span class="n">appointment_data</span><span class="p">[</span><span class="s2">&quot;locator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_locator</span><span class="p">(</span><span class="n">tx_id</span><span class="p">)</span>
+        <span class="n">appointment_data</span><span class="p">[</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">Blob</span><span class="p">(</span><span class="n">tx</span><span class="p">),</span> <span class="n">tx_id</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Appointment data is missing some fields&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">appointment</span> <span class="o">=</span> <span class="n">Appointment</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="n">cli_sk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">appointment</span> <span class="ow">and</span> <span class="n">signature</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;appointment&quot;</span><span class="p">:</span> <span class="n">appointment</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">signature</span><span class="p">,</span> <span class="s2">&quot;public_key&quot;</span><span class="p">:</span> <span class="n">hex_pk_der</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)}</span>
+
+    <span class="c1"># Send appointment to the server.</span>
+    <span class="n">server_response</span> <span class="o">=</span> <span class="n">post_appointment</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">add_appointment_endpoint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">server_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">response_json</span> <span class="o">=</span> <span class="n">process_post_appointment_response</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response_json</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">response_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;signature&quot;</span><span class="p">)</span>
+    <span class="c1"># Check that the server signed the appointment as it should.</span>
+    <span class="k">if</span> <span class="n">signature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The response does not contain the signature of the appointment&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">rpk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">recover_pk</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="n">signature</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">verify_rpk</span><span class="p">(</span><span class="n">teos_pk</span><span class="p">,</span> <span class="n">rpk</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The returned appointment&#39;s signature is invalid&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Appointment accepted and signed by the Eye of Satoshi&quot;</span><span class="p">)</span>
+
+    <span class="c1"># All good, store appointment and signature</span>
+    <span class="k">return</span> <span class="n">save_appointment_receipt</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">signature</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_add_appointment_args"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.parse_add_appointment_args">[docs]</a><span class="k">def</span> <span class="nf">parse_add_appointment_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the arguments of the add_appointment command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args (:obj:`list`): a list of arguments to pass to ``parse_add_appointment_args``. Must contain a json encoded</span>
+<span class="sd">            appointment, or the file option and the path to a file containing a json encoded appointment.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict` or :obj:`None`: A dictionary containing the appointment data if it can be loaded. ``None``</span>
+<span class="sd">        otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">use_help</span> <span class="o">=</span> <span class="s2">&quot;Use &#39;help add_appointment&#39; for help of how to use the command&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No appointment data provided. &quot;</span> <span class="o">+</span> <span class="n">use_help</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">arg_opt</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg_opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_add_appointment</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">arg_opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--file&quot;</span><span class="p">]:</span>
+            <span class="n">fin</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fin</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t find file&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">fin</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">appointment_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;I/O error&quot;</span><span class="p">,</span> <span class="n">errno</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">errno</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">strerror</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">appointment_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">arg_opt</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-JSON encoded data provided as appointment. &quot;</span> <span class="o">+</span> <span class="n">use_help</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">appointment_data</span></div>
+
+
+<div class="viewcode-block" id="post_appointment"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.post_appointment">[docs]</a><span class="k">def</span> <span class="nf">post_appointment</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">add_appointment_endpoint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sends appointment data to add_appointment endpoint to be processed by the tower.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (:obj:`dict`): a dictionary containing three fields: an appointment, the client-side signature, and the</span>
+<span class="sd">            der-encoded client public key.</span>
+<span class="sd">        add_appointment_endpoint (:obj:`str`): the teos endpoint where to send appointments to.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict` or ``None``: a json-encoded dictionary with the server response if the data can be posted.</span>
+<span class="sd">        None otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sending appointment to the Eye of Satoshi&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">add_appointment_endpoint</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">ConnectTimeout</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to the Eye of Satoshi&#39;s API. Connection timeout&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to the Eye of Satoshi&#39;s API. Server cannot be reached&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="n">InvalidSchema</span><span class="p">,</span> <span class="n">MissingSchema</span><span class="p">,</span> <span class="n">InvalidURL</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Invalid URL. No schema, or invalid schema, found (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">add_appointment_endpoint</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The request timed out&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="process_post_appointment_response"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.process_post_appointment_response">[docs]</a><span class="k">def</span> <span class="nf">process_post_appointment_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the server response to an add_appointment request.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        response (:obj:`requests.models.Response`): a ``Response`` object obtained from the sent request.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict` or :obj:`None`: a dictionary containing the tower&#39;s response data if it can be properly parsed and</span>
+<span class="sd">        the response type is ``HTTP_OK``. ``None`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;The server returned a non-JSON response&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">reason</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">constants</span><span class="o">.</span><span class="n">HTTP_OK</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response_json</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The server returned an error status code but no error description&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The server returned an error status code with an error description&quot;</span><span class="p">,</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">response_json</span></div>
+
+
+<div class="viewcode-block" id="save_appointment_receipt"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.save_appointment_receipt">[docs]</a><span class="k">def</span> <span class="nf">save_appointment_receipt</span><span class="p">(</span><span class="n">appointment</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves an appointment receipt to disk. A receipt consists in an appointment and a signature from the tower.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        appointment (:obj:`Appointment &lt;common.appointment.Appointment&gt;`): the appointment to be saved on disk.</span>
+<span class="sd">        signature (:obj:`str`): the signature of the appointment performed by the tower.</span>
+<span class="sd">        config (:obj:`dict`): a config dictionary following the format of :func:`create_config_dict &lt;common.config_loader.ConfigLoader.create_config_dict&gt;`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`bool`: True if the appointment if properly saved, false otherwise.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        IOError: if an error occurs whilst writing the file on disk.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create the appointments directory if it doesn&#39;t already exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;APPOINTMENTS_FOLDER_NAME&quot;</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+    <span class="n">locator</span> <span class="o">=</span> <span class="n">appointment</span><span class="p">[</span><span class="s2">&quot;locator&quot;</span><span class="p">]</span>
+    <span class="n">uuid</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>  <span class="c1"># prevent filename collisions</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/appointment-</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">-</span><span class="si">{}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;APPOINTMENTS_FOLDER_NAME&quot;</span><span class="p">),</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;appointment&quot;</span><span class="p">:</span> <span class="n">appointment</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">signature</span><span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Appointment saved at </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;There was an error while saving the appointment&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="get_appointment"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.get_appointment">[docs]</a><span class="k">def</span> <span class="nf">get_appointment</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">get_appointment_endpoint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets information about an appointment from the tower.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        locator (:obj:`str`): the appointment locator used to identify it.</span>
+<span class="sd">        get_appointment_endpoint (:obj:`str`): the teos endpoint where to get appointments from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict` or :obj:`None`: a dictionary containing thew appointment data if the locator is valid and the tower</span>
+<span class="sd">        responds. ``None`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid_locator</span> <span class="o">=</span> <span class="n">check_locator_format</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_locator</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The provided locator is not valid&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="s2">&quot;?locator=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">get_appointment_endpoint</span> <span class="o">+</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">ConnectTimeout</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to the Eye of Satoshi&#39;s API. Connection timeout&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to the Eye of Satoshi&#39;s API. Server cannot be reached&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidSchema</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No transport protocol found. Have you missed http(s):// in the server url?&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The request timed out&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../cli.teos_cli.html#cli.teos_cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">):</span>
+    <span class="c1"># Loads config and sets up the data folder and log file</span>
+    <span class="n">config_loader</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">config_loader</span><span class="o">.</span><span class="n">build_config</span><span class="p">()</span>
+
+    <span class="n">setup_data_folder</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span>
+    <span class="n">setup_logging</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LOG_FILE&quot;</span><span class="p">),</span> <span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+    <span class="c1"># Set the teos url</span>
+    <span class="n">teos_url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_SERVER&quot;</span><span class="p">),</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_PORT&quot;</span><span class="p">))</span>
+    <span class="c1"># If an http or https prefix if found, leaves the server as is. Otherwise defaults to http.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">teos_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+        <span class="n">teos_url</span> <span class="o">=</span> <span class="s2">&quot;http://&quot;</span> <span class="o">+</span> <span class="n">teos_url</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;add_appointment&quot;</span><span class="p">:</span>
+                    <span class="n">add_appointment</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">teos_url</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_appointment&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No arguments were given&quot;</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">arg_opt</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">arg_opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_appointment</span><span class="p">())</span>
+
+                        <span class="n">get_appointment_endpoint</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/get_appointment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">teos_url</span><span class="p">)</span>
+                        <span class="n">appointment_data</span> <span class="o">=</span> <span class="n">get_appointment</span><span class="p">(</span><span class="n">arg_opt</span><span class="p">,</span> <span class="n">get_appointment_endpoint</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">appointment_data</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                        <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;add_appointment&quot;</span><span class="p">:</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_add_appointment</span><span class="p">())</span>
+
+                        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_appointment&quot;</span><span class="p">:</span>
+                            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_appointment</span><span class="p">())</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unknown command. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">show_usage</span><span class="p">())</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unknown command. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No command provided. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-JSON encoded appointment passed as parameter&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">command_line_conf</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;add_appointment&quot;</span><span class="p">,</span> <span class="s2">&quot;get_appointment&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;s:p:h&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--server&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="p">:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;TEOS_SERVER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="s2">&quot;--port&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;TEOS_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;port must be an integer&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">show_usage</span><span class="p">())</span>
+
+        <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

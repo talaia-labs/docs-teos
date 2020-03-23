@@ -1,0 +1,7 @@
+teos.inspector
+==============
+
+.. automodule:: teos.inspector
+   :members:
+   :undoc-members:
+   :show-inheritance:

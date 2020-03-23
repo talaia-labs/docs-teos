@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.responder &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.rpc_errors" href="teos.rpc_errors.html" />
+    <link rel="prev" title="teos.inspector" href="teos.inspector.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.responder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.responder.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.responder">
+<span id="teos-responder"></span><h1>teos.responder<a class="headerlink" href="#module-teos.responder" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="teos.responder.Responder">
+<em class="property">class </em><code class="sig-name descname">Responder</code><span class="sig-paren">(</span><em class="sig-param">db_manager</em>, <em class="sig-param">carrier</em>, <em class="sig-param">block_processor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Responder</span></code></a> is the class in charge of ensuring that channel breaches are dealt with. It does so handling
+the decrypted <code class="docutils literal notranslate"><span class="pre">penalty_txs</span></code> handed by the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and ensuring the they make it to
+the blockchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_manager</strong> (<a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="teos.responder.Responder.trackers">
+<code class="sig-name descname">trackers</code><a class="headerlink" href="#teos.responder.Responder.trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary containing the minimum information about the <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a>
+required by the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> (<code class="docutils literal notranslate"><span class="pre">penalty_txid</span></code>, <code class="docutils literal notranslate"><span class="pre">locator</span></code> and <code class="docutils literal notranslate"><span class="pre">end_time</span></code>).
+Each entry is identified by a <code class="docutils literal notranslate"><span class="pre">uuid</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.tx_tracker_map">
+<code class="sig-name descname">tx_tracker_map</code><a class="headerlink" href="#teos.responder.Responder.tx_tracker_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">penalty_txid:uuid</span></code> map used to allow the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> to deal with
+several trackers triggered by the same <code class="docutils literal notranslate"><span class="pre">penalty_txid</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.unconfirmed_txs">
+<code class="sig-name descname">unconfirmed_txs</code><a class="headerlink" href="#teos.responder.Responder.unconfirmed_txs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list that keeps track of all unconfirmed <code class="docutils literal notranslate"><span class="pre">penalty_txs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.missed_confirmations">
+<code class="sig-name descname">missed_confirmations</code><a class="headerlink" href="#teos.responder.Responder.missed_confirmations" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that keeps count of how many confirmations each <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code>
+has missed. Used to trigger rebroadcast if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.block_queue">
+<code class="sig-name descname">block_queue</code><a class="headerlink" href="#teos.responder.Responder.block_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>A queue used by the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> to receive block hashes from <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code>. It</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">is populated by the :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.db_manager">
+<code class="sig-name descname">db_manager</code><a class="headerlink" href="#teos.responder.Responder.db_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">DBManager</span></code> instance to interact with the
+database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.db_manager.html#teos.db_manager.DBManager" title="teos.db_manager.DBManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.carrier">
+<code class="sig-name descname">carrier</code><a class="headerlink" href="#teos.responder.Responder.carrier" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <code class="docutils literal notranslate"><span class="pre">Carrier</span></code> instance to send transactions to bitcoind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.carrier.html#teos.carrier.Carrier" title="teos.carrier.Carrier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Carrier</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.block_processor">
+<code class="sig-name descname">block_processor</code><a class="headerlink" href="#teos.responder.Responder.block_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>a <code class="docutils literal notranslate"><span class="pre">BlockProcessor</span></code> instance to get
+data from bitcoind.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.block_processor.html#teos.block_processor.BlockProcessor" title="teos.block_processor.BlockProcessor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBManager</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="teos.responder.Responder.last_known_block">
+<code class="sig-name descname">last_known_block</code><a class="headerlink" href="#teos.responder.Responder.last_known_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>the last block known by the <code class="docutils literal notranslate"><span class="pre">Responder</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.add_tracker">
+<code class="sig-name descname">add_tracker</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">locator</em>, <em class="sig-param">dispute_txid</em>, <em class="sig-param">penalty_txid</em>, <em class="sig-param">penalty_rawtx</em>, <em class="sig-param">appointment_end</em>, <em class="sig-param">confirmations=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.add_tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.add_tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> after successfully broadcasting a <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code>.</p>
+<p>A reduction of <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> is stored in <code class="docutils literal notranslate"><span class="pre">trackers</span></code> and <code class="docutils literal notranslate"><span class="pre">tx_tracker_map</span></code> and the
+<code class="docutils literal notranslate"><span class="pre">penalty_txid</span></code> added to <code class="docutils literal notranslate"><span class="pre">unconfirmed_txs</span></code> if <code class="docutils literal notranslate"><span class="pre">confirmations=0</span></code>. Finally, all the data is stored in the
+database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a unique identifier for the appointment.</p></li>
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the appointment locator provided by the user (16-byte hex-encoded).</p></li>
+<li><p><strong>dispute_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the transaction that created the channel breach.</p></li>
+<li><p><strong>penalty_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the decrypted transaction included in the appointment.</p></li>
+<li><p><strong>penalty_rawtx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the raw transaction to be broadcast.</p></li>
+<li><p><strong>appointment_end</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> will stop monitoring for the
+tracker.</p></li>
+<li><p><strong>confirmations</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the confirmation count of the <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code>. In normal conditions it will be
+zero, but if the transaction is already on the blockchain this won’t be the case.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.awake">
+<code class="sig-name descname">awake</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.awake"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.awake" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.check_confirmations">
+<code class="sig-name descname">check_confirmations</code><span class="sig-paren">(</span><em class="sig-param">txs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.check_confirmations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.check_confirmations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if any of the monitored <code class="docutils literal notranslate"><span class="pre">penalty_txs</span></code> has received it’s first confirmation or keeps missing them.</p>
+<p>This method manages <code class="docutils literal notranslate"><span class="pre">unconfirmed_txs</span></code> and <code class="docutils literal notranslate"><span class="pre">missed_confirmations</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>txs</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – A list of confirmed tx ids (the list of transactions included in the last received
+block).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.do_watch">
+<code class="sig-name descname">do_watch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.do_watch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.do_watch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monitors the blockchain whilst there are pending trackers.</p>
+<p>This is the main method of the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> and triggers tracker cleaning, rebroadcasting, reorg managing,
+etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.get_completed_trackers">
+<code class="sig-name descname">get_completed_trackers</code><span class="sig-paren">(</span><em class="sig-param">height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.get_completed_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.get_completed_trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the trackers that has already been fulfilled based on a given height (<code class="docutils literal notranslate"><span class="pre">end_time</span></code> was reached with a
+minimum confirmation count).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>height</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the height of the last received block.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict (<code class="docutils literal notranslate"><span class="pre">uuid:confirmations</span></code>) of the completed trackers.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.get_txs_to_rebroadcast">
+<code class="sig-name descname">get_txs_to_rebroadcast</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.get_txs_to_rebroadcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.get_txs_to_rebroadcast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the transactions to be rebroadcast based on their <code class="docutils literal notranslate"><span class="pre">missed_confirmation</span></code> count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list with all the ids of the transaction that have to be rebroadcast.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.handle_breach">
+<code class="sig-name descname">handle_breach</code><span class="sig-paren">(</span><em class="sig-param">uuid</em>, <em class="sig-param">locator</em>, <em class="sig-param">dispute_txid</em>, <em class="sig-param">penalty_txid</em>, <em class="sig-param">penalty_rawtx</em>, <em class="sig-param">appointment_end</em>, <em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.handle_breach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.handle_breach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Requests the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> to handle a channel breach. This is the entry point of the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uuid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a unique identifier for the appointment.</p></li>
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the appointment locator provided by the user (16-byte hex-encoded).</p></li>
+<li><p><strong>dispute_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the transaction that created the channel breach.</p></li>
+<li><p><strong>penalty_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the decrypted transaction included in the appointment.</p></li>
+<li><p><strong>penalty_rawtx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the raw transaction to be broadcast in response of the breach.</p></li>
+<li><p><strong>appointment_end</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block height at which the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> will stop monitoring for this
+penalty transaction.</p></li>
+<li><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the block hash at which the breach was seen (used to see if we are on sync).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">Receipt</span></code> indicating whether or not the <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code> made it
+into the blockchain.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="teos.carrier.html#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Receipt</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.handle_reorgs">
+<code class="sig-name descname">handle_reorgs</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.handle_reorgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.handle_reorgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic reorg handle. It deals with situations where a reorg has been found but the <code class="docutils literal notranslate"><span class="pre">dispute_tx</span></code> is still
+on the chain. If the <code class="docutils literal notranslate"><span class="pre">dispute_tx</span></code> is reverted, it need to call the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ReorgManager</span></code> (Soon TM).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the hash of the last block received (which triggered the reorg).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.on_sync">
+<code class="sig-name descname">on_sync</code><span class="sig-paren">(</span><em class="sig-param">block_hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.on_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.on_sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> is on sync with <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> or not. Used when recovering from a crash.</p>
+<p>The Watchtower can be instantiated with fresh or with backed up data. In the later,  some triggers may have been
+missed. In order to go back on sync both the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>
+need to perform the state transitions until they catch up.</p>
+<p>If a transaction is broadcast by the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> and it is rejected (due to a double-spending for example)
+and the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> is off-sync then the <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> is abandoned.</p>
+<p>This method helps making that decision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_hash</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the block hash passed to the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> in the <code class="docutils literal notranslate"><span class="pre">handle_breach</span></code> request.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> and <code class="docutils literal notranslate"><span class="pre">bitcoind</span></code> are on sync.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.Responder.rebroadcast">
+<code class="sig-name descname">rebroadcast</code><span class="sig-paren">(</span><em class="sig-param">txs_to_rebroadcast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#Responder.rebroadcast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.Responder.rebroadcast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rebroadcasts a <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code> that has missed too many confirmations. In the current approach this would loop
+forever si the transaction keeps not getting it.</p>
+<p>Potentially the fees could be bumped here if the transaction has some tower dedicated outputs (or allows it
+trough <code class="docutils literal notranslate"><span class="pre">ANYONECANPAY</span></code> or something similar).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>txs_to_rebroadcast</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – a list of transactions to be rebroadcast.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of <a class="reference internal" href="teos.carrier.html#teos.carrier.Receipt" title="teos.carrier.Receipt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Receipts</span></code></a> with information about whether or not every
+transaction made it trough the network.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="teos.responder.TransactionTracker">
+<em class="property">class </em><code class="sig-name descname">TransactionTracker</code><span class="sig-paren">(</span><em class="sig-param">locator</em>, <em class="sig-param">dispute_txid</em>, <em class="sig-param">penalty_txid</em>, <em class="sig-param">penalty_rawtx</em>, <em class="sig-param">appointment_end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#TransactionTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.TransactionTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> is used to monitor a <code class="docutils literal notranslate"><span class="pre">penalty_tx</span></code>. Once the dispute is  seen by the
+<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> the penalty transaction is decrypted and the relevant appointment data is
+passed along to the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<p>Once the <a class="reference internal" href="#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> has succeeded on broadcasting the penalty transaction it will create a
+<a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> and monitor the blockchain until the end of the appointment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a
+trigger for the tower to decrypt and broadcast the penalty transaction.</p></li>
+<li><p><strong>dispute_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the transaction that created the channel breach and triggered the penalty.</p></li>
+<li><p><strong>penalty_txid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the id of the transaction that was encrypted under <code class="docutils literal notranslate"><span class="pre">dispute_txid</span></code>.</p></li>
+<li><p><strong>penalty_rawtx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the raw transaction that was broadcast as a consequence of the channel breach.</p></li>
+<li><p><strong>appointment_end</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – the block at which the tower will stop monitoring the blockchain for this
+appointment.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="teos.responder.TransactionTracker.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">tx_tracker_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#TransactionTracker.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.TransactionTracker.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> instance from a dictionary. Requires that all the fields are populated
+(<code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">None</span></code>).</p>
+<p>Useful to load data from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tx_tracker_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary with an entry per each field required to create the
+<a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TransactionTracker</span></code> instantiated with the provided data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if any of the required fields is missing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.TransactionTracker.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#TransactionTracker.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.TransactionTracker.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary containing the <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="teos.responder.TransactionTracker.to_json">
+<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/responder.html#TransactionTracker.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.responder.TransactionTracker.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> as a json-encoded dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A json-encoded dictionary containing the <a class="reference internal" href="#teos.responder.TransactionTracker" title="teos.responder.TransactionTracker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransactionTracker</span></code></a> data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.rpc_errors.html" class="btn btn-neutral float-right" title="teos.rpc_errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.inspector.html" class="btn btn-neutral float-left" title="teos.inspector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

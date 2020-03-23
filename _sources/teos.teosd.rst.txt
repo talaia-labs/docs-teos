@@ -1,0 +1,7 @@
+teos.teosd
+==========
+
+.. automodule:: teos.teosd
+   :members:
+   :undoc-members:
+   :show-inheritance:

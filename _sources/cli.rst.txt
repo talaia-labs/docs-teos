@@ -1,0 +1,14 @@
+cli package
+===========
+
+.. automodule:: cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   cli.teos_cli

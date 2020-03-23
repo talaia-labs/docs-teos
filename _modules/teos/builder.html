@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.builder &mdash; pyton-teos  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.builder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.builder</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="Builder"><a class="viewcode-back" href="../../teos.builder.html#teos.builder.Builder">[docs]</a><span></span><span class="k">class</span> <span class="nc">Builder</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Builder` class is in charge of reconstructing data loaded from the database and build the data</span>
+<span class="sd">    structures of the :obj:`Watcher &lt;teos.watcher.Watcher&gt;` and the :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Builder.build_appointments"><a class="viewcode-back" href="../../teos.builder.html#teos.builder.Builder.build_appointments">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_appointments</span><span class="p">(</span><span class="n">appointments_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds an appointments dictionary (``uuid: Appointment``) and a locator_uuid_map (``locator: uuid``) given a</span>
+<span class="sd">        dictionary of appointments from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            appointments_data (:obj:`dict`): a dictionary of dictionaries representing all the</span>
+<span class="sd">                :obj:`Watcher &lt;teos.watcher.Watcher&gt;` appointments stored in the database. The structure is as follows:</span>
+
+<span class="sd">                    ``{uuid: {locator: str, start_time: int, ...}, uuid: {locator:...}}``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`tuple`: A tuple with two dictionaries. ``appointments`` containing the appointment information in</span>
+<span class="sd">            :obj:`Appointment &lt;teos.appointment.Appointment&gt;` objects and ``locator_uuid_map`` containing a map of</span>
+<span class="sd">            appointment (``uuid:locator``).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">appointments</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">locator_uuid_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">appointments_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">),</span> <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">)}</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">locator_uuid_map</span><span class="p">:</span>
+                <span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">locator_uuid_map</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uuid</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">locator_uuid_map</span></div>
+
+<div class="viewcode-block" id="Builder.build_trackers"><a class="viewcode-back" href="../../teos.builder.html#teos.builder.Builder.build_trackers">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_trackers</span><span class="p">(</span><span class="n">tracker_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a tracker dictionary (``uuid: TransactionTracker``) and a tx_tracker_map (``penalty_txid: uuid``) given</span>
+<span class="sd">        a dictionary of trackers from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tracker_data (:obj:`dict`): a dictionary of dictionaries representing all the</span>
+<span class="sd">                :mod:`Responder &lt;teos.responder.Responder&gt;` trackers stored in the database.</span>
+<span class="sd">                The structure is as follows:</span>
+
+<span class="sd">                    ``{uuid: {locator: str, dispute_txid: str, ...}, uuid: {locator:...}}``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`tuple`: A tuple with two dictionaries. ``trackers`` containing the trackers&#39; information in</span>
+<span class="sd">            :obj:`TransactionTracker &lt;teos.responder.TransactionTracker&gt;` objects and a ``tx_tracker_map`` containing</span>
+<span class="sd">            the map of trackers (``penalty_txid: uuid``).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">trackers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tx_tracker_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">tracker_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;penalty_txid&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;appointment_end&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointment_end&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tx_tracker_map</span><span class="p">:</span>
+                <span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uuid</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">trackers</span><span class="p">,</span> <span class="n">tx_tracker_map</span></div>
+
+<div class="viewcode-block" id="Builder.populate_block_queue"><a class="viewcode-back" href="../../teos.builder.html#teos.builder.Builder.populate_block_queue">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">populate_block_queue</span><span class="p">(</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">missed_blocks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populates a ``Queue`` of block hashes to initialize the :mod:`Watcher &lt;teos.watcher.Watcher&gt;` or the</span>
+<span class="sd">        :mod:`Responder &lt;teos.responder.Responder&gt;` using backed up data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_queue (:obj:`Queue`): a ``Queue``</span>
+<span class="sd">            missed_blocks (:obj:`list`): list of block hashes missed by the Watchtower (do to a crash or shutdown).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`Queue`: A ``Queue`` containing all the missed blocks hashes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">missed_blocks</span><span class="p">:</span>
+            <span class="n">block_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">block</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Builder.update_states"><a class="viewcode-back" href="../../teos.builder.html#teos.builder.Builder.update_states">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">update_states</span><span class="p">(</span><span class="n">watcher</span><span class="p">,</span> <span class="n">missed_blocks_watcher</span><span class="p">,</span> <span class="n">missed_blocks_responder</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the states of both the :mod:`Watcher &lt;teos.watcher.Watcher&gt;` and the :mod:`Responder &lt;teos.responder.Responder&gt;`.</span>
+<span class="sd">        If both have pending blocks to process they need to be updates at the same time, block by block.</span>
+
+<span class="sd">        If only one instance has to be updated, ``populate_block_queue`` should be used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            watcher (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`): a ``Watcher`` instance (including a ``Responder``).</span>
+<span class="sd">            missed_blocks_watcher (:obj:`list`): the list of block missed by the ``Watcher``.</span>
+<span class="sd">            missed_blocks_responder (:obj:`list`): the list of block missed by the ``Responder``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: is one of the provided list is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Both the Watcher and the Responder must have missed blocks. Use ``populate_block_queue`` otherwise.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If the missed blocks of the Watcher and the Responder are not the same, we need to bring one up to date with</span>
+        <span class="c1"># the other.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">):</span>
+            <span class="n">block_diff</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">missed_blocks_responder</span><span class="o">.</span><span class="n">index</span>
+            <span class="p">)</span>
+            <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">block_diff</span><span class="p">)</span>
+            <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">):</span>
+            <span class="n">block_diff</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">missed_blocks_watcher</span><span class="o">.</span><span class="n">index</span>
+            <span class="p">)</span>
+            <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">block_diff</span><span class="p">)</span>
+            <span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="c1"># Once they are at the same height, we update them one by one</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">missed_blocks_watcher</span><span class="p">:</span>
+            <span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+            <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
