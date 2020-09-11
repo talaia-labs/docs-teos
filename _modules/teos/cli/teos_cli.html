@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.cli.teos_cli &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.cli.teos_cli</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.cli.teos_cli</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">grpc</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">getopt</span> <span class="kn">import</span> <span class="n">getopt</span><span class="p">,</span> <span class="n">GetoptError</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">json_format</span>
+<span class="kn">from</span> <span class="nn">google.protobuf.empty_pb2</span> <span class="kn">import</span> <span class="n">Empty</span>
+
+<span class="kn">from</span> <span class="nn">common.config_loader</span> <span class="kn">import</span> <span class="n">ConfigLoader</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">setup_data_folder</span><span class="p">,</span> <span class="n">is_compressed_pk</span><span class="p">,</span> <span class="n">intify</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">InvalidParameter</span>
+
+<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span>
+<span class="kn">from</span> <span class="nn">teos.cli.help</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">show_usage</span><span class="p">,</span>
+    <span class="n">help_get_all_appointments</span><span class="p">,</span>
+    <span class="n">help_get_tower_info</span><span class="p">,</span>
+    <span class="n">help_get_users</span><span class="p">,</span>
+    <span class="n">help_get_user</span><span class="p">,</span>
+    <span class="n">help_stop</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.tower_services_pb2_grpc</span> <span class="kn">import</span> <span class="n">TowerServicesStub</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.user_pb2</span> <span class="kn">import</span> <span class="n">GetUserRequest</span>
+
+
+<div class="viewcode-block" id="to_json"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.to_json">[docs]</a><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All conversions to json in this module should be consistent, therefore we restrict the options using</span>
+<span class="sd">    this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="formatted"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.formatted">[docs]</a><span class="k">def</span> <span class="nf">formatted</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms the given function by wrapping the return value with ``json_format.MessageToDict`` followed by</span>
+<span class="sd">    json.dumps, in order to print the result in a prettyfied json format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="n">json_format</span><span class="o">.</span><span class="n">MessageToDict</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">including_default_value_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preserving_proto_field_name</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_json</span><span class="p">(</span><span class="n">intify</span><span class="p">(</span><span class="n">result_dict</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="RPCClient"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient">[docs]</a><span class="k">class</span> <span class="nc">RPCClient</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates and keeps a connection to the an RPC serving TowerServices. It has methods to call each of the</span>
+<span class="sd">    available grpc services, and it returns a pretty-printed json response.</span>
+<span class="sd">    Errors from the grpc calls are not handled.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rpc_host (:obj:`str`): the IP or host where the RPC server will be hosted.</span>
+<span class="sd">        rpc_port (:obj:`int`): the port where the RPC server will be hosted.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        channel (:obj:`grpc.Channel`): The :obj:`Channel` object.</span>
+<span class="sd">        stub: The rpc client stub.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rpc_host</span><span class="p">,</span> <span class="n">rpc_port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_host</span> <span class="o">=</span> <span class="n">rpc_host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_port</span> <span class="o">=</span> <span class="n">rpc_port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rpc_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">rpc_port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stub</span> <span class="o">=</span> <span class="n">TowerServicesStub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RPCClient.get_all_appointments"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_all_appointments">[docs]</a>    <span class="nd">@formatted</span>
+    <span class="k">def</span> <span class="nf">get_all_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets a list of all the appointments in the watcher, and trackers in the responder.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_all_appointments</span><span class="p">(</span><span class="n">Empty</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">appointments</span></div>
+
+<div class="viewcode-block" id="RPCClient.get_tower_info"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_tower_info">[docs]</a>    <span class="nd">@formatted</span>
+    <span class="k">def</span> <span class="nf">get_tower_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets generic information about the tower.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_tower_info</span><span class="p">(</span><span class="n">Empty</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="RPCClient.get_users"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_users">[docs]</a>    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the list of registered user ids.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_users</span><span class="p">(</span><span class="n">Empty</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">to_json</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">user_ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RPCClient.get_user"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_user">[docs]</a>    <span class="nd">@formatted</span>
+    <span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets information about a specific user.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id (:obj:`str`): the id of the requested user.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`InvalidParameter`: if `user_id` is not in the valid format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_compressed_pk</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Invalid user id&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">GetUserRequest</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">user</span></div>
+
+<div class="viewcode-block" id="RPCClient.stop"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stops TEOS gracefully.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">Empty</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closing the Eye of Satoshi&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../teos.cli.teos_cli.html#teos.cli.teos_cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">):</span>
+    <span class="c1"># Loads config and sets up the data folder and log file</span>
+    <span class="n">config_loader</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">config_loader</span><span class="o">.</span><span class="n">build_config</span><span class="p">()</span>
+
+    <span class="n">setup_data_folder</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span>
+
+    <span class="n">teos_rpc_host</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RPC_BIND&quot;</span><span class="p">)</span>
+    <span class="n">teos_rpc_port</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RPC_PORT&quot;</span><span class="p">)</span>
+
+    <span class="n">rpc_client</span> <span class="o">=</span> <span class="n">RPCClient</span><span class="p">(</span><span class="n">teos_rpc_host</span><span class="p">,</span> <span class="n">teos_rpc_port</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_all_appointments&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rpc_client</span><span class="o">.</span><span class="n">get_all_appointments</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_tower_info&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rpc_client</span><span class="o">.</span><span class="n">get_tower_info</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_users&quot;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rpc_client</span><span class="o">.</span><span class="n">get_users</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_user&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;No user_id was given&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected only one argument, not </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">rpc_client</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+            <span class="n">rpc_client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_all_appointments&quot;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_all_appointments</span><span class="p">())</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_tower_info&quot;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_tower_info</span><span class="p">())</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_users&quot;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_users</span><span class="p">())</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;get_user&quot;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_get_user</span><span class="p">())</span>
+
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">help_stop</span><span class="p">())</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Unknown command. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">show_usage</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">()</span> <span class="o">==</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNAVAILABLE</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;It was not possible to reach the Eye of Satoshi. Are you sure the tower is running?&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">details</span><span class="p">())</span>
+    <span class="k">except</span> <span class="n">InvalidParameter</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">kwargs</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">. Error arguments: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown error occurred: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">command_line_conf</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_all_appointments&quot;</span><span class="p">,</span> <span class="s2">&quot;get_appointments&quot;</span><span class="p">,</span> <span class="s2">&quot;get_tower_info&quot;</span><span class="p">,</span> <span class="s2">&quot;get_users&quot;</span><span class="p">,</span> <span class="s2">&quot;get_user&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rpcbind=&quot;</span><span class="p">,</span> <span class="s2">&quot;rpcport=&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--rpcbind&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="p">:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;RPC_BIND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--rpcport&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;RPC_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;port must be an integer&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">show_usage</span><span class="p">())</span>
+
+        <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">command</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;No command provided. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;Unknown command. Use help to check the list of available commands&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

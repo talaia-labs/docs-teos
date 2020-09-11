@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -147,179 +150,424 @@
             
   <h1>Source code for teos.teosd</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">daemon</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">argv</span><span class="p">,</span> <span class="n">exit</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
 <span class="kn">from</span> <span class="nn">getopt</span> <span class="kn">import</span> <span class="n">getopt</span><span class="p">,</span> <span class="n">GetoptError</span>
 <span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">SIGTERM</span>
 
-<span class="kn">import</span> <span class="nn">common.cryptographer</span>
-<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span> <span class="nn">common.config_loader</span> <span class="kn">import</span> <span class="n">ConfigLoader</span>
 <span class="kn">from</span> <span class="nn">common.cryptographer</span> <span class="kn">import</span> <span class="n">Cryptographer</span>
-<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">setup_data_folder</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">setup_data_folder</span>
 
-<span class="kn">from</span> <span class="nn">teos.api</span> <span class="kn">import</span> <span class="n">API</span>
+<span class="kn">import</span> <span class="nn">teos.api</span> <span class="k">as</span> <span class="nn">api</span>
+<span class="kn">import</span> <span class="nn">teos.rpc</span> <span class="k">as</span> <span class="nn">rpc</span>
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">serve</span> <span class="k">as</span> <span class="n">serve_logging</span>
 <span class="kn">from</span> <span class="nn">teos.help</span> <span class="kn">import</span> <span class="n">show_usage</span>
 <span class="kn">from</span> <span class="nn">teos.watcher</span> <span class="kn">import</span> <span class="n">Watcher</span>
 <span class="kn">from</span> <span class="nn">teos.builder</span> <span class="kn">import</span> <span class="n">Builder</span>
 <span class="kn">from</span> <span class="nn">teos.carrier</span> <span class="kn">import</span> <span class="n">Carrier</span>
-<span class="kn">from</span> <span class="nn">teos.inspector</span> <span class="kn">import</span> <span class="n">Inspector</span>
+<span class="kn">from</span> <span class="nn">teos.users_dbm</span> <span class="kn">import</span> <span class="n">UsersDBM</span>
 <span class="kn">from</span> <span class="nn">teos.responder</span> <span class="kn">import</span> <span class="n">Responder</span>
-<span class="kn">from</span> <span class="nn">teos.db_manager</span> <span class="kn">import</span> <span class="n">DBManager</span>
+<span class="kn">from</span> <span class="nn">teos.gatekeeper</span> <span class="kn">import</span> <span class="n">Gatekeeper</span>
+<span class="kn">from</span> <span class="nn">teos.internal_api</span> <span class="kn">import</span> <span class="n">InternalAPI</span>
 <span class="kn">from</span> <span class="nn">teos.chain_monitor</span> <span class="kn">import</span> <span class="n">ChainMonitor</span>
 <span class="kn">from</span> <span class="nn">teos.block_processor</span> <span class="kn">import</span> <span class="n">BlockProcessor</span>
-<span class="kn">from</span> <span class="nn">teos.tools</span> <span class="kn">import</span> <span class="n">can_connect_to_bitcoind</span><span class="p">,</span> <span class="n">in_correct_network</span>
-<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span><span class="p">,</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span>
+<span class="kn">from</span> <span class="nn">teos.appointments_dbm</span> <span class="kn">import</span> <span class="n">AppointmentsDBM</span>
+<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span>
+<span class="kn">from</span> <span class="nn">teos.tools</span> <span class="kn">import</span> <span class="n">can_connect_to_bitcoind</span><span class="p">,</span> <span class="n">in_correct_network</span><span class="p">,</span> <span class="n">get_default_rpc_port</span>
+<span class="kn">from</span> <span class="nn">teos.constants</span> <span class="kn">import</span> <span class="n">INTERNAL_API_ENDPOINT</span><span class="p">,</span> <span class="n">SHUTDOWN_GRACE_TIME</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Daemon&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
-<span class="n">common</span><span class="o">.</span><span class="n">cryptographer</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Cryptographer&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="handle_signals"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.handle_signals">[docs]</a><span class="k">def</span> <span class="nf">handle_signals</span><span class="p">(</span><span class="n">signal_received</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Closing connection with appointments db&quot;</span><span class="p">)</span>
-    <span class="n">db_manager</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">chain_monitor</span><span class="o">.</span><span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Shutting down TEOS&quot;</span><span class="p">)</span>
-    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+<span class="n">parent_pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">command_line_conf</span><span class="p">):</span>
-    <span class="k">global</span> <span class="n">db_manager</span><span class="p">,</span> <span class="n">chain_monitor</span>
+<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">command_line_conf</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines the command line config with the config loaded from the file and the default config in order to construct</span>
+<span class="sd">    the final config object.</span>
 
-    <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">handle_signals</span><span class="p">)</span>
-    <span class="n">signal</span><span class="p">(</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">handle_signals</span><span class="p">)</span>
-    <span class="n">signal</span><span class="p">(</span><span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">handle_signals</span><span class="p">)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        command_line_conf (:obj:`dict`): a collection of the command line parameters.</span>
 
-    <span class="c1"># Loads config and sets up the data folder and log file</span>
-    <span class="n">config_loader</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict`: A dictionary containing all the system&#39;s configuration parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config_loader</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">CONF_FILE_NAME</span><span class="p">,</span> <span class="n">DEFAULT_CONF</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">)</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">config_loader</span><span class="o">.</span><span class="n">build_config</span><span class="p">()</span>
-    <span class="n">setup_data_folder</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span>
-    <span class="n">setup_logging</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LOG_FILE&quot;</span><span class="p">),</span> <span class="n">LOG_PREFIX</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting TEOS&quot;</span><span class="p">)</span>
-    <span class="n">db_manager</span> <span class="o">=</span> <span class="n">DBManager</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DB_PATH&quot;</span><span class="p">))</span>
+    <span class="c1"># Set default RPC port if not overwritten by the user.</span>
+    <span class="k">if</span> <span class="s2">&quot;BTC_RPC_PORT&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_loader</span><span class="o">.</span><span class="n">overwritten_fields</span><span class="p">:</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_default_rpc_port</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_NETWORK&quot;</span><span class="p">))</span>
 
-    <span class="n">bitcoind_connect_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BTC&quot;</span><span class="p">)}</span>
-    <span class="n">bitcoind_feed_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FEED&quot;</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">config</span></div>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">can_connect_to_bitcoind</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to bitcoind. Shutting down&quot;</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="ow">not</span> <span class="n">in_correct_network</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_NETWORK&quot;</span><span class="p">)):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;bitcoind is running on a different network, check conf.py and bitcoin.conf. Shutting down&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="TeosDaemon"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon">[docs]</a><span class="k">class</span> <span class="nc">TeosDaemon</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`TeosDaemon` organizes the code to initialize all the components of teos, start the service, stop and</span>
+<span class="sd">    teardown.</span>
 
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">secret_key_der</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_key_file</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_SECRET_KEY&quot;</span><span class="p">))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">secret_key_der</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;TEOS private key can&#39;t be loaded&quot;</span><span class="p">)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        config (:obj:`dict`): the configuration object.</span>
+<span class="sd">        sk (:obj:`PrivateKey`): the :obj:`PrivateKey` of the tower.</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): the logger instance.</span>
 
-            <span class="n">block_processor</span> <span class="o">=</span> <span class="n">BlockProcessor</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">)</span>
-            <span class="n">carrier</span> <span class="o">=</span> <span class="n">Carrier</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">)</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        stop_command_event (:obj:`threading.Event`): The event that will be set to initiate a graceful shutdown.</span>
+<span class="sd">        stop_event (:obj:`multiprocessing.Event`): The event that services running on different processes will monitor</span>
+<span class="sd">            in order to be informed that they should shutdown.</span>
+<span class="sd">        block_processor (:obj:`teos.block_processor.BlockProcessor`): The block processor instance.</span>
+<span class="sd">        db_manager (:obj:`teos.appointments_dbm.AppointmentsDBM`): The db manager for appointments.</span>
+<span class="sd">        watcher (:obj:`teos.watcher.Watcher`): The watcher instance.</span>
+<span class="sd">        watcher_thread (:obj:`multithreading.Thread`): After ``bootstrap_components``, the thread that</span>
+<span class="sd">            runs the Watcher monitoring (set to :obj:`None` beforehand).</span>
+<span class="sd">        responder_thread (:obj:`multithreading.Thread`): After ``bootstrap_components``, the thread that</span>
+<span class="sd">            runs the Responder monitoring (set to :obj:`None` beforehand).</span>
+<span class="sd">        chain_monitor (:obj:`teos.chain_monitor.ChainMonitor`): The ``ChainMonitor`` instance.</span>
+<span class="sd">        self.api_proc (:obj:`subprocess.Popen` or :obj:`multiprocessing.Process`): Once the rpc process</span>
+<span class="sd">            is created, the instance of either ``Popen`` or ``Process`` that is serving the public API (set to</span>
+<span class="sd">            :obj:`None` beforehand).</span>
+<span class="sd">        self.rpc_process (:obj:`multiprocessing.Process`): The instance of the internal RPC server; only set if running.</span>
+<span class="sd">        self.internal_api (:obj:`teos.internal_api.InternalAPI`): The InternalAPI instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-            <span class="n">responder</span> <span class="o">=</span> <span class="n">Responder</span><span class="p">(</span><span class="n">db_manager</span><span class="p">,</span> <span class="n">carrier</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">)</span>
-            <span class="n">watcher</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">(</span>
-                <span class="n">db_manager</span><span class="p">,</span>
-                <span class="n">block_processor</span><span class="p">,</span>
-                <span class="n">responder</span><span class="p">,</span>
-                <span class="n">secret_key_der</span><span class="p">,</span>
-                <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MAX_APPOINTMENTS&quot;</span><span class="p">),</span>
-                <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPIRY_DELTA&quot;</span><span class="p">),</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="c1"># event triggered when a ``stop`` command is issued</span>
+        <span class="c1"># Using multiprocessing.Event seems to cause a deadlock if event.set() is called in a signal handler that</span>
+        <span class="c1"># interrupted event.wait(). This does not happen with threading.Event.</span>
+        <span class="c1"># See https://bugs.python.org/issue41606</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+        <span class="c1"># event triggered when the public API is halted, hence teosd is ready to stop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+        <span class="n">bitcoind_connect_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BTC_RPC&quot;</span><span class="p">)}</span>
+        <span class="n">bitcoind_feed_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;BTC_FEED&quot;</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">can_connect_to_bitcoind</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot connect to bitcoind&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">in_correct_network</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_NETWORK&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;bitcoind is running on a different network, check teos.conf and bitcoin.conf&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tower_id = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Cryptographer</span><span class="o">.</span><span class="n">get_compressed_pk</span><span class="p">(</span><span class="n">sk</span><span class="o">.</span><span class="n">public_key</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">BlockProcessor</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">)</span>
+        <span class="n">carrier</span> <span class="o">=</span> <span class="n">Carrier</span><span class="p">(</span><span class="n">bitcoind_connect_params</span><span class="p">)</span>
+
+        <span class="n">gatekeeper</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span>
+            <span class="n">UsersDBM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;USERS_DB_PATH&quot;</span><span class="p">)),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SUBSCRIPTION_SLOTS&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SUBSCRIPTION_DURATION&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPIRY_DELTA&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">AppointmentsDBM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;APPOINTMENTS_DB_PATH&quot;</span><span class="p">))</span>
+        <span class="n">responder</span> <span class="o">=</span> <span class="n">Responder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="p">,</span> <span class="n">gatekeeper</span><span class="p">,</span> <span class="n">carrier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="p">,</span>
+            <span class="n">gatekeeper</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="p">,</span>
+            <span class="n">responder</span><span class="p">,</span>
+            <span class="n">sk</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MAX_APPOINTMENTS&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LOCATOR_CACHE_SIZE&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher_thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responder_thread</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Create the chain monitor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_monitor</span> <span class="o">=</span> <span class="n">ChainMonitor</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="p">,</span> <span class="n">bitcoind_feed_params</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Set up the internal API</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_api</span> <span class="o">=</span> <span class="n">InternalAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="p">,</span> <span class="n">INTERNAL_API_ENDPOINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span><span class="p">)</span>
+
+        <span class="c1"># Create the rpc, without starting it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_process</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">rpc</span><span class="o">.</span><span class="n">serve</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RPC_BIND&quot;</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RPC_PORT&quot;</span><span class="p">),</span>
+                <span class="n">INTERNAL_API_ENDPOINT</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LOG_FILE&quot;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># This variables will contain the handle of the process running the API, when the service is started.</span>
+        <span class="c1"># It will be an instance of either Popen or Process, depending on the WSGI config setting.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="TeosDaemon.bootstrap_components"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon.bootstrap_components">[docs]</a>    <span class="k">def</span> <span class="nf">bootstrap_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs the initial setup of the components. It loads the appointments and tracker for the watcher and the</span>
+<span class="sd">        responder (if any), and awakes the components. It also populates the block queues with any missing data, in</span>
+<span class="sd">        case the tower has been offline for some time. Finally, it starts the chain monitor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Make sure that the ChainMonitor starts listening to new blocks while we bootstrap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_monitor</span><span class="o">.</span><span class="n">monitor_chain</span><span class="p">()</span>
+
+        <span class="n">watcher_appointments_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_watcher_appointments</span><span class="p">()</span>
+        <span class="n">responder_trackers_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_trackers</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">watcher_appointments_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">responder_trackers_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Fresh bootstrap&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">watcher_thread</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">responder_thread</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Bootstrapping from backed up data&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Update the Watcher backed up data if found.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">watcher_appointments_data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">appointments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">locator_uuid_map</span> <span class="o">=</span> <span class="n">Builder</span><span class="o">.</span><span class="n">build_appointments</span><span class="p">(</span>
+                    <span class="n">watcher_appointments_data</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Update the Responder with backed up data if found.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">responder_trackers_data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">trackers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">tx_tracker_map</span> <span class="o">=</span> <span class="n">Builder</span><span class="o">.</span><span class="n">build_trackers</span><span class="p">(</span>
+                    <span class="n">responder_trackers_data</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Awaking components so the states can be updated.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">watcher_thread</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">responder_thread</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
+
+            <span class="n">last_block_watcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_last_block_hash_watcher</span><span class="p">()</span>
+            <span class="n">last_block_responder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_last_block_hash_responder</span><span class="p">()</span>
+
+            <span class="c1"># Populate the block queues with data if they&#39;ve missed some while offline. If the blocks of both match</span>
+            <span class="c1"># we don&#39;t perform the search twice.</span>
+
+            <span class="c1"># FIXME: 32-reorgs-offline dropped txs are not used at this point.</span>
+            <span class="n">last_common_ancestor_watcher</span><span class="p">,</span> <span class="n">dropped_txs_watcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">find_last_common_ancestor</span><span class="p">(</span>
+                <span class="n">last_block_watcher</span>
             <span class="p">)</span>
+            <span class="n">missed_blocks_watcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_missed_blocks</span><span class="p">(</span><span class="n">last_common_ancestor_watcher</span><span class="p">)</span>
 
-            <span class="c1"># Create the chain monitor and start monitoring the chain</span>
-            <span class="n">chain_monitor</span> <span class="o">=</span> <span class="n">ChainMonitor</span><span class="p">(</span>
-                <span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">,</span> <span class="n">bitcoind_feed_params</span>
-            <span class="p">)</span>
-
-            <span class="n">watcher_appointments_data</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_watcher_appointments</span><span class="p">()</span>
-            <span class="n">responder_trackers_data</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_trackers</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">watcher_appointments_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">responder_trackers_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Fresh bootstrap&quot;</span><span class="p">)</span>
-
-                <span class="n">watcher</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
-                <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">last_block_watcher</span> <span class="o">==</span> <span class="n">last_block_responder</span><span class="p">:</span>
+                <span class="n">dropped_txs_responder</span> <span class="o">=</span> <span class="n">dropped_txs_watcher</span>
+                <span class="n">missed_blocks_responder</span> <span class="o">=</span> <span class="n">missed_blocks_watcher</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Bootstrapping from backed up data&quot;</span><span class="p">)</span>
-
-                <span class="c1"># Update the Watcher backed up data if found.</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">watcher_appointments_data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">watcher</span><span class="o">.</span><span class="n">appointments</span><span class="p">,</span> <span class="n">watcher</span><span class="o">.</span><span class="n">locator_uuid_map</span> <span class="o">=</span> <span class="n">Builder</span><span class="o">.</span><span class="n">build_appointments</span><span class="p">(</span>
-                        <span class="n">watcher_appointments_data</span>
-                    <span class="p">)</span>
-
-                <span class="c1"># Update the Responder with backed up data if found.</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">responder_trackers_data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">trackers</span><span class="p">,</span> <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">tx_tracker_map</span> <span class="o">=</span> <span class="n">Builder</span><span class="o">.</span><span class="n">build_trackers</span><span class="p">(</span>
-                        <span class="n">responder_trackers_data</span>
-                    <span class="p">)</span>
-
-                <span class="c1"># Awaking components so the states can be updated.</span>
-                <span class="n">watcher</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
-                <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">awake</span><span class="p">()</span>
-
-                <span class="n">last_block_watcher</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_last_block_hash_watcher</span><span class="p">()</span>
-                <span class="n">last_block_responder</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_last_block_hash_responder</span><span class="p">()</span>
-
-                <span class="c1"># Populate the block queues with data if they&#39;ve missed some while offline. If the blocks of both match</span>
-                <span class="c1"># we don&#39;t perform the search twice.</span>
-
-                <span class="c1"># FIXME: 32-reorgs-offline dropped txs are not used at this point.</span>
-                <span class="n">last_common_ancestor_watcher</span><span class="p">,</span> <span class="n">dropped_txs_watcher</span> <span class="o">=</span> <span class="n">block_processor</span><span class="o">.</span><span class="n">find_last_common_ancestor</span><span class="p">(</span>
-                    <span class="n">last_block_watcher</span>
+                <span class="n">last_common_ancestor_responder</span><span class="p">,</span> <span class="n">dropped_txs_responder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">find_last_common_ancestor</span><span class="p">(</span>
+                    <span class="n">last_block_responder</span>
                 <span class="p">)</span>
-                <span class="n">missed_blocks_watcher</span> <span class="o">=</span> <span class="n">block_processor</span><span class="o">.</span><span class="n">get_missed_blocks</span><span class="p">(</span><span class="n">last_common_ancestor_watcher</span><span class="p">)</span>
+                <span class="n">missed_blocks_responder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_missed_blocks</span><span class="p">(</span><span class="n">last_common_ancestor_responder</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">last_block_watcher</span> <span class="o">==</span> <span class="n">last_block_responder</span><span class="p">:</span>
-                    <span class="n">dropped_txs_responder</span> <span class="o">=</span> <span class="n">dropped_txs_watcher</span>
-                    <span class="n">missed_blocks_responder</span> <span class="o">=</span> <span class="n">missed_blocks_watcher</span>
+            <span class="c1"># If only one of the instances needs to be updated, it can be done separately.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">missed_blocks_responder</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">last_common_ancestor_responder</span><span class="p">,</span> <span class="n">dropped_txs_responder</span> <span class="o">=</span> <span class="n">block_processor</span><span class="o">.</span><span class="n">find_last_common_ancestor</span><span class="p">(</span>
-                        <span class="n">last_block_responder</span>
-                    <span class="p">)</span>
-                    <span class="n">missed_blocks_responder</span> <span class="o">=</span> <span class="n">block_processor</span><span class="o">.</span><span class="n">get_missed_blocks</span><span class="p">(</span><span class="n">last_common_ancestor_responder</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">missed_blocks_watcher</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
-                <span class="c1"># If only one of the instances needs to be updated, it can be done separately.</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">missed_blocks_responder</span><span class="p">)</span>
-                    <span class="n">watcher</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="c1"># Otherwise they need to be updated at the same time, block by block</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Builder</span><span class="o">.</span><span class="n">update_states</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="p">,</span> <span class="n">missed_blocks_watcher</span><span class="p">,</span> <span class="n">missed_blocks_responder</span><span class="p">)</span>
 
-                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">Builder</span><span class="o">.</span><span class="n">populate_block_queue</span><span class="p">(</span><span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="p">,</span> <span class="n">missed_blocks_watcher</span><span class="p">)</span>
-                    <span class="n">watcher</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="c1"># Activate ChainMonitor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_monitor</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span></div>
 
-                <span class="c1"># Otherwise they need to be updated at the same time, block by block</span>
-                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_responder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_blocks_watcher</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">Builder</span><span class="o">.</span><span class="n">update_states</span><span class="p">(</span><span class="n">watcher</span><span class="p">,</span> <span class="n">missed_blocks_watcher</span><span class="p">,</span> <span class="n">missed_blocks_responder</span><span class="p">)</span>
+<div class="viewcode-block" id="TeosDaemon.start_services"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon.start_services">[docs]</a>    <span class="k">def</span> <span class="nf">start_services</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Readies the tower by setting up signal handling, and starting all the services.&quot;&quot;&quot;</span>
+        <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
+        <span class="n">signal</span><span class="p">(</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
+        <span class="n">signal</span><span class="p">(</span><span class="n">SIGQUIT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
 
-            <span class="c1"># Fire the API and the ChainMonitor</span>
-            <span class="c1"># FIXME: 92-block-data-during-bootstrap-db</span>
-            <span class="n">chain_monitor</span><span class="o">.</span><span class="n">monitor_chain</span><span class="p">()</span>
-            <span class="n">API</span><span class="p">(</span><span class="n">Inspector</span><span class="p">(</span><span class="n">block_processor</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MIN_TO_SELF_DELAY&quot;</span><span class="p">)),</span> <span class="n">watcher</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;An error occurred: </span><span class="si">{}</span><span class="s2">. Shutting down&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="c1"># Start the rpc process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Start the internal API</span>
+        <span class="c1"># This MUST be done after rpc_process.start to avoid the issue that was solved in</span>
+        <span class="c1"># https://github.com/talaia-labs/python-teos/pull/198</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_api</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Internal API initialized. Serving at </span><span class="si">{</span><span class="n">INTERNAL_API_ENDPOINT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Start the public API server</span>
+        <span class="n">api_endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;API_BIND&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;API_PORT&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WSGI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;gunicorn&quot;</span><span class="p">:</span>
+            <span class="c1"># FIXME: We may like to add workers depending on a config value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;gunicorn&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;--bind=</span><span class="si">{</span><span class="n">api_endpoint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;teos.api:serve(internal_api_endpoint=&#39;</span><span class="si">{</span><span class="n">INTERNAL_API_ENDPOINT</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;endpoint=&#39;</span><span class="si">{</span><span class="n">api_endpoint</span><span class="si">}</span><span class="s2">&#39;, min_to_self_delay=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MIN_TO_SELF_DELAY&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">api</span><span class="o">.</span><span class="n">serve</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;internal_api_endpoint&quot;</span><span class="p">:</span> <span class="n">INTERNAL_API_ENDPOINT</span><span class="p">,</span>
+                    <span class="s2">&quot;endpoint&quot;</span><span class="p">:</span> <span class="n">api_endpoint</span><span class="p">,</span>
+                    <span class="s2">&quot;min_to_self_delay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MIN_TO_SELF_DELAY&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;auto_run&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TeosDaemon.handle_signals"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon.handle_signals">[docs]</a>    <span class="k">def</span> <span class="nf">handle_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handles signals by initiating a graceful shutdown.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Signal </span><span class="si">{</span><span class="n">signum</span><span class="si">}</span><span class="s2"> received. Stopping&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TeosDaemon.teardown"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shuts down all services and closes the DB, then exits. This method does not return.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Terminating public API&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Stop the public API first</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
+            <span class="c1"># FIXME: when the public API process is ran with flask, there is no SIGTERM handler attempting</span>
+            <span class="c1"># a graceful shutdown (rejecting new requests, trying to complete ongoing ones); therefore, we send</span>
+            <span class="c1"># a SIGKILL instead.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_proc</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Public API terminated&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Signals readiness to shutdown to the other processes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+        <span class="c1"># wait for RPC process to shutdown</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_process</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="c1"># Stops the internal API, after waiting for some grace time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping internal API&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_api</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">SHUTDOWN_GRACE_TIME</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Internal API stopped&quot;</span><span class="p">)</span>
+
+        <span class="c1"># terminate the ChainMonitor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_monitor</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+        <span class="c1"># wait for watcher and responder to finish processing their queues</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">responder_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Closing connection with appointments db&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Shutting down TEOS&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TeosDaemon.start"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.TeosDaemon.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method implements the whole lifetime cycle of the the TEOS tower. This method does not return.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting TEOS&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bootstrap_components</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_services</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../teos.teosd.html#teos.teosd.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="n">setup_data_folder</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DATA_DIR&quot;</span><span class="p">))</span>
+
+    <span class="n">silent</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DAEMON&quot;</span><span class="p">)</span>
+    <span class="n">logging_server_ready</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+    <span class="n">logging_process</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">serve_logging</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LOG_FILE&quot;</span><span class="p">),</span> <span class="n">silent</span><span class="p">,</span> <span class="n">logging_server_ready</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">logging_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">logging_server_ready</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="n">setup_logging</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="s2">&quot;Daemon&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_SECRET_KEY&quot;</span><span class="p">))</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OVERWRITE_KEY&quot;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating a new key pair&quot;</span><span class="p">)</span>
+        <span class="n">sk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">generate_key</span><span class="p">()</span>
+        <span class="n">Cryptographer</span><span class="o">.</span><span class="n">save_key_file</span><span class="p">(</span><span class="n">sk</span><span class="o">.</span><span class="n">to_der</span><span class="p">(),</span> <span class="s2">&quot;teos_sk&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DATA_DIR&quot;</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tower identity found. Loading keys&quot;</span><span class="p">)</span>
+        <span class="n">secret_key_der</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_key_file</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEOS_SECRET_KEY&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">secret_key_der</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;TEOS private key cannot be loaded&quot;</span><span class="p">)</span>
+        <span class="n">sk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">load_private_key_der</span><span class="p">(</span><span class="n">secret_key_der</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">TeosDaemon</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;An error occurred: </span><span class="si">{}</span><span class="s2">. Shutting down&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">command_line_conf</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Subprocess need to be run using &quot;spawn&quot; for consistent execution between different OS. No state is really shared</span>
+    <span class="c1"># between process.</span>
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">)</span>
 
+    <span class="n">command_line_conf</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">DATA_DIR</span>
+
+    <span class="n">opts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span>
+        <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+        <span class="s2">&quot;hd&quot;</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="s2">&quot;apibind=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;apiport=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rpcbind=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rpcport=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcnetwork=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcrpcuser=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcrpcpassword=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcrpcconnect=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcrpcport=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcfeedconnect=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;btcfeedport=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;datadir=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;wsgi=&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;daemon&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;overwritekey&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;help&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">opts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span>
-            <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
-            <span class="s2">&quot;h&quot;</span><span class="p">,</span>
-            <span class="p">[</span><span class="s2">&quot;btcnetwork=&quot;</span><span class="p">,</span> <span class="s2">&quot;btcrpcuser=&quot;</span><span class="p">,</span> <span class="s2">&quot;btcrpcpassword=&quot;</span><span class="p">,</span> <span class="s2">&quot;btcrpcconnect=&quot;</span><span class="p">,</span> <span class="s2">&quot;btcrpcport=&quot;</span><span class="p">,</span> <span class="s2">&quot;datadir=&quot;</span><span class="p">,</span> <span class="s2">&quot;help&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
         <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--apibind&quot;</span><span class="p">]:</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;API_BIND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--apiport&quot;</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;API_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="s2">&quot;apiport must be an integer&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--rpcbind&quot;</span><span class="p">]:</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;RPC_BIND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--rpcport&quot;</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;RPC_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="s2">&quot;rpcport must be an integer&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcnetwork&quot;</span><span class="p">]:</span>
                 <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_NETWORK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcrpcuser&quot;</span><span class="p">]:</span>
                 <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_USER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcrpcpassword&quot;</span><span class="p">]:</span>
-                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_PASSWD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcrpcconnect&quot;</span><span class="p">]:</span>
                 <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_CONNECT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcrpcport&quot;</span><span class="p">]:</span>
@@ -327,15 +575,38 @@
                     <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_RPC_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="n">exit</span><span class="p">(</span><span class="s2">&quot;btcrpcport must be an integer&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcfeedconnect&quot;</span><span class="p">]:</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_FEED_CONNECT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--btcfeedport&quot;</span><span class="p">]:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;BTC_FEED_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="s2">&quot;btcfeedport must be an integer&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--datadir&quot;</span><span class="p">]:</span>
-                <span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--wsgi&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gunicorn&quot;</span><span class="p">,</span> <span class="s2">&quot;flask&quot;</span><span class="p">]:</span>
+                    <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;WSGI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="s2">&quot;wsgi must be either gunicorn or flask&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--daemon&quot;</span><span class="p">]:</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;DAEMON&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;--overwritekey&quot;</span><span class="p">]:</span>
+                <span class="n">command_line_conf</span><span class="p">[</span><span class="s2">&quot;OVERWRITE_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]:</span>
                 <span class="n">exit</span><span class="p">(</span><span class="n">show_usage</span><span class="p">())</span>
 
     <span class="k">except</span> <span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">exit</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-    <span class="n">main</span><span class="p">(</span><span class="n">command_line_conf</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">command_line_conf</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DAEMON&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting TEOS&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">daemon</span><span class="o">.</span><span class="n">DaemonContext</span><span class="p">():</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
 
            </div>
@@ -348,11 +619,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -363,7 +642,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

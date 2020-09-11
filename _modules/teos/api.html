@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -146,107 +149,252 @@
            <div itemprop="articleBody">
             
   <h1>Source code for teos.api</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">jsonify</span>
+<span></span><span class="kn">import</span> <span class="nn">grpc</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="kn">import</span> <span class="n">json_format</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
 
-<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">,</span> <span class="n">LOG_PREFIX</span>
-<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+<span class="kn">import</span> <span class="nn">common.errors</span> <span class="k">as</span> <span class="nn">errors</span>
+<span class="kn">from</span> <span class="nn">teos.inspector</span> <span class="kn">import</span> <span class="n">Inspector</span><span class="p">,</span> <span class="n">InspectionFailed</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.user_pb2</span> <span class="kn">import</span> <span class="n">RegisterRequest</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.tower_services_pb2_grpc</span> <span class="kn">import</span> <span class="n">TowerServicesStub</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.appointment_pb2</span> <span class="kn">import</span> <span class="n">Appointment</span><span class="p">,</span> <span class="n">AddAppointmentRequest</span><span class="p">,</span> <span class="n">GetAppointmentRequest</span>
 
-<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">HTTP_OK</span><span class="p">,</span> <span class="n">HTTP_BAD_REQUEST</span><span class="p">,</span> <span class="n">HTTP_SERVICE_UNAVAILABLE</span><span class="p">,</span> <span class="n">LOCATOR_LEN_HEX</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">InvalidParameter</span>
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">HTTP_OK</span><span class="p">,</span> <span class="n">HTTP_BAD_REQUEST</span><span class="p">,</span> <span class="n">HTTP_SERVICE_UNAVAILABLE</span><span class="p">,</span> <span class="n">HTTP_NOT_FOUND</span>
 
 
-<span class="c1"># ToDo: #5-add-async-to-api</span>
-<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;API&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+<span class="c1"># NOTCOVERED: not sure how to monkey patch this one. May be related to #77</span>
+<div class="viewcode-block" id="get_remote_addr"><a class="viewcode-back" href="../../teos.api.html#teos.api.get_remote_addr">[docs]</a><span class="k">def</span> <span class="nf">get_remote_addr</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the remote client ip address. The ``HTTP_X_REAL_IP`` field is tried first in case the server is behind a</span>
+<span class="sd">    reverse proxy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: The IP address of the client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Getting the real IP if the server is behind a reverse proxy</span>
+    <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_X_REAL_IP&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">remote_addr</span><span class="p">:</span>
+        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;REMOTE_ADDR&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">remote_addr</span></div>
+
+
+<span class="c1"># NOTCOVERED: not sure how to monkey patch this one. May be related to #77</span>
+<div class="viewcode-block" id="get_request_data_json"><a class="viewcode-back" href="../../teos.api.html#teos.api.get_request_data_json">[docs]</a><span class="k">def</span> <span class="nf">get_request_data_json</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the content of a json ``POST`` request and makes sure it decodes to a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (:obj:`Request`): the request sent by the user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`dict`: The dictionary parsed from the json request.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        :obj:`InvalidParameter`: if the request is not json encoded or it does not decodes to a dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
+        <span class="n">request_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">request_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Invalid request content&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Request is not json encoded&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="serve"><a class="viewcode-back" href="../../teos.api.html#teos.api.serve">[docs]</a><span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">internal_api_endpoint</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">min_to_self_delay</span><span class="p">,</span> <span class="n">auto_run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Starts the API.</span>
+
+<span class="sd">    This method can be handled either form an external WSGI (like gunicorn) or by the Flask development server.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): endpoint where the internal api is running (``host:port``).</span>
+<span class="sd">        endpoint (:obj:`str`): endpoint where the http api will be running (``host:port``).</span>
+<span class="sd">        min_to_self_delay (:obj:`str`): the minimum to_self_delay accepted by the :obj:`Inspector`.</span>
+<span class="sd">        auto_run (:obj:`bool`): whether the server should be started by this process. False if run with an external</span>
+<span class="sd">            WSGI. True is run by Flask.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The application object needed by the WSGI server to run if ``auto_run`` is False, :obj:`None` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">setup_logging</span><span class="p">()</span>
+    <span class="n">inspector</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">min_to_self_delay</span><span class="p">))</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">API</span><span class="p">(</span><span class="n">inspector</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">)</span>
+
+    <span class="n">api</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized. Serving at </span><span class="si">{</span><span class="n">endpoint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">auto_run</span><span class="p">:</span>
+        <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">api</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">api</span><span class="o">.</span><span class="n">app</span></div>
 
 
 <div class="viewcode-block" id="API"><a class="viewcode-back" href="../../teos.api.html#teos.api.API">[docs]</a><span class="k">class</span> <span class="nc">API</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The :class:`API` is in charge of the interface between the user and the tower. It handles and server user requests.</span>
+<span class="sd">    The :class:`API` is in charge of the interface between the user and the tower. It handles and serves user requests.</span>
+<span class="sd">    The API is connected with the :class:`InternalAPI &lt;teos.internal_api.InternalAPI&gt;` via gRPC.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        inspector (:obj:`Inspector &lt;teos.inspector.Inspector&gt;`): an ``Inspector`` instance to check the correctness of</span>
-<span class="sd">            the received data.</span>
-<span class="sd">        watcher (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`): a ``Watcher`` instance to pass the requests to.</span>
+<span class="sd">        inspector (:obj:`Inspector &lt;teos.inspector.Inspector&gt;`): an :obj:`Inspector` instance to check the correctness</span>
+<span class="sd">            of the received appointment data.</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): the endpoint where the internal api is served.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): The logger for this component.</span>
+<span class="sd">        app: The Flask app of the API server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">watcher</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inspector</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">API</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span> <span class="o">=</span> <span class="n">inspector</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span> <span class="o">=</span> <span class="n">watcher</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span> <span class="o">=</span> <span class="n">internal_api_endpoint</span>
+
+        <span class="c1"># Adds all the routes to the functions listed above.</span>
+        <span class="n">routes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;/register&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;/add_appointment&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_appointment</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;/get_appointment&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_appointment</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">]),</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">routes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">methods</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<div class="viewcode-block" id="API.register"><a class="viewcode-back" href="../../teos.api.html#teos.api.API.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registers a user by creating a subscription.</span>
+
+<span class="sd">        Registration is pretty straightforward for now, since it does not require payments.</span>
+<span class="sd">        The amount of slots and expiry of the subscription cannot be requested by the user yet either. This is linked to</span>
+<span class="sd">        the previous point.</span>
+<span class="sd">        Users register by sending a public key to the proper endpoint. This is exploitable atm, but will be solved when</span>
+<span class="sd">        payments are introduced.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`tuple`: A tuple containing the response (:obj:`str`) and response code (:obj:`int`). For accepted</span>
+<span class="sd">            requests, the ``rcode`` is always 200 and the response contains a json with the public key and number of</span>
+<span class="sd">            slots in the subscription. For rejected requests, the ``rcode`` is a 404 and the value contains an</span>
+<span class="sd">            application error, and an error message. Error messages can be found at ``common.errors``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">get_remote_addr</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received register request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">))</span>
+
+        <span class="c1"># Check that data type and content are correct. Abort otherwise.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">request_data</span> <span class="o">=</span> <span class="n">get_request_data_json</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">InvalidParameter</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received invalid register request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">INVALID_REQUEST_FORMAT</span><span class="p">}),</span> <span class="n">HTTP_BAD_REQUEST</span>
+
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public_key&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+                    <span class="n">stub</span> <span class="o">=</span> <span class="n">TowerServicesStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">RegisterRequest</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">))</span>
+
+                    <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_OK</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">json_format</span><span class="o">.</span><span class="n">MessageToDict</span><span class="p">(</span>
+                        <span class="n">r</span><span class="p">,</span> <span class="n">including_default_value_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preserving_proto_field_name</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                    <span class="n">response</span><span class="p">[</span><span class="s2">&quot;public_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_id</span>
+
+            <span class="k">except</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">details</span><span class="p">(),</span> <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">REGISTRATION_MISSING_FIELD</span><span class="p">}</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;public_key not found in register message&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">REGISTRATION_WRONG_FIELD_FORMAT</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sending response and disconnecting&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">),</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">rcode</span></div>
 
 <div class="viewcode-block" id="API.add_appointment"><a class="viewcode-back" href="../../teos.api.html#teos.api.API.add_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">add_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main endpoint of the Watchtower.</span>
 
 <span class="sd">        The client sends requests (appointments) to this endpoint to request a job to the Watchtower. Requests must be</span>
-<span class="sd">        json encoded and contain an ``appointment`` field and optionally a ``signature`` and ``public_key`` fields.</span>
+<span class="sd">        json encoded and contain an ``appointment`` and ``signature`` fields.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple containing the response (``json``) and response code (``int``). For accepted</span>
-<span class="sd">            appointments, the ``rcode`` is always 0 and the response contains the signed receipt. For rejected</span>
-<span class="sd">            appointments, the ``rcode`` is a negative value and the response contains the error message. Error messages</span>
-<span class="sd">            can be found at :mod:`Errors &lt;teos.errors&gt;`.</span>
+<span class="sd">            :obj:`tuple`: A tuple containing the response (:obj:`str`) and response code (:obj:`int`). For accepted</span>
+<span class="sd">            appointments, the ``rcode`` is always 200 and the response contains the receipt signature (json). For</span>
+<span class="sd">            rejected appointments, the ``rcode`` contains an application error, and an error message. Error messages can</span>
+<span class="sd">            be found at ``common.errors``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Getting the real IP if the server is behind a reverse proxy</span>
-        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_X_REAL_IP&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">remote_addr</span><span class="p">:</span>
-            <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;REMOTE_ADDR&quot;</span><span class="p">)</span>
+        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">get_remote_addr</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received add_appointment request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">))</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received add_appointment request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">))</span>
+        <span class="c1"># Check that data type and content are correct. Abort otherwise.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">request_data</span> <span class="o">=</span> <span class="n">get_request_data_json</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 
-        <span class="c1"># FIXME: Logging every request so we can get better understanding of bugs in the alpha</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Request details&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">InvalidParameter</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">INVALID_REQUEST_FORMAT</span><span class="p">}),</span> <span class="n">HTTP_BAD_REQUEST</span>
 
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
-            <span class="c1"># Check content type once if properly defined</span>
-            <span class="n">request_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">())</span>
-            <span class="n">appointment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span>
-                <span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointment&quot;</span><span class="p">),</span> <span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;signature&quot;</span><span class="p">),</span> <span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public_key&quot;</span><span class="p">)</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">appointment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointment&quot;</span><span class="p">))</span>
+            <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+                <span class="n">stub</span> <span class="o">=</span> <span class="n">TowerServicesStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">add_appointment</span><span class="p">(</span>
+                    <span class="n">AddAppointmentRequest</span><span class="p">(</span>
+                        <span class="n">appointment</span><span class="o">=</span><span class="n">Appointment</span><span class="p">(</span>
+                            <span class="n">locator</span><span class="o">=</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span>
+                            <span class="n">encrypted_blob</span><span class="o">=</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="p">,</span>
+                            <span class="n">to_self_delay</span><span class="o">=</span><span class="n">appointment</span><span class="o">.</span><span class="n">to_self_delay</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="n">signature</span><span class="o">=</span><span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;signature&quot;</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
-            <span class="n">error</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
-
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">appointment</span><span class="p">)</span> <span class="o">==</span> <span class="n">Appointment</span><span class="p">:</span>
-                <span class="n">appointment_added</span><span class="p">,</span> <span class="n">signature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">add_appointment</span><span class="p">(</span><span class="n">appointment</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">appointment_added</span><span class="p">:</span>
-                    <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_OK</span>
-                    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="n">signature</span><span class="p">}</span>
-
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_SERVICE_UNAVAILABLE</span>
-                    <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;appointment rejected&quot;</span>
-
-            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">appointment</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
-                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
-                <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;appointment rejected. Error </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">appointment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">appointment</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># We  should never end up here, since inspect only returns appointments or tuples. Just in case.</span>
-                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
-                <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;appointment rejected. Request does not match the standard&quot;</span>
-
-        <span class="k">else</span><span class="p">:</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_OK</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">json_format</span><span class="o">.</span><span class="n">MessageToDict</span><span class="p">(</span>
+                    <span class="n">r</span><span class="p">,</span> <span class="n">including_default_value_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preserving_proto_field_name</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">InspectionFailed</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
-            <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;appointment rejected. Request is not json encoded&quot;</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;appointment rejected. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="p">),</span> <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">erno</span><span class="p">}</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Sending response and disconnecting&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">),</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span>
-        <span class="p">)</span>
+        <span class="k">except</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">()</span> <span class="o">==</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNAUTHENTICATED</span><span class="p">:</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;appointment rejected. </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">details</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_INVALID_SIGNATURE_OR_INSUFFICIENT_SLOTS</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="k">elif</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">()</span> <span class="o">==</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">ALREADY_EXISTS</span><span class="p">:</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_BAD_REQUEST</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;appointment rejected. </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">details</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_ALREADY_TRIGGERED</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># This covers grpc.StatusCode.RESOURCE_EXHAUSTED (and any other return).</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_SERVICE_UNAVAILABLE</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;appointment rejected&quot;</span><span class="p">}</span>
 
-        <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">rcode</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error</span><span class="p">}),</span> <span class="n">rcode</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sending response and disconnecting&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">),</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">rcode</span></div>
 
-    <span class="c1"># FIXME: THE NEXT TWO API ENDPOINTS ARE FOR TESTING AND SHOULD BE REMOVED / PROPERLY MANAGED BEFORE PRODUCTION!</span>
-    <span class="c1"># ToDo: #17-add-api-keys</span>
 <div class="viewcode-block" id="API.get_appointment"><a class="viewcode-back" href="../../teos.api.html#teos.api.API.get_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">get_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gives information about a given appointment state in the Watchtower.</span>
@@ -254,7 +402,9 @@
 <span class="sd">        The information is requested by ``locator``.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`dict`: A json formatted dictionary containing information about the requested appointment.</span>
+<span class="sd">            :obj:`str`: A json formatted dictionary containing information about the requested appointment.</span>
+
+<span class="sd">            Returns not found if the user does not have the requested appointment or the locator is invalid.</span>
 
 <span class="sd">            A ``status`` flag is added to the data provided by either the :obj:`Watcher &lt;teos.watcher.Watcher&gt;` or the</span>
 <span class="sd">            :obj:`Responder &lt;teos.responder.Responder&gt;` that signals the status of the appointment.</span>
@@ -265,91 +415,47 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Getting the real IP if the server is behind a reverse proxy</span>
-        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HTTP_X_REAL_IP&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">remote_addr</span><span class="p">:</span>
-            <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;REMOTE_ADDR&quot;</span><span class="p">)</span>
+        <span class="n">remote_addr</span> <span class="o">=</span> <span class="n">get_remote_addr</span><span class="p">()</span>
 
-        <span class="n">locator</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Check that data type and content are correct. Abort otherwise.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">request_data</span> <span class="o">=</span> <span class="n">get_request_data_json</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received get_appointment request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">),</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">InvalidParameter</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received invalid get_appointment request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;error_code&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="o">.</span><span class="n">INVALID_REQUEST_FORMAT</span><span class="p">}),</span> <span class="n">HTTP_BAD_REQUEST</span>
 
-        <span class="c1"># ToDo: #15-add-system-monitor</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span> <span class="o">!=</span> <span class="n">LOCATOR_LEN_HEX</span><span class="p">:</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;not_found&quot;</span><span class="p">})</span>
-            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="n">locator</span> <span class="o">=</span> <span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
 
-        <span class="n">locator_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
-        <span class="n">triggered_appointments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_all_triggered_flags</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">check_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Received get_appointment request&quot;</span><span class="p">,</span> <span class="n">from_addr</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">),</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">locator_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">locator_map</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">uuid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">triggered_appointments</span><span class="p">:</span>
-                    <span class="n">appointment_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_watcher_appointment</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+                <span class="n">stub</span> <span class="o">=</span> <span class="n">TowerServicesStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">get_appointment</span><span class="p">(</span>
+                    <span class="n">GetAppointmentRequest</span><span class="p">(</span><span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="n">request_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;signature&quot;</span><span class="p">))</span>
+                <span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">r</span><span class="o">.</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">appointment</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">WhichOneof</span><span class="p">(</span><span class="s2">&quot;appointment_data&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;appointment&quot;</span>
+                    <span class="k">else</span> <span class="n">r</span><span class="o">.</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">tracker</span>
+                <span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">appointment_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">appointment_data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;being_watched&quot;</span>
-                        <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
+                <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_OK</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                    <span class="s2">&quot;appointment&quot;</span><span class="p">:</span> <span class="n">json_format</span><span class="o">.</span><span class="n">MessageToDict</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">,</span> <span class="n">including_default_value_fields</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preserving_proto_field_name</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">),</span>
+                <span class="p">}</span>
 
-                <span class="n">tracker_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">InspectionFailed</span><span class="p">,</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span><span class="p">):</span>
+            <span class="n">rcode</span> <span class="o">=</span> <span class="n">HTTP_NOT_FOUND</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;not_found&quot;</span><span class="p">}</span>
 
-                <span class="k">if</span> <span class="n">tracker_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">tracker_data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dispute_responded&quot;</span>
-                    <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tracker_data</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;not_found&quot;</span><span class="p">})</span>
-
-        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">response</span></div>
-
-<div class="viewcode-block" id="API.get_all_appointments"><a class="viewcode-back" href="../../teos.api.html#teos.api.API.get_all_appointments">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gives information about all the appointments in the Watchtower.</span>
-
-<span class="sd">        This endpoint should only be accessible by the administrator. Requests are only allowed from localhost.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`dict`: A json formatted dictionary containing all the appointments hold by the</span>
-<span class="sd">            :obj:`Watcher &lt;teos.watcher.Watcher&gt;` (``watcher_appointments``) and by the</span>
-<span class="sd">            :obj:`Responder &lt;teos.responder.Responder&gt;` (``responder_trackers``).</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># ToDo: #15-add-system-monitor</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">remote_addr</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">host</span> <span class="ow">or</span> <span class="n">request</span><span class="o">.</span><span class="n">remote_addr</span> <span class="o">==</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">:</span>
-            <span class="n">watcher_appointments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_watcher_appointments</span><span class="p">()</span>
-            <span class="n">responder_trackers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_trackers</span><span class="p">()</span>
-
-            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;watcher_appointments&quot;</span><span class="p">:</span> <span class="n">watcher_appointments</span><span class="p">,</span> <span class="s2">&quot;responder_trackers&quot;</span><span class="p">:</span> <span class="n">responder_trackers</span><span class="p">})</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">response</span></div>
-
-<div class="viewcode-block" id="API.start"><a class="viewcode-back" href="../../teos.api.html#teos.api.API.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function starts the Flask server used to run the API. Adds all the routes to the functions listed above.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">routes</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;/&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_appointment</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;/get_appointment&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_appointment</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;/get_all_appointments&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_appointments</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">]),</span>
-        <span class="p">}</span>
-
-        <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">routes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">methods</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-        <span class="c1"># Setting Flask log to ERROR only so it does not mess with out logging. Also disabling flask initial messages</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;werkzeug&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;WERKZEUG_RUN_MAIN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
-
-        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">HOST</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">PORT</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">rcode</span></div></div>
 </pre></div>
 
            </div>
@@ -362,11 +468,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -377,7 +491,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

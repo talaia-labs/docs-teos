@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.extended_appointment &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.extended_appointment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.extended_appointment</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+
+
+<div class="viewcode-block" id="ExtendedAppointment"><a class="viewcode-back" href="../../teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment">[docs]</a><span class="k">class</span> <span class="nc">ExtendedAppointment</span><span class="p">(</span><span class="n">Appointment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`ExtendedAppointment` contains extended information about an appointment between a user and the tower.</span>
+
+<span class="sd">    It extends the :class:`Appointment &lt;common.appointment.Appointment&gt;` with information relevant to the tower, such</span>
+<span class="sd">    as the ``user_id``, ``user_signature`` and ``start_block``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        locator (:obj:`str`): A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a</span>
+<span class="sd">            trigger for the tower to decrypt and broadcast the penalty transaction.</span>
+<span class="sd">        encrypted_blob (:obj:`str`): An encrypted blob of data containing a penalty transaction. The tower will decrypt</span>
+<span class="sd">            it and broadcast the penalty transaction upon seeing a breach on the blockchain.</span>
+<span class="sd">        to_self_delay (:obj:`int`): The ``to_self_delay`` encoded in the ``csv`` of the ``to_remote`` output of the</span>
+<span class="sd">            commitment transaction that this appointment is covering.</span>
+<span class="sd">        user_id (:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
+<span class="sd">        user_signature (:obj:`str`): the signature of the appointment by the user.</span>
+<span class="sd">        start_block (:obj:`str`): the block height at where the towers started watching for this appointment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_signature</span><span class="p">,</span> <span class="n">start_block</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_signature</span> <span class="o">=</span> <span class="n">user_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_block</span> <span class="o">=</span> <span class="n">start_block</span>
+
+<div class="viewcode-block" id="ExtendedAppointment.get_summary"><a class="viewcode-back" href="../../teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment.get_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the summary of an appointment, consisting on the ``locator``, and the ``user_id``.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: The appointment summary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="ExtendedAppointment.from_dict"><a class="viewcode-back" href="../../teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">appointment_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds an appointment from a dictionary.</span>
+
+<span class="sd">        This method is useful to load data from a database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            appointment_data (:obj:`dict`): a dictionary containing the following keys:</span>
+<span class="sd">                ``{locator, to_self_delay, encrypted_blob, user_id}``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`ExtendedAppointment &lt;teos.extended_appointment.ExtendedAppointment&gt;`: An appointment initialized</span>
+<span class="sd">            using the provided data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If one of the mandatory keys is missing in ``appointment_data``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">appointment</span> <span class="o">=</span> <span class="n">Appointment</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
+        <span class="n">user_signature</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_signature&quot;</span><span class="p">)</span>
+        <span class="n">start_block</span> <span class="o">=</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_block&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_signature</span><span class="p">,</span> <span class="n">start_block</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong appointment data, some fields are missing&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span>
+            <span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="p">,</span>
+            <span class="n">appointment</span><span class="o">.</span><span class="n">to_self_delay</span><span class="p">,</span>
+            <span class="n">user_id</span><span class="p">,</span>
+            <span class="n">user_signature</span><span class="p">,</span>
+            <span class="n">start_block</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

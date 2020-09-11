@@ -1,0 +1,7 @@
+teos.extended\_appointment
+==========================
+
+.. automodule:: teos.extended_appointment
+   :members:
+   :undoc-members:
+   :show-inheritance:

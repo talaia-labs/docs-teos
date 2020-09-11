@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="common.logger" href="common.logger.html" /> 
+    <link rel="next" title="contrib package" href="contrib.html" />
+    <link rel="prev" title="common.receipts" href="common.receipts.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -72,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -82,25 +85,26 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="common.appointment.html">common.appointment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.blob.html">common.blob</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.config_loader.html">common.config_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.cryptographer.html">common.cryptographer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.encrypted_blob.html">common.encrypted_blob</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.logger.html">common.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.db_manager.html">common.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.exceptions.html">common.exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.receipts.html">common.receipts</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">common.tools</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -139,7 +143,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="common.html">common package</a> &raquo;</li>
         
@@ -164,26 +168,42 @@
             
   <div class="section" id="module-common.tools">
 <span id="common-tools"></span><h1>common.tools<a class="headerlink" href="#module-common.tools" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="common.tools.check_locator_format">
-<code class="sig-name descname">check_locator_format</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#check_locator_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.check_locator_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if a given value is a 16-byte hex encoded string.</p>
+<dl class="py function">
+<dt id="common.tools.compute_locator">
+<code class="sig-name descname">compute_locator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tx_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#compute_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.compute_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes an appointment locator given a transaction id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the value to be checked.</p>
+<dd class="field-odd"><p><strong>tx_id</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the transaction id used to compute the locator.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Whether or not the value matches the format.</p>
+<dd class="field-even"><p>The computed locator.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="common.tools.check_sha256_hex_format">
-<code class="sig-name descname">check_sha256_hex_format</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#check_sha256_hex_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.check_sha256_hex_format" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="common.tools.intify">
+<code class="sig-name descname">intify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#intify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.intify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an object that is a recursive composition of primitive types, lists and dictionaries, and returns an
+equivalent object where every <cite>float</cite> number that is actually an integer is replaced with the corresponding
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> – an object as specified.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The modified version of <code class="docutils literal notranslate"><span class="pre">obj</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="common.tools.is_256b_hex_str">
+<code class="sig-name descname">is_256b_hex_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#is_256b_hex_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.is_256b_hex_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a given value is a 32-byte hex encoded string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -198,44 +218,64 @@
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="common.tools.compute_locator">
-<code class="sig-name descname">compute_locator</code><span class="sig-paren">(</span><em class="sig-param">tx_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#compute_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.compute_locator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes an appointment locator given a transaction id.
-:param tx_id: the transaction id used to compute the locator.
-:type tx_id: <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+<dl class="py function">
+<dt id="common.tools.is_compressed_pk">
+<code class="sig-name descname">is_compressed_pk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#is_compressed_pk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.is_compressed_pk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given value is a 33-byte hex-encoded string starting by 02 or 03.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The computed locator.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the value to be checked.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the value matches the format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
+<dt id="common.tools.is_locator">
+<code class="sig-name descname">is_locator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#is_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.is_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given value is a 16-byte hex encoded string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the value to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the value matches the format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="common.tools.is_u4int">
+<code class="sig-name descname">is_u4int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#is_u4int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.is_u4int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a given value is an unsigned 4-byte integer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">int</span></code>) – the value to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether or not the value matches the format.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="common.tools.setup_data_folder">
-<code class="sig-name descname">setup_data_folder</code><span class="sig-paren">(</span><em class="sig-param">data_folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#setup_data_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.setup_data_folder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setup_data_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_folder</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#setup_data_folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.setup_data_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a data folder for either the client or the server side if the folder does not exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_folder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path of the folder</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="common.tools.setup_logging">
-<code class="sig-name descname">setup_logging</code><span class="sig-paren">(</span><em class="sig-param">log_file_path</em>, <em class="sig-param">log_name_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/tools.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tools.setup_logging" title="Permalink to this definition">¶</a></dt>
-<dd><p>Setups a couple of loggers (console and file) given a prefix and a file path. The log names are:</p>
-<p>prefix | _file_log and prefix | _console_log</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>log_file_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path of the file to output the file log.</p></li>
-<li><p><strong>log_name_prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the prefix to identify the log.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>data_folder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path of the folder.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -250,8 +290,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="contrib.html" class="btn btn-neutral float-right" title="contrib package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="common.logger.html" class="btn btn-neutral float-left" title="common.logger" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="common.receipts.html" class="btn btn-neutral float-left" title="common.receipts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -260,11 +302,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -275,7 +325,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

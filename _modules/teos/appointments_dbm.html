@@ -1,0 +1,713 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.appointments_dbm &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.appointments_dbm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.appointments_dbm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">plyvel</span>
+
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">common.db_manager</span> <span class="kn">import</span> <span class="n">DBManager</span>
+
+<span class="n">WATCHER_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span>
+<span class="n">WATCHER_LAST_BLOCK_KEY</span> <span class="o">=</span> <span class="s2">&quot;bw&quot;</span>
+<span class="n">RESPONDER_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span>
+<span class="n">RESPONDER_LAST_BLOCK_KEY</span> <span class="o">=</span> <span class="s2">&quot;br&quot;</span>
+<span class="n">LOCATOR_MAP_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+<span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;ta&quot;</span>
+
+
+<div class="viewcode-block" id="AppointmentsDBM"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM">[docs]</a><span class="k">class</span> <span class="nc">AppointmentsDBM</span><span class="p">(</span><span class="n">DBManager</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`AppointmentsDBM` is in charge of interacting with the appointments database (``LevelDB``).</span>
+<span class="sd">    Keys and values are stored as bytes in the database but processed as strings by the manager.</span>
+
+<span class="sd">    The database is split in six prefixes:</span>
+
+<span class="sd">        - ``WATCHER_PREFIX``, defined as ``b&#39;w``, is used to store :obj:`Watcher &lt;teos.watcher.Watcher&gt;` appointments.</span>
+<span class="sd">        - ``RESPONDER_PREFIX``, defines as ``b&#39;r``, is used to store :obj:`Responder &lt;teos.responder.Responder&gt;` trackers.</span>
+<span class="sd">        - ``WATCHER_LAST_BLOCK_KEY``, defined as ``b&#39;bw``, is used to store the last block hash known by the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`.</span>
+<span class="sd">        - ``RESPONDER_LAST_BLOCK_KEY``, defined as ``b&#39;br``, is used to store the last block hash known by the :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+<span class="sd">        - ``LOCATOR_MAP_PREFIX``, defined as ``b&#39;m``, is used to store the ``locator:uuid`` maps.</span>
+<span class="sd">        - ``TRIGGERED_APPOINTMENTS_PREFIX``, defined as ``b&#39;ta``, is used to stored triggered appointments (appointments that have been handed to the :obj:`Responder &lt;teos.responder.Responder&gt;`.)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_path (:obj:`str`): the path (relative or absolute) to the system folder containing the database. A fresh</span>
+<span class="sd">            database will be created if the specified path does not contain one.</span>
+<span class="sd">            </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): the logger for this component.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        :obj:`ValueError`: If the provided ``db_path`` is not a string.</span>
+<span class="sd">        :obj:`plyvel.Error`: If the db is currently unavailable (being used by another process).</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;db_path must be a valid path/name&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">AppointmentsDBM</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">plyvel</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;LOCK: Resource temporarily unavailable&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The db is already being used by another process (LOCK)&quot;</span><span class="p">)</span>
+
+            <span class="k">raise</span> <span class="n">e</span>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_appointments_db"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_appointments_db">[docs]</a>    <span class="k">def</span> <span class="nf">load_appointments_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all data from the appointments database given a prefix. Two prefixes are defined: ``WATCHER_PREFIX`` and</span>
+<span class="sd">        ``RESPONDER_PREFIX``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix (:obj:`str`): the prefix of the data to load.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary containing the requested data (appointments or trackers) indexed by ``uuid``.</span>
+
+<span class="sd">            Returns an empty dictionary if no data is found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">iterator</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)):</span>
+            <span class="c1"># Get uuid and appointment_data from the db</span>
+            <span class="n">uuid</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E203</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.get_last_known_block"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.get_last_known_block">[docs]</a>    <span class="k">def</span> <span class="nf">get_last_known_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the last known block given a key.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (:obj:`str`): the identifier of the db to look into (either ``WATCHER_LAST_BLOCK_KEY`` or</span>
+<span class="sd">                ``RESPONDER_LAST_BLOCK_KEY``).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str` or :obj:`None`: A 32-byte hex-encoded str representing the last known block hash.</span>
+
+<span class="sd">            Returns :obj:`None` if the entry is not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">last_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">last_block</span><span class="p">:</span>
+
+            <span class="n">last_block</span> <span class="o">=</span> <span class="n">last_block</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">last_block</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_watcher_appointment"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_watcher_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">load_watcher_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads an appointment from the database using ``WATCHER_PREFIX`` as prefix to the given ``uuid``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the appointment&#39;s unique identifier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary containing the appointment data if they ``key`` is found.</span>
+
+<span class="sd">            Returns :obj:`None` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">WATCHER_PREFIX</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_responder_tracker"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_responder_tracker">[docs]</a>    <span class="k">def</span> <span class="nf">load_responder_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads a tracker from the database using ``RESPONDER_PREFIX`` as a prefix to the given ``uuid``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the tracker&#39;s unique identifier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary containing the tracker data if they ``key`` is found.</span>
+
+<span class="sd">            Returns :obj:`None` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">RESPONDER_PREFIX</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_watcher_appointments"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_watcher_appointments">[docs]</a>    <span class="k">def</span> <span class="nf">load_watcher_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_triggered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all the appointments from the database (all entries with the ``WATCHER_PREFIX`` prefix).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            include_triggered (:obj:`bool`): whether to include the appointments flagged as triggered or not. False</span>
+<span class="sd">                by default.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary with all the appointments stored in the database. An empty dictionary if there</span>
+<span class="sd">            are none.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">appointments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_appointments_db</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">WATCHER_PREFIX</span><span class="p">)</span>
+        <span class="n">triggered_appointments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_all_triggered_flags</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include_triggered</span><span class="p">:</span>
+            <span class="n">not_triggered</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">appointments</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">triggered_appointments</span><span class="p">))</span>
+            <span class="n">appointments</span> <span class="o">=</span> <span class="p">{</span><span class="n">uuid</span><span class="p">:</span> <span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">not_triggered</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">appointments</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_responder_trackers"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_responder_trackers">[docs]</a>    <span class="k">def</span> <span class="nf">load_responder_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all the trackers from the database (all entries with the ``RESPONDER_PREFIX`` prefix).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict`: A dictionary with all the trackers stored in the database. An empty dictionary if there are</span>
+<span class="sd">            none.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_appointments_db</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">RESPONDER_PREFIX</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.store_watcher_appointment"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_watcher_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">store_watcher_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">appointment</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores an appointment in the database using the ``WATCHER_PREFIX`` prefix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the appointment to be stored.</span>
+<span class="sd">            appointment (:obj:`dict`): an appointment encoded as a dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the appointment was stored in the db. False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">appointment</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="n">WATCHER_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding appointment to Watchers&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Couldn&#39;t add appointment to db. Wrong appointment format.&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointment</span><span class="o">=</span><span class="n">appointment</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t add appointment to db.&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">appointment</span><span class="o">=</span><span class="n">appointment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.store_responder_tracker"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_responder_tracker">[docs]</a>    <span class="k">def</span> <span class="nf">store_responder_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">tracker</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores a tracker in the database using the ``RESPONDER_PREFIX`` prefix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the appointment to be stored.</span>
+<span class="sd">            tracker (:obj:`dict`): a tracker encoded as a dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the tracker was stored in the db. False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">tracker</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="n">RESPONDER_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding tracker to Responder&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t add tracker to db. Wrong tracker format.&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">tracker</span><span class="o">=</span><span class="n">tracker</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t add tracker to db.&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">tracker</span><span class="o">=</span><span class="n">tracker</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_locator_map"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_locator_map">[docs]</a>    <span class="k">def</span> <span class="nf">load_locator_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the ``locator:uuid`` map of a given ``locator`` from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            locator (:obj:`str`): a 16-byte hex-encoded string representing the appointment locator.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`dict` or :obj:`None`: The requested ``locator:uuid`` map if found.</span>
+
+<span class="sd">            Returns :obj:`None` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOCATOR_MAP_PREFIX</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">locator_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">locator_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">locator_map</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">locator_map</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Locator not found in the db&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">locator_map</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.create_append_locator_map"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.create_append_locator_map">[docs]</a>    <span class="k">def</span> <span class="nf">create_append_locator_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a ``locator:uuid`` map.</span>
+
+<span class="sd">        If the map already exists, the new ``uuid`` is appended to the existing ones (if it is not already there).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            locator (:obj:`str`): a 16-byte hex-encoded string used as the key of the map.</span>
+<span class="sd">            uuid (:obj:`str`): a 16-byte hex-encoded unique id to create (or add to) the map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">locator_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">locator_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">uuid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">locator_map</span><span class="p">:</span>
+                <span class="n">locator_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Updating locator map&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;UUID already in the map&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">locator_map</span> <span class="o">=</span> <span class="p">[</span><span class="n">uuid</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating new locator map&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOCATOR_MAP_PREFIX</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.update_locator_map"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.update_locator_map">[docs]</a>    <span class="k">def</span> <span class="nf">update_locator_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">locator_map</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a ``locator:uuid`` map in the database by deleting one of it&#39;s uuid. It will only work as long as</span>
+<span class="sd">        the given ``locator_map`` is a subset of the current one and it&#39;s not empty.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            locator (:obj:`str`): a 16-byte hex-encoded string used as the key of the map.</span>
+<span class="sd">            locator_map (:obj:`list`): a list of uuids to replace the current one on the db.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">current_locator_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_locator_map</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">current_locator_map</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">LOCATOR_MAP_PREFIX</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">locator_map</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Trying to update a locator_map with completely different, or empty, data&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.delete_locator_map"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_locator_map">[docs]</a>    <span class="k">def</span> <span class="nf">delete_locator_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a ``locator:uuid`` map.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            locator (:obj:`str`): a 16-byte hex-encoded string identifying the map to delete.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the locator map was deleted from the database or it was non-existent, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_entry</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">LOCATOR_MAP_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting locator map from db&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t delete locator map from db, locator has wrong type&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.delete_watcher_appointment"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_watcher_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">delete_watcher_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an appointment from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           uuid (:obj:`str`): a 16-byte hex-encoded string identifying the appointment to be deleted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the appointment was deleted from the database or it was non-existent, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">WATCHER_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting appointment from Watcher&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t delete appointment from db, uuid has wrong type&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.batch_delete_watcher_appointments"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_watcher_appointments">[docs]</a>    <span class="k">def</span> <span class="nf">batch_delete_watcher_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes multiple appointments from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           uuids (:obj:`list`): a list of 16-byte hex-encoded strings identifying the appointments to be deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">write_batch</span><span class="p">()</span> <span class="k">as</span> <span class="n">b</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">delete</span><span class="p">((</span><span class="n">WATCHER_PREFIX</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting appointment from Watcher&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.delete_responder_tracker"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_responder_tracker">[docs]</a>    <span class="k">def</span> <span class="nf">delete_responder_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a tracker from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           uuid (:obj:`str`): a 16-byte hex-encoded string identifying the tracker to be deleted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the tracker was deleted from the database or it was non-existent, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">RESPONDER_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting tracker from Responder&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t delete tracker from db, uuid has wrong type&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.batch_delete_responder_trackers"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_responder_trackers">[docs]</a>    <span class="k">def</span> <span class="nf">batch_delete_responder_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes multiple trackers from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           uuids (:obj:`list`): a list of 16-byte hex-encoded strings identifying the trackers to be deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">write_batch</span><span class="p">()</span> <span class="k">as</span> <span class="n">b</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">delete</span><span class="p">((</span><span class="n">RESPONDER_PREFIX</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting appointment from Responder&#39;s db&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_last_block_hash_watcher"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_last_block_hash_watcher">[docs]</a>    <span class="k">def</span> <span class="nf">load_last_block_hash_watcher</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the last known block hash of the :obj:`Watcher &lt;teos.watcher.Watcher&gt;` from the database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str` or :obj:`None`: A 32-byte hex-encoded string representing the last known block hash if found.</span>
+
+<span class="sd">            Returns :obj:`None` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_known_block</span><span class="p">(</span><span class="n">WATCHER_LAST_BLOCK_KEY</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_last_block_hash_responder"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_last_block_hash_responder">[docs]</a>    <span class="k">def</span> <span class="nf">load_last_block_hash_responder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the last known block hash of the :obj:`Responder &lt;teos.responder.Responder&gt;` from the database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str` or :obj:`None`: A 32-byte hex-encoded string representing the last known block hash if found.</span>
+
+<span class="sd">            Returns :obj:`None` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_known_block</span><span class="p">(</span><span class="n">RESPONDER_LAST_BLOCK_KEY</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.store_last_block_hash_watcher"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_last_block_hash_watcher">[docs]</a>    <span class="k">def</span> <span class="nf">store_last_block_hash_watcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores a block hash as the last known block of the :obj:`Watcher &lt;teos.watcher.Watcher&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_hash (:obj:`str`): the block hash to be stored (32-byte hex-encoded)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the block hash was stored in the db. False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_entry</span><span class="p">(</span><span class="n">WATCHER_LAST_BLOCK_KEY</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.store_last_block_hash_responder"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_last_block_hash_responder">[docs]</a>    <span class="k">def</span> <span class="nf">store_last_block_hash_responder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores a block hash as the last known block of the :obj:`Responder &lt;teos.responder.Responder&gt;`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_hash (:obj:`str`): the block hash to be stored (32-byte hex-encoded)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the block hash was stored in the db. False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_entry</span><span class="p">(</span><span class="n">RESPONDER_LAST_BLOCK_KEY</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.create_triggered_appointment_flag"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.create_triggered_appointment_flag">[docs]</a>    <span class="k">def</span> <span class="nf">create_triggered_appointment_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a flag that signals that an appointment has been triggered.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the flag to be created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Flagging appointment as triggered&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.batch_create_triggered_appointment_flag"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_create_triggered_appointment_flag">[docs]</a>    <span class="k">def</span> <span class="nf">batch_create_triggered_appointment_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a flag that signals that an appointment has been triggered for every appointment in the given list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuids (:obj:`list`): a list of identifiers for the appointments to flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">write_batch</span><span class="p">()</span> <span class="k">as</span> <span class="n">b</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Flagging appointment as triggered&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.load_all_triggered_flags"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_all_triggered_flags">[docs]</a>    <span class="k">def</span> <span class="nf">load_all_triggered_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all the appointment triggered flags from the database.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             :obj:`list`: a list of all the uuids of the triggered appointments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">decode</span><span class="p">()[</span><span class="nb">len</span><span class="p">(</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span><span class="p">)</span> <span class="p">:]</span>  <span class="c1"># noqa: E203</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">iterator</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.delete_triggered_appointment_flag"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_triggered_appointment_flag">[docs]</a>    <span class="k">def</span> <span class="nf">delete_triggered_appointment_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a flag that signals that an appointment has been triggered.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuid (:obj:`str`): the identifier of the flag to be removed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`bool`: True if the flag was deleted from the database or it was non-existent, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_entry</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing triggered flag from appointment appointment&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t delete triggered flag from db, uuid has wrong type&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="AppointmentsDBM.batch_delete_triggered_appointment_flag"><a class="viewcode-back" href="../../teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_triggered_appointment_flag">[docs]</a>    <span class="k">def</span> <span class="nf">batch_delete_triggered_appointment_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a list of flag signaling that some appointment have been triggered.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uuids (:obj:`list`): the identifier of the flag to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">write_batch</span><span class="p">()</span> <span class="k">as</span> <span class="n">b</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">uuids</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">delete</span><span class="p">((</span><span class="n">TRIGGERED_APPOINTMENTS_PREFIX</span> <span class="o">+</span> <span class="n">uuid</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing triggered flag from appointment appointment&quot;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

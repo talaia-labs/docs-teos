@@ -1,0 +1,7 @@
+common.receipts
+===============
+
+.. automodule:: common.receipts
+   :members:
+   :undoc-members:
+   :show-inheritance:

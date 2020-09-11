@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="common.encrypted_blob" href="common.encrypted_blob.html" />
+    <link rel="next" title="common.db_manager" href="common.db_manager.html" />
     <link rel="prev" title="common.config_loader" href="common.config_loader.html" /> 
 </head>
 
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,25 +85,26 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="common.appointment.html">common.appointment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.blob.html">common.blob</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.config_loader.html">common.config_loader</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">common.cryptographer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.encrypted_blob.html">common.encrypted_blob</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.logger.html">common.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.db_manager.html">common.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.exceptions.html">common.exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.receipts.html">common.receipts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.tools.html">common.tools</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -140,7 +143,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="common.html">common package</a> &raquo;</li>
         
@@ -165,151 +168,241 @@
             
   <div class="section" id="module-common.cryptographer">
 <span id="common-cryptographer"></span><h1>common.cryptographer<a class="headerlink" href="#module-common.cryptographer" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="common.cryptographer.Cryptographer">
 <em class="property">class </em><code class="sig-name descname">Cryptographer</code><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The <a class="reference internal" href="#common.cryptographer.Cryptographer" title="common.cryptographer.Cryptographer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cryptographer</span></code></a> is the class in charge of all the cryptography in the tower.</p>
-<dl class="method">
+<p>The <a class="reference internal" href="#common.cryptographer.Cryptographer" title="common.cryptographer.Cryptographer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cryptographer</span></code></a> is in charge of all the cryptography in the tower.</p>
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.check_data_key_format">
-<em class="property">static </em><code class="sig-name descname">check_data_key_format</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">secret</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.check_data_key_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.check_data_key_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks that the data and secret that will be used to by <code class="docutils literal notranslate"><span class="pre">encrypt</span></code> / <code class="docutils literal notranslate"><span class="pre">decrypt</span></code> are properly
-formatted.</p>
+<em class="property">static </em><code class="sig-name descname">check_data_key_format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.check_data_key_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.check_data_key_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the data and secret that will be used to by <code class="docutils literal notranslate"><span class="pre">encrypt</span></code> / <code class="docutils literal notranslate"><span class="pre">decrypt</span></code> are properly formatted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the data to be encrypted.</p></li>
-<li><p><strong>secret</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – the secret used to derive the encryption key.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the data to be encrypted.</p></li>
+<li><p><strong>secret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the secret used to derive the encryption key.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Whether or not the <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> are properly formatted.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if either the <code class="docutils literal notranslate"><span class="pre">key</span></code> or <code class="docutils literal notranslate"><span class="pre">data</span></code> is not properly formatted.</p>
+<dd class="field-even"><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if either the <code class="docutils literal notranslate"><span class="pre">key</span></code> and/or <code class="docutils literal notranslate"><span class="pre">data</span></code> are not properly formatted.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.decrypt">
-<em class="property">static </em><code class="sig-name descname">decrypt</code><span class="sig-paren">(</span><em class="sig-param">encrypted_blob</em>, <em class="sig-param">secret</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.decrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decrypts a given <a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-mod docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a> using <code class="docutils literal notranslate"><span class="pre">CHACHA20POLY1305</span></code>.</p>
+<em class="property">static </em><code class="sig-name descname">decrypt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encrypted_blob</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.decrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.decrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypts a given encrypted_blob using <code class="docutils literal notranslate"><span class="pre">CHACHA20POLY1305</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">SHA256(secret)</span></code> is used as <code class="docutils literal notranslate"><span class="pre">key</span></code>, and <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">(12-byte)</span></code> as <code class="docutils literal notranslate"><span class="pre">iv</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>encrypted_blob</strong> (<a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-mod docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a>) – an <code class="docutils literal notranslate"><span class="pre">EncryptedBlob</span></code> potentially
-containing a penalty transaction.</p></li>
-<li><p><strong>secret</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – a value to used to derive the decryption key. Should be the dispute txid.</p></li>
+<li><p><strong>encrypted_blob</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an encrypted blob of data potentially containing a penalty transaction.</p></li>
+<li><p><strong>secret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a value used to derive the decryption key. Should be the dispute txid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The decrypted data (hex encoded).</p>
+<dd class="field-even"><p>The decrypted data (hex-encoded).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if either the <code class="docutils literal notranslate"><span class="pre">key</span></code> and/or <code class="docutils literal notranslate"><span class="pre">data</span></code> are not properly formatted.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.EncryptionError" title="common.exceptions.EncryptionError"><strong>EncryptionError</strong></a> – if the data cannot be decrypted with the given key.</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.encrypt">
-<em class="property">static </em><code class="sig-name descname">encrypt</code><span class="sig-paren">(</span><em class="sig-param">blob</em>, <em class="sig-param">secret</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.encrypt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encrypts a given <code class="xref py py-mod docutils literal notranslate"><span class="pre">Blob</span></code> data using <code class="docutils literal notranslate"><span class="pre">CHACHA20POLY1305</span></code>.</p>
+<em class="property">static </em><code class="sig-name descname">encrypt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">secret</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.encrypt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.encrypt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encrypts a given message data using <code class="docutils literal notranslate"><span class="pre">CHACHA20POLY1305</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">SHA256(secret)</span></code> is used as <code class="docutils literal notranslate"><span class="pre">key</span></code>, and <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">(12-byte)</span></code> as <code class="docutils literal notranslate"><span class="pre">iv</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>blob</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">Blob</span></code>) – a <code class="docutils literal notranslate"><span class="pre">Blob</span></code> object containing a raw penalty transaction.</p></li>
-<li><p><strong>secret</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – a value to used to derive the encryption key. Should be the dispute txid.</p></li>
+<li><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a message to be encrypted. Should be the hex-encoded commitment_tx.</p></li>
+<li><p><strong>secret</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a value to used to derive the encryption key. Should be the dispute txid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The encrypted data (hex encoded).</p>
+<dd class="field-even"><p>The encrypted data (hex-encoded).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if either the <code class="docutils literal notranslate"><span class="pre">key</span></code> and/or <code class="docutils literal notranslate"><span class="pre">data</span></code> are not properly formatted.</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="common.cryptographer.Cryptographer.generate_key">
+<em class="property">static </em><code class="sig-name descname">generate_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.generate_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.generate_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates an ECDSA private key (over secp256k1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A private key.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="common.cryptographer.Cryptographer.get_compressed_pk">
+<em class="property">static </em><code class="sig-name descname">get_compressed_pk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pk</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.get_compressed_pk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.get_compressed_pk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a compressed, hex-encoded, public key given a <code class="xref py py-obj docutils literal notranslate"><span class="pre">PublicKey</span></code> .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PublicKey</span></code>) – a given public key.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A compressed, hex-encoded, public key (33-byte long) if it can be compressed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if the value passed as public key is not a PublicKey object.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidKey" title="common.exceptions.InvalidKey"><strong>InvalidKey</strong></a> – if the public key has not been properly created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.load_key_file">
-<em class="property">static </em><code class="sig-name descname">load_key_file</code><span class="sig-paren">(</span><em class="sig-param">file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.load_key_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.load_key_file" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">load_key_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.load_key_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.load_key_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a key from a key file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path to the key file to be loaded.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the key file data if the file can be found and read. <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+<dd class="field-even"><p>The key file data if the file can be found and read.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="common.cryptographer.Cryptographer.load_private_key_der">
-<em class="property">static </em><code class="sig-name descname">load_private_key_der</code><span class="sig-paren">(</span><em class="sig-param">sk_der</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.load_private_key_der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.load_private_key_der" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <code class="xref py py-mod docutils literal notranslate"><span class="pre">PrivateKey</span></code> object from a given <code class="docutils literal notranslate"><span class="pre">DER</span></code> encoded private key.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sk_der</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – a private key encoded in <code class="docutils literal notranslate"><span class="pre">DER</span></code> format.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">PrivateKey</span></code> object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">PrivateKey</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – if the provided <code class="docutils literal notranslate"><span class="pre">pk_der</span></code> data cannot be deserialized (wrong size or format).</p></li>
-<li><p><strong>TypeError</strong> – if the provided <code class="docutils literal notranslate"><span class="pre">pk_der</span></code> data is not a string.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if the file_path has wrong format or cannot be found.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidKey" title="common.exceptions.InvalidKey"><strong>InvalidKey</strong></a> – if the key cannot be loaded from the file. It covers temporary I/O errors.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="common.cryptographer.Cryptographer.load_private_key_der">
+<em class="property">static </em><code class="sig-name descname">load_private_key_der</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sk_der</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.load_private_key_der"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.load_private_key_der" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code> from a given <code class="docutils literal notranslate"><span class="pre">DER</span></code> encoded private key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sk_der</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – a private key encoded in <code class="docutils literal notranslate"><span class="pre">DER</span></code> format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code> object if the private key can be loaded.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidKey" title="common.exceptions.InvalidKey"><strong>InvalidKey</strong></a> – if a <code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code> cannot be loaded from the given data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.recover_pk">
-<em class="property">static </em><code class="sig-name descname">recover_pk</code><span class="sig-paren">(</span><em class="sig-param">message</em>, <em class="sig-param">zb32_sig</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.recover_pk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.recover_pk" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">recover_pk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">zb32_sig</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.recover_pk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.recover_pk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recovers an ECDSA public key from a given message and zbase32 signature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the data to be signed.</p></li>
+<li><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – original message from where the signature was generated.</p></li>
 <li><p><strong>zb32_sig</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the zbase32 signature of the message.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The recovered public key.</p>
+<dd class="field-even"><p>The public key if it can be recovered.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PublicKey</span></code></p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if the message and/or signature have a wrong value.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.SignatureError" title="common.exceptions.SignatureError"><strong>SignatureError</strong></a> – if a public key cannot be recovered from the given signature.</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="common.cryptographer.Cryptographer.save_key_file">
+<em class="property">static </em><code class="sig-name descname">save_key_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">data_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.save_key_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.save_key_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a key to disk in DER format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the key to be saved to disk.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the name of the key file to be generated.</p></li>
+<li><p><strong>data_dir</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the data directory where the file will be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – If the given key is not bytes or the name or data_dir are not strings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="common.cryptographer.Cryptographer.sign">
-<em class="property">static </em><code class="sig-name descname">sign</code><span class="sig-paren">(</span><em class="sig-param">message</em>, <em class="sig-param">sk</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.sign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.sign" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signs a given data using a given secret key using ECDSA.</p>
+<em class="property">static </em><code class="sig-name descname">sign</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">sk</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.sign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.sign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signs a given message with a given secret key using ECDSA over secp256k1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the data to be signed.</p></li>
-<li><p><strong>sk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code>) – the ECDSA secret key used to signed the data.</p></li>
+<li><p><strong>sk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PrivateKey</span></code>) – the ECDSA secret key to be used to sign the data.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The zbase32 signature of the given message.</p>
+<dd class="field-even"><p>The zbase32 signature of the given message is it can be signed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if the message and/or secret key have a wrong value.</p></li>
+<li><p><a class="reference internal" href="common.exceptions.html#common.exceptions.SignatureError" title="common.exceptions.SignatureError"><strong>SignatureError</strong></a> – if there is an error during the signing process.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="common.cryptographer.hash_160">
+<code class="sig-name descname">hash_160</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#hash_160"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.hash_160" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the RIPEMD-160 hash of a given message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the message to be hashed.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The ripemd160 hash of the given message.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -317,38 +410,16 @@ containing a penalty transaction.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="common.cryptographer.Cryptographer.verify_rpk">
-<em class="property">static </em><code class="sig-name descname">verify_rpk</code><span class="sig-paren">(</span><em class="sig-param">pk</em>, <em class="sig-param">rpk</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#Cryptographer.verify_rpk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.Cryptographer.verify_rpk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verifies that that a recovered public key matches a given one.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PublicKey</span></code>) – a given public key (provided by the user).</p></li>
-<li><p><strong>rpk</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PublicKey</span></code>) – a public key recovered via <code class="docutils literal notranslate"><span class="pre">recover_pk</span></code>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if the public keys match, False otherwise.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
+<dl class="py function">
 <dt id="common.cryptographer.sha256d">
-<code class="sig-name descname">sha256d</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sha256d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sha256d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the sha245d (double sha256) of a given by message.</p>
+<code class="sig-name descname">sha256d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sha256d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sha256d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the double sha256 of a given message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>message</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the message to be used as input to the hash function.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the sha256d of the given message.</p>
+<dd class="field-even"><p>The sha256d of the given message.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></p>
@@ -356,36 +427,38 @@ containing a penalty transaction.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="common.cryptographer.sigrec_decode">
-<code class="sig-name descname">sigrec_decode</code><span class="sig-paren">(</span><em class="sig-param">sigrec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sigrec_decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sigrec_decode" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sigrec_decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigrec</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sigrec_decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sigrec_decode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes a pk-recoverable signature in the format used by LN to be input to <code class="docutils literal notranslate"><span class="pre">PublicKey.from_signature_and_message</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sigrec</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the signature to be decoded.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the decoded signature.</p>
+<dd class="field-even"><p>The decoded signature.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if the SigRec is not properly encoded (first byte is not 31 + recovery id)</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="common.cryptographer.sigrec_encode">
-<code class="sig-name descname">sigrec_encode</code><span class="sig-paren">(</span><em class="sig-param">rsig_rid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sigrec_encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sigrec_encode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encodes a pk-recoverable signature to be used in LN. <code class="docutils literal notranslate"><span class="pre">`rsig_rid</span></code> can be obtained trough
+<code class="sig-name descname">sigrec_encode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rsig_rid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/cryptographer.html#sigrec_encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.cryptographer.sigrec_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes a pk-recoverable signature to be used in LN. <code class="docutils literal notranslate"><span class="pre">rsig_rid</span></code> can be obtained trough
 <code class="docutils literal notranslate"><span class="pre">PrivateKey.sign_recoverable</span></code>. The required format has the recovery id as the last byte, and for signing LN
-messages we need it as the first.
-From: <a class="reference external" href="https://twitter.com/rusty_twit/status/1182102005914800128">https://twitter.com/rusty_twit/status/1182102005914800128</a></p>
+messages we need it as the first. From: <a class="reference external" href="https://twitter.com/rusty_twit/status/1182102005914800128">https://twitter.com/rusty_twit/status/1182102005914800128</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rsig_rid</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code>) – the signature to be encoded.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the encoded signature.</p>
+<dd class="field-even"><p>The encoded signature.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></p>
@@ -403,7 +476,7 @@ From: <a class="reference external" href="https://twitter.com/rusty_twit/status/
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="common.encrypted_blob.html" class="btn btn-neutral float-right" title="common.encrypted_blob" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="common.db_manager.html" class="btn btn-neutral float-right" title="common.db_manager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="common.config_loader.html" class="btn btn-neutral float-left" title="common.config_loader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -415,11 +488,19 @@ From: <a class="reference external" href="https://twitter.com/rusty_twit/status/
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -430,7 +511,6 @@ From: <a class="reference external" href="https://twitter.com/rusty_twit/status/
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -12,9 +12,9 @@ Submodules
 .. toctree::
 
    common.appointment
-   common.blob
    common.config_loader
    common.cryptographer
-   common.encrypted_blob
-   common.logger
+   common.db_manager
+   common.exceptions
+   common.receipts
    common.tools

@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -147,18 +150,12 @@
             
   <h1>Source code for teos.inspector</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">unhexlify</span>
 
-<span class="kn">import</span> <span class="nn">common.cryptographer</span>
-<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">LOCATOR_LEN_HEX</span>
-<span class="kn">from</span> <span class="nn">common.cryptographer</span> <span class="kn">import</span> <span class="n">Cryptographer</span><span class="p">,</span> <span class="n">PublicKey</span>
-
-<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">errors</span><span class="p">,</span> <span class="n">LOG_PREFIX</span>
-<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">is_locator</span>
 <span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">LOCATOR_LEN_HEX</span>
+<span class="kn">import</span> <span class="nn">common.errors</span> <span class="k">as</span> <span class="nn">errors</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Inspector&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
-<span class="n">common</span><span class="o">.</span><span class="n">cryptographer</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Cryptographer&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
 
 <span class="c1"># FIXME: The inspector logs the wrong messages sent form the users. A possible attack surface would be to send a really</span>
 <span class="c1">#        long field that, even if not accepted by TEOS, would be stored in the logs. This is a possible DoS surface</span>
@@ -167,7 +164,14 @@
 
 
 <span class="n">BLOCKS_IN_A_MONTH</span> <span class="o">=</span> <span class="mi">4320</span>  <span class="c1"># 4320 = roughly a month in blocks</span>
-<span class="n">ENCRYPTED_BLOB_MAX_SIZE_HEX</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2048</span>
+
+
+<div class="viewcode-block" id="InspectionFailed"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.InspectionFailed">[docs]</a><span class="k">class</span> <span class="nc">InspectionFailed</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raise this the inspector finds a problem with any of the appointment fields.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">erno</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">erno</span> <span class="o">=</span> <span class="n">erno</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="n">reason</span></div>
 
 
 <div class="viewcode-block" id="Inspector"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector">[docs]</a><span class="k">class</span> <span class="nc">Inspector</span><span class="p">:</span>
@@ -175,223 +179,69 @@
 <span class="sd">    The :class:`Inspector` class is in charge of verifying that the appointment data provided by the user is correct.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a ``BlockProcessor`` instance.</span>
 <span class="sd">        min_to_self_delay (:obj:`int`): the minimum to_self_delay accepted in appointments.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">,</span> <span class="n">min_to_self_delay</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">block_processor</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_to_self_delay</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_to_self_delay</span> <span class="o">=</span> <span class="n">min_to_self_delay</span>
 
-<div class="viewcode-block" id="Inspector.inspect"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.inspect">[docs]</a>    <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">appointment_data</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">public_key</span><span class="p">):</span>
+<div class="viewcode-block" id="Inspector.inspect"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.inspect">[docs]</a>    <span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">appointment_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inspects whether the data provided by the user is correct.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            appointment_data (:obj:`dict`): a dictionary containing the appointment data.</span>
-<span class="sd">            signature (:obj:`str`): the appointment signature provided by the user (hex encoded).</span>
-<span class="sd">            public_key (:obj:`str`): the user&#39;s public key (hex encoded).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`Appointment &lt;teos.appointment.Appointment&gt;` or :obj:`tuple`: An appointment initialized with the</span>
-<span class="sd">            provided data if it is correct.</span>
+<span class="sd">            :obj:`Appointment &lt;common.appointment.Appointment&gt;`: An appointment initialized with the provided data.</span>
 
-<span class="sd">            Returns a tuple ``(return code, message)`` describing the error otherwise.</span>
-
-<span class="sd">            Errors are defined in :mod:`Errors &lt;teos.errors&gt;`.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           :obj:`InspectionFailed`: if any of the fields is wrong.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">block_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_block_count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">appointment_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span><span class="p">,</span> <span class="s2">&quot;empty appointment received&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD</span><span class="p">,</span> <span class="s2">&quot;wrong appointment format&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">block_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_locator</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_locator</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_to_self_delay</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;to_self_delay&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_blob</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">))</span>
 
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_start_time</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">),</span> <span class="n">block_height</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_end_time</span><span class="p">(</span>
-                    <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">),</span> <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">),</span> <span class="n">block_height</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_to_self_delay</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;to_self_delay&quot;</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_blob</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_appointment_signature</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">rcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="n">Appointment</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">rcode</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># In case of an unknown exception, assign a special rcode and reason.</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">UNKNOWN_JSON_RPC_EXCEPTION</span><span class="p">,</span> <span class="s2">&quot;Unexpected error occurred&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">r</span></div>
+        <span class="k">return</span> <span class="n">Appointment</span><span class="p">(</span>
+            <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">),</span>
+            <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">),</span>
+            <span class="n">appointment_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;to_self_delay&quot;</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Inspector.check_locator"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_locator">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">check_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if the provided ``locator`` is correct.</span>
 
-<span class="sd">        Locators must be 16-byte hex encoded strings.</span>
+<span class="sd">        Locators must be 16-byte hex-encoded strings.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            locator (:obj:`str`): the locator to be checked.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``locator`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">            The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``,</span>
-<span class="sd">            ``APPOINTMENT_WRONG_FIELD_SIZE``, and ``APPOINTMENT_WRONG_FIELD_FORMAT``.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           :obj:`InspectionFailed`: if any of the fields is wrong.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">if</span> <span class="n">locator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty locator received&quot;</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span><span class="p">,</span> <span class="s2">&quot;empty locator received&quot;</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong locator data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">locator</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span><span class="p">,</span> <span class="s2">&quot;wrong locator data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">locator</span><span class="p">))</span>
+            <span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span> <span class="o">!=</span> <span class="n">LOCATOR_LEN_HEX</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_SIZE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong locator size (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">locator</span><span class="p">))</span>
-            <span class="c1"># TODO: #12-check-txid-regexp</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_SIZE</span><span class="p">,</span> <span class="s2">&quot;wrong locator size (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">locator</span><span class="p">)))</span>
 
-        <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[0-9A-Fa-f]+$&quot;</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_FORMAT</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong locator format (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locator</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div>
-
-<div class="viewcode-block" id="Inspector.check_start_time"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_start_time">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">check_start_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">block_height</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if the provided ``start_time`` is correct.</span>
-
-<span class="sd">        Start times must be ahead the current best chain tip.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            start_time (:obj:`int`): the block height at which the tower is requested to start watching for breaches.</span>
-<span class="sd">            block_height (:obj:`int`): the chain height.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``start_time`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">             The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``, and</span>
-<span class="sd">             ``APPOINTMENT_FIELD_TOO_SMALL``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c1"># TODO: What&#39;s too close to the current height is not properly defined. Right now any appointment that is in the</span>
-        <span class="c1">#       future will be accepted (even if it&#39;s only one block away).</span>
-
-        <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">start_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty start_time received&quot;</span>
-
-        <span class="k">elif</span> <span class="n">t</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong start_time data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">start_time</span> <span class="o">&lt;=</span> <span class="n">block_height</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_SMALL</span>
-            <span class="k">if</span> <span class="n">start_time</span> <span class="o">&lt;</span> <span class="n">block_height</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;start_time is in the past&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;start_time is too close to current height. &quot;</span>
-                    <span class="s2">&quot;Accepted times are: [current_height+1, current_height+6]&quot;</span>
-                <span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">block_height</span> <span class="o">+</span> <span class="mi">6</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_BIG</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;start_time is too far in the future. Accepted start times are up to 6 blocks in the future&quot;</span>
-
-        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div>
-
-<div class="viewcode-block" id="Inspector.check_end_time"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_end_time">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">check_end_time</span><span class="p">(</span><span class="n">end_time</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">block_height</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if the provided ``end_time`` is correct.</span>
-
-<span class="sd">        End times must be ahead both the ``start_time`` and the current best chain tip.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            end_time (:obj:`int`): the block height at which the tower is requested to stop watching for breaches.</span>
-<span class="sd">            start_time (:obj:`int`): the block height at which the tower is requested to start watching for breaches.</span>
-<span class="sd">            block_height (:obj:`int`): the chain height.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``end_time`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">            The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``, and</span>
-<span class="sd">            ``APPOINTMENT_FIELD_TOO_SMALL``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c1"># TODO: What&#39;s too close to the current height is not properly defined. Right now any appointment that ends in</span>
-        <span class="c1">#       the future will be accepted (even if it&#39;s only one block away).</span>
-
-        <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty end_time received&quot;</span>
-
-        <span class="k">elif</span> <span class="n">t</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong end_time data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="n">block_height</span> <span class="o">+</span> <span class="n">BLOCKS_IN_A_MONTH</span><span class="p">:</span>  <span class="c1"># 4320 = roughly a month in blocks</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_BIG</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;end_time should be within the next month (&lt;= current_height + 4320)&quot;</span>
-
-        <span class="k">elif</span> <span class="n">start_time</span> <span class="o">&gt;=</span> <span class="n">end_time</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_SMALL</span>
-            <span class="k">if</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="n">end_time</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;end_time is smaller than start_time&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;end_time is equal to start_time&quot;</span>
-
-        <span class="k">elif</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="n">end_time</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_SMALL</span>
-            <span class="k">if</span> <span class="n">block_height</span> <span class="o">&gt;</span> <span class="n">end_time</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;end_time is in the past&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;end_time is too close to current height&quot;</span>
-
-        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_locator</span><span class="p">(</span><span class="n">locator</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_FORMAT</span><span class="p">,</span> <span class="s2">&quot;wrong locator format (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locator</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Inspector.check_to_self_delay"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_to_self_delay">[docs]</a>    <span class="k">def</span> <span class="nf">check_to_self_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_self_delay</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -400,141 +250,59 @@
 <span class="sd">        To self delays must be greater or equal to ``MIN_TO_SELF_DELAY``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            to_self_delay (:obj:`int`): The ``to_self_delay`` encoded in the ``csv`` of the ``htlc`` that this</span>
-<span class="sd">                appointment is covering.</span>
+<span class="sd">            to_self_delay (:obj:`int`): The ``to_self_delay`` encoded in the ``csv`` of ``to_remote`` output of the</span>
+<span class="sd">                commitment transaction this appointment is covering.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``to_self_delay`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">            The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``, and</span>
-<span class="sd">            ``APPOINTMENT_FIELD_TOO_SMALL``.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           :obj:`InspectionFailed`: if any of the fields is wrong.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">to_self_delay</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">to_self_delay</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty to_self_delay received&quot;</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span><span class="p">,</span> <span class="s2">&quot;empty to_self_delay received&quot;</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">t</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong to_self_delay data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">to_self_delay</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span><span class="p">,</span> <span class="s2">&quot;wrong to_self_delay data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">to_self_delay</span><span class="p">))</span>
+            <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">to_self_delay</span> <span class="o">&gt;</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_BIG</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;to_self_delay must fit the transaction nLockTime field (</span><span class="si">{}</span><span class="s2"> &gt; </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">to_self_delay</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_BIG</span><span class="p">,</span>
+                <span class="s2">&quot;to_self_delay must fit the transaction nLockTime field (</span><span class="si">{}</span><span class="s2"> &gt; </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">to_self_delay</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">32</span><span class="p">)),</span>
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">to_self_delay</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_to_self_delay</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_SMALL</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;to_self_delay too small. The to_self_delay should be at least </span><span class="si">{}</span><span class="s2"> (current: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">min_to_self_delay</span><span class="p">,</span> <span class="n">to_self_delay</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_SMALL</span><span class="p">,</span>
+                <span class="s2">&quot;to_self_delay too small. The to_self_delay should be at least </span><span class="si">{}</span><span class="s2"> (current: </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">min_to_self_delay</span><span class="p">,</span> <span class="n">to_self_delay</span>
+                <span class="p">),</span>
+            <span class="p">)</span></div>
 
-        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div>
-
-    <span class="c1"># ToDo: #6-define-checks-encrypted-blob</span>
 <div class="viewcode-block" id="Inspector.check_blob"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_blob">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">check_blob</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if the provided ``encrypted_blob`` may be correct.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            encrypted_blob (:obj:`str`): the encrypted blob to be checked (hex encoded).</span>
+<span class="sd">            encrypted_blob (:obj:`str`): the encrypted blob to be checked (hex-encoded).</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``encrypted_blob`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">            The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``, and</span>
-<span class="sd">            ``APPOINTMENT_WRONG_FIELD_FORMAT``.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">           :obj:`InspectionFailed`: if any of the fields is wrong.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="n">t</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">encrypted_blob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty encrypted_blob received&quot;</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span><span class="p">,</span> <span class="s2">&quot;empty encrypted_blob received&quot;</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">t</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong encrypted_blob data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ENCRYPTED_BLOB_MAX_SIZE_HEX</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_FIELD_TOO_BIG</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;encrypted_blob has to be 2Kib at most (current </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_TYPE</span><span class="p">,</span> <span class="s2">&quot;wrong encrypted_blob data type (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">))</span>
+            <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[0-9A-Fa-f]+$&quot;</span><span class="p">,</span> <span class="n">encrypted_blob</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_FORMAT</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;wrong encrypted_blob format (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div>
-
-<div class="viewcode-block" id="Inspector.check_appointment_signature"><a class="viewcode-back" href="../../teos.inspector.html#teos.inspector.Inspector.check_appointment_signature">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="c1"># Verifies that the appointment signature is a valid signature with public key</span>
-    <span class="k">def</span> <span class="nf">check_appointment_signature</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">,</span> <span class="n">signature</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if the provided user signature is correct.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            appointment_data (:obj:`dict`): the appointment that was signed by the user.</span>
-<span class="sd">            signature (:obj:`str`): the user&#39;s signature (hex encoded).</span>
-<span class="sd">            pk (:obj:`str`): the user&#39;s public key (hex encoded).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (return code, message) as follows:</span>
-
-<span class="sd">            - ``(0, None)`` if the ``signature`` is correct.</span>
-<span class="sd">            - ``!= (0, None)`` otherwise.</span>
-
-<span class="sd">            The possible return errors are: ``APPOINTMENT_EMPTY_FIELD``, ``APPOINTMENT_WRONG_FIELD_TYPE``, and</span>
-<span class="sd">            ``APPOINTMENT_WRONG_FIELD_FORMAT``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rcode</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">if</span> <span class="n">signature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty signature received&quot;</span>
-
-        <span class="k">elif</span> <span class="n">pk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_EMPTY_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;empty public key received&quot;</span>
-
-        <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[0-9A-Fa-f]</span><span class="si">{66}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;public key must be a hex encoded 33-byte long value&quot;</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">appointment</span> <span class="o">=</span> <span class="n">Appointment</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">appointment_data</span><span class="p">)</span>
-            <span class="n">rpk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">recover_pk</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="n">signature</span><span class="p">)</span>
-            <span class="n">pk</span> <span class="o">=</span> <span class="n">PublicKey</span><span class="p">(</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
-            <span class="n">valid_sig</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">verify_rpk</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">rpk</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_sig</span><span class="p">:</span>
-                <span class="n">rcode</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_INVALID_SIGNATURE</span>
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;invalid signature&quot;</span>
-
-        <span class="k">return</span> <span class="n">rcode</span><span class="p">,</span> <span class="n">message</span></div></div>
+            <span class="k">raise</span> <span class="n">InspectionFailed</span><span class="p">(</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">APPOINTMENT_WRONG_FIELD_FORMAT</span><span class="p">,</span> <span class="s2">&quot;wrong encrypted_blob format (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span>
+            <span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -547,11 +315,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -562,7 +338,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,7 +1,0 @@
-teos.rpc\_errors
-================
-
-.. automodule:: teos.rpc_errors
-   :members:
-   :undoc-members:
-   :show-inheritance:

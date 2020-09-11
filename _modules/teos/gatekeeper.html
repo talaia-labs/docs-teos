@@ -1,0 +1,434 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.gatekeeper &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.gatekeeper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.gatekeeper</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">is_compressed_pk</span><span class="p">,</span> <span class="n">is_u4int</span>
+<span class="kn">from</span> <span class="nn">common.cryptographer</span> <span class="kn">import</span> <span class="n">Cryptographer</span>
+<span class="kn">from</span> <span class="nn">common.receipts</span> <span class="kn">import</span> <span class="n">create_registration_receipt</span>
+<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">ENCRYPTED_BLOB_MAX_SIZE_HEX</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">InvalidParameter</span><span class="p">,</span> <span class="n">InvalidKey</span><span class="p">,</span> <span class="n">SignatureError</span>
+
+
+<div class="viewcode-block" id="NotEnoughSlots"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.NotEnoughSlots">[docs]</a><span class="k">class</span> <span class="nc">NotEnoughSlots</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raised when trying to subtract more slots than a user has available.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AuthenticationFailure"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.AuthenticationFailure">[docs]</a><span class="k">class</span> <span class="nc">AuthenticationFailure</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when a user can not be authenticated. Either the user public key cannot be recovered or the user is</span>
+<span class="sd">    not found within the registered ones.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="UserInfo"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.UserInfo">[docs]</a><span class="k">class</span> <span class="nc">UserInfo</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class used to stored information about a user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        available_slots (:obj:`int`): the number of appointment slots available to the user.</span>
+<span class="sd">        subscription_expiry (:obj:`int`): the block height when the user subscription will expire.</span>
+<span class="sd">        appointments (:obj:`dict`): a dictionary containing the current appointments of the user. Optional.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">available_slots</span><span class="p">,</span> <span class="n">subscription_expiry</span><span class="p">,</span> <span class="n">appointments</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">available_slots</span> <span class="o">=</span> <span class="n">available_slots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscription_expiry</span> <span class="o">=</span> <span class="n">subscription_expiry</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">appointments</span><span class="p">:</span>
+            <span class="c1"># A dictionary of the form uuid:required_slots for each user appointment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">appointments</span> <span class="o">=</span> <span class="n">appointments</span>
+
+<div class="viewcode-block" id="UserInfo.from_dict"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.UserInfo.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a :obj:`UserInfo` instance from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_data (:obj:`dict`): a dictionary containing all the necessary ``key:value`` pairs.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`ValueError`: if any of the dictionary entries is missing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">available_slots</span> <span class="o">=</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;available_slots&quot;</span><span class="p">)</span>
+        <span class="n">appointments</span> <span class="o">=</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointments&quot;</span><span class="p">)</span>
+        <span class="n">subscription_expiry</span> <span class="o">=</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subscription_expiry&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">available_slots</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">subscription_expiry</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong appointment data, some fields are missing&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">available_slots</span><span class="p">,</span> <span class="n">subscription_expiry</span><span class="p">,</span> <span class="n">appointments</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UserInfo.to_dict"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.UserInfo.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts a :obj:`UserInfo` instance in a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span></div></div>
+
+
+<div class="viewcode-block" id="Gatekeeper"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.Gatekeeper">[docs]</a><span class="k">class</span> <span class="nc">Gatekeeper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :class:`Gatekeeper` is in charge of managing the access to the tower. Only registered users are allowed to</span>
+<span class="sd">    perform actions.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        subscription_slots (:obj:`int`): The number of slots assigned to a user subscription.</span>
+<span class="sd">        subscription_duration (:obj:`int`): The expiry assigned to a user subscription.</span>
+<span class="sd">        expiry_delta (:obj:`int`): The grace period given to the user to renew their subscription.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): A block processor instance to</span>
+<span class="sd">            get block from bitcoind.</span>
+<span class="sd">        user_db (:obj:`UsersDBM &lt;teos.user_dbm.UsersDBM&gt;`): A user database manager instance to interact with the</span>
+<span class="sd">            database.</span>
+<span class="sd">        registered_users (:obj:`dict`): A map of ``user_pk:user_info``.</span>
+<span class="sd">        lock (:obj:`Lock`): A lock object to lock access to the Gatekeeper on updates.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_db</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">,</span> <span class="n">subscription_slots</span><span class="p">,</span> <span class="n">subscription_duration</span><span class="p">,</span> <span class="n">expiry_delta</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscription_slots</span> <span class="o">=</span> <span class="n">subscription_slots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscription_duration</span> <span class="o">=</span> <span class="n">subscription_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expiry_delta</span> <span class="o">=</span> <span class="n">expiry_delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">block_processor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_db</span> <span class="o">=</span> <span class="n">user_db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">user_id</span><span class="p">:</span> <span class="n">UserInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">user_data</span> <span class="ow">in</span> <span class="n">user_db</span><span class="o">.</span><span class="n">load_all_users</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Gatekeeper.add_update_user"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.add_update_user">[docs]</a>    <span class="k">def</span> <span class="nf">add_update_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a new user or updates the subscription of an existing one, by adding additional slots.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id(:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`tuple`: A tuple with the number of available slots in the user subscription, the subscription</span>
+<span class="sd">            expiry (in absolute block height), and the registration_receipt.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`InvalidParameter`: if the user_pk does not match the expected format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_compressed_pk</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Provided public key does not match expected format (33-byte hex string)&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">UserInfo</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subscription_slots</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_block_count</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription_duration</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># FIXME: For now new calls to register add subscription_slots to the current count and reset the expiry time</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_u4int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">available_slots</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription_slots</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Maximum slots reached for the subscription&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">available_slots</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription_slots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">subscription_expiry</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_block_count</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription_duration</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_db</span><span class="o">.</span><span class="n">store_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">receipt</span> <span class="o">=</span> <span class="n">create_registration_receipt</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">available_slots</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">subscription_expiry</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">available_slots</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">subscription_expiry</span><span class="p">,</span>
+            <span class="n">receipt</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Gatekeeper.authenticate_user"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.authenticate_user">[docs]</a>    <span class="k">def</span> <span class="nf">authenticate_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">signature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a request comes from a registered user by ec-recovering their public key from a signed message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            message (:obj:`bytes`): byte representation of the original message from where the signature was generated.</span>
+<span class="sd">            signature (:obj:`str`): the user&#39;s signature (hex-encoded).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`str`: A compressed key recovered from the signature and matching a registered user.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`AuthenticationFailure`: if the user cannot be authenticated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rpk</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">recover_pk</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+            <span class="n">user_id</span> <span class="o">=</span> <span class="n">Cryptographer</span><span class="o">.</span><span class="n">get_compressed_pk</span><span class="p">(</span><span class="n">rpk</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">user_id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">AuthenticationFailure</span><span class="p">(</span><span class="s2">&quot;User not found.&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">InvalidParameter</span><span class="p">,</span> <span class="n">InvalidKey</span><span class="p">,</span> <span class="n">SignatureError</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">AuthenticationFailure</span><span class="p">(</span><span class="s2">&quot;Wrong message or signature.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Gatekeeper.add_update_appointment"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.add_update_appointment">[docs]</a>    <span class="k">def</span> <span class="nf">add_update_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">appointment</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds (or updates) an appointment to a user subscription. The user slots are updated accordingly.</span>
+
+<span class="sd">        Slots are taken if a new appointment is given, or an update is given with an appointment bigger than the</span>
+<span class="sd">        existing one.</span>
+
+<span class="sd">        Slots are given back if an update is given but the new appointment is smaller than the existing one.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id (:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
+<span class="sd">            uuid (:obj:`str`): the appointment uuid.</span>
+<span class="sd">            appointment (:obj:`ExtendedAppointment &lt;teos.extended_appointment.ExtendedAppointment&gt;`): the summary of new</span>
+<span class="sd">                appointment the user is requesting.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`int`: The number of remaining appointment slots.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`NotEnoughSlots`: if the user does not have enough slots to fill.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="c1"># For updates the difference between the existing appointment and the update is computed.</span>
+        <span class="k">if</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">appointments</span><span class="p">:</span>
+            <span class="n">used_slots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># For regular appointments 1 slot is reserved per ENCRYPTED_BLOB_MAX_SIZE_HEX block.</span>
+            <span class="n">used_slots</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">required_slots</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="p">)</span> <span class="o">/</span> <span class="n">ENCRYPTED_BLOB_MAX_SIZE_HEX</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">required_slots</span> <span class="o">-</span> <span class="n">used_slots</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">available_slots</span><span class="p">:</span>
+            <span class="c1"># Filling / freeing slots depending on whether this is an update or not, and if it is bigger or smaller than</span>
+            <span class="c1"># the old appointment.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">appointments</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_slots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">available_slots</span> <span class="o">-=</span> <span class="n">required_slots</span> <span class="o">-</span> <span class="n">used_slots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_db</span><span class="o">.</span><span class="n">store_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">NotEnoughSlots</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">available_slots</span></div>
+
+<div class="viewcode-block" id="Gatekeeper.get_expired_appointments"><a class="viewcode-back" href="../../teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.get_expired_appointments">[docs]</a>    <span class="k">def</span> <span class="nf">get_expired_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a list of appointments that expire at a given block height.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            block_height: the block height that wants to be checked.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`list`: A list of appointment uuids that will expire at ``block_height``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">expired_appointments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Avoiding dictionary changed size during iteration</span>
+        <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">block_height</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">subscription_expiry</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">expiry_delta</span><span class="p">:</span>
+                <span class="n">expired_appointments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registered_users</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">appointments</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">expired_appointments</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

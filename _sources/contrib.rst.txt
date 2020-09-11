@@ -1,0 +1,14 @@
+contrib package
+===============
+
+.. automodule:: contrib
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+   contrib.client

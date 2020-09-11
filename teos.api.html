@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,14 +34,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="teos.block_processor" href="teos.block_processor.html" />
-    <link rel="prev" title="teos package" href="teos.html" /> 
+    <link rel="next" title="teos.appointments_dbm" href="teos.appointments_dbm.html" />
+    <link rel="prev" title="teos.cli.teos_cli" href="teos.cli.teos_cli.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,32 +85,39 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="teos.html#subpackages">Subpackages</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.appointments_dbm.html">teos.appointments_dbm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.extended_appointment.html">teos.extended_appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.gatekeeper.html">teos.gatekeeper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.internal_api.html">teos.internal_api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.lightning_server.html">teos.lightning_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.logger.html">teos.logger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc.html">teos.rpc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.users_dbm.html">teos.users_dbm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -147,7 +156,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="teos.html">teos package</a> &raquo;</li>
         
@@ -172,32 +181,50 @@
             
   <div class="section" id="module-teos.api">
 <span id="teos-api"></span><h1>teos.api<a class="headerlink" href="#module-teos.api" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="teos.api.API">
-<em class="property">class </em><code class="sig-name descname">API</code><span class="sig-paren">(</span><em class="sig-param">inspector</em>, <em class="sig-param">watcher</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">API</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inspector</span></em>, <em class="sig-param"><span class="n">internal_api_endpoint</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The <a class="reference internal" href="#teos.api.API" title="teos.api.API"><code class="xref py py-class docutils literal notranslate"><span class="pre">API</span></code></a> is in charge of the interface between the user and the tower. It handles and server user requests.</p>
+<p>The <a class="reference internal" href="#teos.api.API" title="teos.api.API"><code class="xref py py-class docutils literal notranslate"><span class="pre">API</span></code></a> is in charge of the interface between the user and the tower. It handles and serves user requests.
+The API is connected with the <a class="reference internal" href="teos.internal_api.html#teos.internal_api.InternalAPI" title="teos.internal_api.InternalAPI"><code class="xref py py-class docutils literal notranslate"><span class="pre">InternalAPI</span></code></a> via gRPC.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inspector</strong> (<a class="reference internal" href="teos.inspector.html#teos.inspector.Inspector" title="teos.inspector.Inspector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inspector</span></code></a>) – an <code class="docutils literal notranslate"><span class="pre">Inspector</span></code> instance to check the correctness of
-the received data.</p></li>
-<li><p><strong>watcher</strong> (<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> instance to pass the requests to.</p></li>
+<li><p><strong>inspector</strong> (<a class="reference internal" href="teos.inspector.html#teos.inspector.Inspector" title="teos.inspector.Inspector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inspector</span></code></a>) – an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Inspector</span></code> instance to check the correctness
+of the received appointment data.</p></li>
+<li><p><strong>internal_api_endpoint</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the endpoint where the internal api is served.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py attribute">
+<dt id="teos.api.API.logger">
+<code class="sig-name descname">logger</code><a class="headerlink" href="#teos.api.API.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>The logger for this component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Logger</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="teos.api.API.app">
+<code class="sig-name descname">app</code><a class="headerlink" href="#teos.api.API.app" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Flask app of the API server.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="teos.api.API.add_appointment">
 <code class="sig-name descname">add_appointment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API.add_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API.add_appointment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main endpoint of the Watchtower.</p>
 <p>The client sends requests (appointments) to this endpoint to request a job to the Watchtower. Requests must be
-json encoded and contain an <code class="docutils literal notranslate"><span class="pre">appointment</span></code> field and optionally a <code class="docutils literal notranslate"><span class="pre">signature</span></code> and <code class="docutils literal notranslate"><span class="pre">public_key</span></code> fields.</p>
+json encoded and contain an <code class="docutils literal notranslate"><span class="pre">appointment</span></code> and <code class="docutils literal notranslate"><span class="pre">signature</span></code> fields.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A tuple containing the response (<code class="docutils literal notranslate"><span class="pre">json</span></code>) and response code (<code class="docutils literal notranslate"><span class="pre">int</span></code>). For accepted
-appointments, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> is always 0 and the response contains the signed receipt. For rejected
-appointments, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> is a negative value and the response contains the error message. Error messages
-can be found at <a class="reference internal" href="teos.errors.html#module-teos.errors" title="teos.errors"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Errors</span></code></a>.</p>
+<dd class="field-odd"><p>A tuple containing the response (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) and response code (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>). For accepted
+appointments, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> is always 200 and the response contains the receipt signature (json). For
+rejected appointments, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> contains an application error, and an error message. Error messages can
+be found at <code class="docutils literal notranslate"><span class="pre">common.errors</span></code>.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -205,24 +232,7 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="teos.api.API.get_all_appointments">
-<code class="sig-name descname">get_all_appointments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API.get_all_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API.get_all_appointments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives information about all the appointments in the Watchtower.</p>
-<p>This endpoint should only be accessible by the administrator. Requests are only allowed from localhost.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A json formatted dictionary containing all the appointments hold by the
-<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> (<code class="docutils literal notranslate"><span class="pre">watcher_appointments</span></code>) and by the
-<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> (<code class="docutils literal notranslate"><span class="pre">responder_trackers</span></code>).</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
+<dl class="py method">
 <dt id="teos.api.API.get_appointment">
 <code class="sig-name descname">get_appointment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API.get_appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API.get_appointment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives information about a given appointment state in the Watchtower.</p>
@@ -230,6 +240,7 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p>A json formatted dictionary containing information about the requested appointment.</p>
+<p>Returns not found if the user does not have the requested appointment or the locator is invalid.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">status</span></code> flag is added to the data provided by either the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> or the
 <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a> that signals the status of the appointment.</p>
 <ul class="simple">
@@ -240,17 +251,89 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="teos.api.API.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function starts the Flask server used to run the API. Adds all the routes to the functions listed above.</p>
+<dl class="py method">
+<dt id="teos.api.API.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#API.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.API.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a user by creating a subscription.</p>
+<p>Registration is pretty straightforward for now, since it does not require payments.
+The amount of slots and expiry of the subscription cannot be requested by the user yet either. This is linked to
+the previous point.
+Users register by sending a public key to the proper endpoint. This is exploitable atm, but will be solved when
+payments are introduced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the response (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) and response code (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>). For accepted
+requests, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> is always 200 and the response contains a json with the public key and number of
+slots in the subscription. For rejected requests, the <code class="docutils literal notranslate"><span class="pre">rcode</span></code> is a 404 and the value contains an
+application error, and an error message. Error messages can be found at <code class="docutils literal notranslate"><span class="pre">common.errors</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.api.get_remote_addr">
+<code class="sig-name descname">get_remote_addr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#get_remote_addr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.get_remote_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the remote client ip address. The <code class="docutils literal notranslate"><span class="pre">HTTP_X_REAL_IP</span></code> field is tried first in case the server is behind a
+reverse proxy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The IP address of the client.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.api.get_request_data_json">
+<code class="sig-name descname">get_request_data_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#get_request_data_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.get_request_data_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the content of a json <code class="docutils literal notranslate"><span class="pre">POST</span></code> request and makes sure it decodes to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Request</span></code>) – the request sent by the user.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The dictionary parsed from the json request.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="common.exceptions.html#common.exceptions.InvalidParameter" title="common.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> – if the request is not json encoded or it does not decodes to a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.api.serve">
+<code class="sig-name descname">serve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">internal_api_endpoint</span></em>, <em class="sig-param"><span class="n">endpoint</span></em>, <em class="sig-param"><span class="n">min_to_self_delay</span></em>, <em class="sig-param"><span class="n">auto_run</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/api.html#serve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.api.serve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the API.</p>
+<p>This method can be handled either form an external WSGI (like gunicorn) or by the Flask development server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>internal_api_endpoint</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – endpoint where the internal api is running (<code class="docutils literal notranslate"><span class="pre">host:port</span></code>).</p></li>
+<li><p><strong>endpoint</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – endpoint where the http api will be running (<code class="docutils literal notranslate"><span class="pre">host:port</span></code>).</p></li>
+<li><p><strong>min_to_self_delay</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the minimum to_self_delay accepted by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Inspector</span></code>.</p></li>
+<li><p><strong>auto_run</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – whether the server should be started by this process. False if run with an external
+WSGI. True is run by Flask.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The application object needed by the WSGI server to run if <code class="docutils literal notranslate"><span class="pre">auto_run</span></code> is False, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -263,10 +346,10 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="teos.block_processor.html" class="btn btn-neutral float-right" title="teos.block_processor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="teos.appointments_dbm.html" class="btn btn-neutral float-right" title="teos.appointments_dbm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="teos.html" class="btn btn-neutral float-left" title="teos package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="teos.cli.teos_cli.html" class="btn btn-neutral float-left" title="teos.cli.teos_cli" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -275,11 +358,19 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -290,7 +381,6 @@ can be found at <a class="reference internal" href="teos.errors.html#module-teos
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,9 +1,7 @@
 
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -13,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -30,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -49,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -72,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -82,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -127,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Index</li>
     
@@ -159,16 +161,17 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
- | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
@@ -176,23 +179,49 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.activate">activate() (ChainMonitor method)</a>
+</li>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitorStatus.ACTIVE">ACTIVE (ChainMonitorStatus attribute)</a>
+</li>
       <li><a href="teos.api.html#teos.api.API.add_appointment">add_appointment() (API method)</a>
 
       <ul>
-        <li><a href="cli.teos_cli.html#cli.teos_cli.add_appointment">(in module cli.teos_cli)</a>
+        <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.add_appointment">(in module contrib.client.teos_client)</a>
 </li>
         <li><a href="teos.watcher.html#teos.watcher.Watcher.add_appointment">(Watcher method)</a>
 </li>
       </ul></li>
       <li><a href="teos.responder.html#teos.responder.Responder.add_tracker">add_tracker() (Responder method)</a>
 </li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.add_update_appointment">add_update_appointment() (Gatekeeper method)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.add_update_user">add_update_user() (Gatekeeper method)</a>
+</li>
+      <li><a href="teos.logger.html#teos.logger.LogRecordSocketReceiver.allow_reuse_address">allow_reuse_address (LogRecordSocketReceiver attribute)</a>
+</li>
+      <li><a href="teos.api.html#teos.api.API">API (class in teos.api)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.self.api_proc">api_proc (TeosDaemon.self attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.api.html#teos.api.API">API (class in teos.api)</a>
+      <li><a href="teos.api.html#teos.api.API.app">app (API attribute)</a>
 </li>
       <li><a href="common.appointment.html#common.appointment.Appointment">Appointment (class in common.appointment)</a>
 </li>
+      <li><a href="teos.watcher.html#teos.watcher.AppointmentAlreadyTriggered">AppointmentAlreadyTriggered</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.AppointmentLimitReached">AppointmentLimitReached</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.AppointmentNotFound">AppointmentNotFound</a>
+</li>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.appointments">appointments (Watcher attribute)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM">AppointmentsDBM (class in teos.appointments_dbm)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.authenticate_user">authenticate_user() (Gatekeeper method)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.AuthenticationFailure">AuthenticationFailure</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.Responder.awake">awake() (Responder method)</a>
 
@@ -206,24 +235,24 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.batch_create_triggered_appointment_flag">batch_create_triggered_appointment_flag() (DBManager method)</a>
+      <li><a href="common.exceptions.html#common.exceptions.BasicException">BasicException</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.batch_delete_responder_trackers">batch_delete_responder_trackers() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_create_triggered_appointment_flag">batch_create_triggered_appointment_flag() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.batch_delete_triggered_appointment_flag">batch_delete_triggered_appointment_flag() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_responder_trackers">batch_delete_responder_trackers() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.batch_delete_watcher_appointments">batch_delete_watcher_appointments() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_triggered_appointment_flag">batch_delete_triggered_appointment_flag() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.best_tip">best_tip (ChainMonitor attribute)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.batch_delete_watcher_appointments">batch_delete_watcher_appointments() (AppointmentsDBM method)</a>
 </li>
       <li><a href="teos.tools.html#teos.tools.bitcoin_cli">bitcoin_cli() (in module teos.tools)</a>
 </li>
-      <li><a href="common.blob.html#common.blob.Blob">Blob (class in common.blob)</a>
-</li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.block_processor">block_processor (ChainMonitor attribute)</a>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.block_processor">block_processor (Gatekeeper attribute)</a>
 
       <ul>
         <li><a href="teos.responder.html#teos.responder.Responder.block_processor">(Responder attribute)</a>
+</li>
+        <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.block_processor">(TeosDaemon attribute)</a>
 </li>
         <li><a href="teos.watcher.html#teos.watcher.Watcher.block_processor">(Watcher attribute)</a>
 </li>
@@ -237,6 +266,10 @@
 </li>
       </ul></li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor">BlockProcessor (class in teos.block_processor)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.blocks">blocks (LocatorCache attribute)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.bootstrap_components">bootstrap_components() (TeosDaemon method)</a>
 </li>
       <li><a href="teos.builder.html#teos.builder.Builder.build_appointments">build_appointments() (Builder static method)</a>
 </li>
@@ -252,31 +285,33 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.cache">cache (LocatorCache attribute)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.cache_size">cache_size (LocatorCache attribute)</a>
+</li>
       <li><a href="teos.tools.html#teos.tools.can_connect_to_bitcoind">can_connect_to_bitcoind() (in module teos.tools)</a>
 </li>
       <li><a href="teos.carrier.html#teos.carrier.Carrier">Carrier (class in teos.carrier)</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.Responder.carrier">carrier (Responder attribute)</a>
 </li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.chain_monitor">chain_monitor (TeosDaemon attribute)</a>
+</li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor">ChainMonitor (class in teos.chain_monitor)</a>
 </li>
-      <li><a href="teos.inspector.html#teos.inspector.Inspector.check_appointment_signature">check_appointment_signature() (Inspector static method)</a>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitorStatus">ChainMonitorStatus (class in teos.chain_monitor)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.channel">channel (RPCClient attribute)</a>
 </li>
       <li><a href="teos.inspector.html#teos.inspector.Inspector.check_blob">check_blob() (Inspector static method)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.check_breach">check_breach() (Watcher method)</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.Responder.check_confirmations">check_confirmations() (Responder method)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.check_data_key_format">check_data_key_format() (Cryptographer static method)</a>
 </li>
-      <li><a href="teos.inspector.html#teos.inspector.Inspector.check_end_time">check_end_time() (Inspector static method)</a>
-</li>
       <li><a href="teos.inspector.html#teos.inspector.Inspector.check_locator">check_locator() (Inspector static method)</a>
-</li>
-      <li><a href="common.tools.html#common.tools.check_locator_format">check_locator_format() (in module common.tools)</a>
-</li>
-      <li><a href="common.tools.html#common.tools.check_sha256_hex_format">check_sha256_hex_format() (in module common.tools)</a>
-</li>
-      <li><a href="teos.inspector.html#teos.inspector.Inspector.check_start_time">check_start_time() (Inspector static method)</a>
 </li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.check_tip">check_tip (ChainMonitor attribute)</a>
 </li>
@@ -284,32 +319,66 @@
 </li>
       <li><a href="teos.cleaner.html#teos.cleaner.Cleaner">Cleaner (class in teos.cleaner)</a>
 </li>
-      <li><a href="cli.html#module-cli">cli (module)</a>
-</li>
-      <li><a href="cli.help.html#module-cli.help">cli.help (module)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cli.teos_cli.html#module-cli.teos_cli">cli.teos_cli (module)</a>
-</li>
       <li><a href="common.config_loader.html#common.config_loader.ConfigLoader.command_line_conf">command_line_conf (ConfigLoader attribute)</a>
 </li>
-      <li><a href="common.html#module-common">common (module)</a>
+      <li>
+    common
+
+      <ul>
+        <li><a href="common.html#module-common">module</a>
 </li>
-      <li><a href="common.appointment.html#module-common.appointment">common.appointment (module)</a>
+      </ul></li>
+      <li>
+    common.appointment
+
+      <ul>
+        <li><a href="common.appointment.html#module-common.appointment">module</a>
 </li>
-      <li><a href="common.blob.html#module-common.blob">common.blob (module)</a>
+      </ul></li>
+      <li>
+    common.config_loader
+
+      <ul>
+        <li><a href="common.config_loader.html#module-common.config_loader">module</a>
 </li>
-      <li><a href="common.config_loader.html#module-common.config_loader">common.config_loader (module)</a>
+      </ul></li>
+      <li>
+    common.cryptographer
+
+      <ul>
+        <li><a href="common.cryptographer.html#module-common.cryptographer">module</a>
 </li>
-      <li><a href="common.cryptographer.html#module-common.cryptographer">common.cryptographer (module)</a>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    common.db_manager
+
+      <ul>
+        <li><a href="common.db_manager.html#module-common.db_manager">module</a>
 </li>
-      <li><a href="common.encrypted_blob.html#module-common.encrypted_blob">common.encrypted_blob (module)</a>
+      </ul></li>
+      <li>
+    common.exceptions
+
+      <ul>
+        <li><a href="common.exceptions.html#module-common.exceptions">module</a>
 </li>
-      <li><a href="common.logger.html#module-common.logger">common.logger (module)</a>
+      </ul></li>
+      <li>
+    common.receipts
+
+      <ul>
+        <li><a href="common.receipts.html#module-common.receipts">module</a>
 </li>
-      <li><a href="common.tools.html#module-common.tools">common.tools (module)</a>
+      </ul></li>
+      <li>
+    common.tools
+
+      <ul>
+        <li><a href="common.tools.html#module-common.tools">module</a>
 </li>
+      </ul></li>
       <li><a href="common.tools.html#common.tools.compute_locator">compute_locator() (in module common.tools)</a>
 </li>
       <li><a href="common.config_loader.html#common.config_loader.ConfigLoader.conf_fields">conf_fields (ConfigLoader attribute)</a>
@@ -318,13 +387,40 @@
 </li>
       <li><a href="common.config_loader.html#common.config_loader.ConfigLoader">ConfigLoader (class in common.config_loader)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.create_append_locator_map">create_append_locator_map() (DBManager method)</a>
+      <li>
+    contrib
+
+      <ul>
+        <li><a href="contrib.html#module-contrib">module</a>
+</li>
+      </ul></li>
+      <li>
+    contrib.client
+
+      <ul>
+        <li><a href="contrib.client.html#module-contrib.client">module</a>
+</li>
+      </ul></li>
+      <li>
+    contrib.client.teos_client
+
+      <ul>
+        <li><a href="contrib.client.teos_client.html#module-contrib.client.teos_client">module</a>
+</li>
+      </ul></li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.create_append_locator_map">create_append_locator_map() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.create_appointment">create_appointment() (in module contrib.client.teos_client)</a>
+</li>
+      <li><a href="common.receipts.html#common.receipts.create_appointment_receipt">create_appointment_receipt() (in module common.receipts)</a>
 </li>
       <li><a href="common.config_loader.html#common.config_loader.ConfigLoader.create_config_dict">create_config_dict() (ConfigLoader method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.create_entry">create_entry() (DBManager method)</a>
+      <li><a href="common.db_manager.html#common.db_manager.DBManager.create_entry">create_entry() (DBManager method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.create_triggered_appointment_flag">create_triggered_appointment_flag() (DBManager method)</a>
+      <li><a href="common.receipts.html#common.receipts.create_registration_receipt">create_registration_receipt() (in module common.receipts)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.create_triggered_appointment_flag">create_triggered_appointment_flag() (AppointmentsDBM method)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer">Cryptographer (class in common.cryptographer)</a>
 </li>
@@ -339,12 +435,12 @@
       <li><a href="teos.responder.html#teos.responder.Responder.db_manager">db_manager (Responder attribute)</a>
 
       <ul>
+        <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.db_manager">(TeosDaemon attribute)</a>
+</li>
         <li><a href="teos.watcher.html#teos.watcher.Watcher.db_manager">(Watcher attribute)</a>
 </li>
       </ul></li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager">DBManager (class in teos.db_manager)</a>
-</li>
-      <li><a href="common.logger.html#common.logger.Logger.debug">debug() (Logger method)</a>
+      <li><a href="common.db_manager.html#common.db_manager.DBManager">DBManager (class in common.db_manager)</a>
 </li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.decode_raw_transaction">decode_raw_transaction() (BlockProcessor method)</a>
 </li>
@@ -354,23 +450,27 @@
 </li>
       <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_appointment_from_memory">delete_appointment_from_memory() (Cleaner static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_completed_appointments">delete_completed_appointments() (Cleaner static method)</a>
 </li>
-      <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_completed_trackers">delete_completed_trackers() (Cleaner static method)</a>
-</li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.delete_entry">delete_entry() (DBManager method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="common.db_manager.html#common.db_manager.DBManager.delete_entry">delete_entry() (DBManager method)</a>
 </li>
       <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_expired_appointments">delete_expired_appointments() (Cleaner static method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.delete_locator_map">delete_locator_map() (DBManager method)</a>
+      <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_gatekeeper_appointments">delete_gatekeeper_appointments() (Cleaner static method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.delete_responder_tracker">delete_responder_tracker() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_locator_map">delete_locator_map() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.delete_triggered_appointment_flag">delete_triggered_appointment_flag() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_responder_tracker">delete_responder_tracker() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.delete_watcher_appointment">delete_watcher_appointment() (DBManager method)</a>
+      <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.delete_trackers">delete_trackers() (Cleaner static method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_triggered_appointment_flag">delete_triggered_appointment_flag() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM.delete_user">delete_user() (UsersDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.delete_watcher_appointment">delete_watcher_appointment() (AppointmentsDBM method)</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.Responder.do_watch">do_watch() (Responder method)</a>
 
@@ -384,17 +484,27 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.logger.html#teos.logger.encode_event_dict">encode_event_dict() (in module teos.logger)</a>
+</li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.encrypt">encrypt() (Cryptographer static method)</a>
 </li>
-      <li><a href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob">EncryptedBlob (class in common.encrypted_blob)</a>
+      <li><a href="common.exceptions.html#common.exceptions.EncryptionError">EncryptionError</a>
 </li>
+      <li><a href="teos.internal_api.html#teos.internal_api.InternalAPI.endpoint">endpoint (InternalAPI attribute)</a>
+
+      <ul>
+        <li><a href="teos.rpc.html#teos.rpc.RPC.endpoint">(RPC attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="common.logger.html#common.logger.Logger.error">error() (Logger method)</a>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.enqueue">enqueue() (ChainMonitor method)</a>
 </li>
-      <li><a href="teos.watcher.html#teos.watcher.Watcher.expiry_delta">expiry_delta (Watcher attribute)</a>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.expiry_delta">expiry_delta (Gatekeeper attribute)</a>
 </li>
       <li><a href="common.config_loader.html#common.config_loader.ConfigLoader.extend_paths">extend_paths() (ConfigLoader method)</a>
+</li>
+      <li><a href="teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment">ExtendedAppointment (class in teos.extended_appointment)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -402,18 +512,28 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.watcher.html#teos.watcher.Watcher.filter_valid_breaches">filter_valid_breaches() (Watcher method)</a>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.filter_breaches">filter_breaches() (Watcher method)</a>
 </li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.find_last_common_ancestor">find_last_common_ancestor() (BlockProcessor method)</a>
 </li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.fix">fix() (LocatorCache method)</a>
+</li>
+      <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.flag_triggered_appointments">flag_triggered_appointments() (Cleaner static method)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.formatted">formatted() (in module teos.cli.teos_cli)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.flag_triggered_appointments">flag_triggered_appointments() (Cleaner static method)</a>
+      <li><a href="teos.rpc.html#teos.rpc.forward_errors">forward_errors() (in module teos.rpc)</a>
 </li>
       <li><a href="common.appointment.html#common.appointment.Appointment.from_dict">from_dict() (Appointment class method)</a>
 
       <ul>
+        <li><a href="teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment.from_dict">(ExtendedAppointment class method)</a>
+</li>
         <li><a href="teos.responder.html#teos.responder.TransactionTracker.from_dict">(TransactionTracker class method)</a>
+</li>
+        <li><a href="teos.gatekeeper.html#teos.gatekeeper.UserInfo.from_dict">(UserInfo class method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -422,14 +542,28 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generate_keys.html#module-generate_keys">generate_keys (module)</a>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper">Gatekeeper (class in teos.gatekeeper)</a>
 </li>
-      <li><a href="teos.api.html#teos.api.API.get_all_appointments">get_all_appointments() (API method)</a>
+      <li><a href="teos.responder.html#teos.responder.Responder.gatekeeper">gatekeeper (Responder attribute)</a>
+
+      <ul>
+        <li><a href="teos.watcher.html#teos.watcher.Watcher.gatekeeper">(Watcher attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.generate_key">generate_key() (Cryptographer static method)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_all_appointments">get_all_appointments() (RPCClient method)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.get_all_responder_trackers">get_all_responder_trackers() (Watcher method)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.get_all_watcher_appointments">get_all_watcher_appointments() (Watcher method)</a>
 </li>
       <li><a href="teos.api.html#teos.api.API.get_appointment">get_appointment() (API method)</a>
 
       <ul>
-        <li><a href="cli.teos_cli.html#cli.teos_cli.get_appointment">(in module cli.teos_cli)</a>
+        <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.get_appointment">(in module contrib.client.teos_client)</a>
+</li>
+        <li><a href="teos.watcher.html#teos.watcher.Watcher.get_appointment">(Watcher method)</a>
 </li>
       </ul></li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.get_best_block_hash">get_best_block_hash() (BlockProcessor method)</a>
@@ -438,21 +572,55 @@
 </li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.get_block_count">get_block_count() (BlockProcessor method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.get_breaches">get_breaches() (Watcher method)</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.Responder.get_completed_trackers">get_completed_trackers() (Responder method)</a>
 </li>
+      <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.get_compressed_pk">get_compressed_pk() (Cryptographer static method)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.get_config">get_config() (in module teos.teosd)</a>
+</li>
+      <li><a href="teos.tools.html#teos.tools.get_default_rpc_port">get_default_rpc_port() (in module teos.tools)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.get_distance_to_tip">get_distance_to_tip() (BlockProcessor method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.get_last_known_block">get_last_known_block() (DBManager method)</a>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.get_expired_appointments">get_expired_appointments() (Gatekeeper method)</a>
+</li>
+      <li><a href="teos.responder.html#teos.responder.Responder.get_expired_trackers">get_expired_trackers() (Responder method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.get_last_known_block">get_last_known_block() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.logger.html#teos.logger.get_logger">get_logger() (in module teos.logger)</a>
 </li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.get_missed_blocks">get_missed_blocks() (BlockProcessor method)</a>
 </li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.get_registered_user_ids">get_registered_user_ids() (Watcher method)</a>
+</li>
+      <li><a href="teos.api.html#teos.api.get_remote_addr">get_remote_addr() (in module teos.api)</a>
+</li>
+      <li><a href="teos.api.html#teos.api.get_request_data_json">get_request_data_json() (in module teos.api)</a>
+</li>
+      <li><a href="teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment.get_summary">get_summary() (ExtendedAppointment method)</a>
+
+      <ul>
+        <li><a href="teos.responder.html#teos.responder.TransactionTracker.get_summary">(TransactionTracker method)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_tower_info">get_tower_info() (RPCClient method)</a>
+</li>
       <li><a href="teos.carrier.html#teos.carrier.Carrier.get_transaction">get_transaction() (Carrier method)</a>
 </li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.get_txid">get_txid() (LocatorCache method)</a>
+</li>
       <li><a href="teos.responder.html#teos.responder.Responder.get_txs_to_rebroadcast">get_txs_to_rebroadcast() (Responder method)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_user">get_user() (RPCClient method)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.get_user_info">get_user_info() (Watcher method)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.get_users">get_users() (RPCClient method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -460,17 +628,23 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.logger.html#teos.logger.LogRecordStreamHandler.handle">handle() (LogRecordStreamHandler method)</a>
+</li>
       <li><a href="teos.responder.html#teos.responder.Responder.handle_breach">handle_breach() (Responder method)</a>
 </li>
-      <li><a href="teos.responder.html#teos.responder.Responder.handle_reorgs">handle_reorgs() (Responder method)</a>
+      <li><a href="teos.logger.html#teos.logger.LogRecordStreamHandler.handle_log_record">handle_log_record() (LogRecordStreamHandler static method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.teosd.html#teos.teosd.handle_signals">handle_signals() (in module teos.teosd)</a>
+      <li><a href="teos.responder.html#teos.responder.Responder.handle_reorgs">handle_reorgs() (Responder method)</a>
 </li>
-      <li><a href="cli.help.html#cli.help.help_add_appointment">help_add_appointment() (in module cli.help)</a>
+      <li><a href="teos.rpc.html#teos.rpc.RPC.handle_signals">handle_signals() (RPC method)</a>
+
+      <ul>
+        <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.handle_signals">(TeosDaemon method)</a>
 </li>
-      <li><a href="cli.help.html#cli.help.help_get_appointment">help_get_appointment() (in module cli.help)</a>
+      </ul></li>
+      <li><a href="common.cryptographer.html#common.cryptographer.hash_160">hash_160() (in module common.cryptographer)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -478,19 +652,55 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitorStatus.IDLE">IDLE (ChainMonitorStatus attribute)</a>
+</li>
+      <li><a href="teos.logger.html#teos.logger.ignore_signal">ignore_signal() (in module teos.logger)</a>
+</li>
       <li><a href="teos.tools.html#teos.tools.in_correct_network">in_correct_network() (in module teos.tools)</a>
 </li>
-      <li><a href="common.logger.html#common.logger.Logger.info">info() (Logger method)</a>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.init">init() (LocatorCache method)</a>
 </li>
       <li><a href="teos.inspector.html#teos.inspector.Inspector.inspect">inspect() (Inspector method)</a>
 </li>
+      <li><a href="teos.inspector.html#teos.inspector.InspectionFailed">InspectionFailed</a>
+</li>
+      <li><a href="teos.inspector.html#teos.inspector.Inspector">Inspector (class in teos.inspector)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.self.internal_api">internal_api (TeosDaemon.self attribute)</a>
+</li>
+      <li><a href="teos.internal_api.html#teos.internal_api.InternalAPI">InternalAPI (class in teos.internal_api)</a>
+</li>
+      <li><a href="common.tools.html#common.tools.intify">intify() (in module common.tools)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.inspector.html#teos.inspector.Inspector">Inspector (class in teos.inspector)</a>
+      <li><a href="common.exceptions.html#common.exceptions.InvalidKey">InvalidKey</a>
+</li>
+      <li><a href="common.exceptions.html#common.exceptions.InvalidParameter">InvalidParameter</a>
+</li>
+      <li><a href="teos.block_processor.html#teos.block_processor.InvalidTransactionFormat">InvalidTransactionFormat</a>
+</li>
+      <li><a href="common.tools.html#common.tools.is_256b_hex_str">is_256b_hex_str() (in module common.tools)</a>
 </li>
       <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.is_block_in_best_chain">is_block_in_best_chain() (BlockProcessor method)</a>
 </li>
+      <li><a href="common.tools.html#common.tools.is_compressed_pk">is_compressed_pk() (in module common.tools)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.is_full">is_full() (LocatorCache method)</a>
+</li>
+      <li><a href="common.tools.html#common.tools.is_locator">is_locator() (in module common.tools)</a>
+</li>
+      <li><a href="common.tools.html#common.tools.is_u4int">is_u4int() (in module common.tools)</a>
+</li>
       <li><a href="teos.carrier.html#teos.carrier.Carrier.issued_receipts">issued_receipts (Carrier attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.logger.html#teos.logger.JsonMsgLogger">JsonMsgLogger (class in teos.logger)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -499,42 +709,86 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.responder.html#teos.responder.Responder.last_known_block">last_known_block (Responder attribute)</a>
+
+      <ul>
+        <li><a href="teos.watcher.html#teos.watcher.Watcher.last_known_block">(Watcher attribute)</a>
 </li>
+      </ul></li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.last_tips">last_tips (ChainMonitor attribute)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_all_triggered_flags">load_all_triggered_flags() (DBManager method)</a>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitorStatus.LISTENING">LISTENING (ChainMonitorStatus attribute)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_appointments_db">load_appointments_db() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_all_triggered_flags">load_all_triggered_flags() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_entry">load_entry() (DBManager method)</a>
+      <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM.load_all_users">load_all_users() (UsersDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_appointments_db">load_appointments_db() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="common.db_manager.html#common.db_manager.DBManager.load_entry">load_entry() (DBManager method)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.load_key_file">load_key_file() (Cryptographer static method)</a>
 </li>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.load_keys">load_keys() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.load_keys">load_keys() (in module contrib.client.teos_client)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_last_block_hash_responder">load_last_block_hash_responder() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_last_block_hash_responder">load_last_block_hash_responder() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_last_block_hash_watcher">load_last_block_hash_watcher() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_last_block_hash_watcher">load_last_block_hash_watcher() (AppointmentsDBM method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_locator_map">load_locator_map() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_locator_map">load_locator_map() (AppointmentsDBM method)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.load_private_key_der">load_private_key_der() (Cryptographer static method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_responder_tracker">load_responder_tracker() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_responder_tracker">load_responder_tracker() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_responder_trackers">load_responder_trackers() (DBManager method)</a>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_responder_trackers">load_responder_trackers() (AppointmentsDBM method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_watcher_appointment">load_watcher_appointment() (DBManager method)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.load_teos_id">load_teos_id() (in module contrib.client.teos_client)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.load_watcher_appointments">load_watcher_appointments() (DBManager method)</a>
+      <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM.load_user">load_user() (UsersDBM method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_watcher_appointment">load_watcher_appointment() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.load_watcher_appointments">load_watcher_appointments() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.locator_cache">locator_cache (Watcher attribute)</a>
 </li>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.locator_uuid_map">locator_uuid_map (Watcher attribute)</a>
 </li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.lock">lock (ChainMonitor attribute)</a>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache">LocatorCache (class in teos.watcher)</a>
 </li>
-      <li><a href="common.logger.html#common.logger.Logger">Logger (class in common.logger)</a>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.lock">lock (ChainMonitor attribute)</a>
+
+      <ul>
+        <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.lock">(Gatekeeper attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.api.html#teos.api.API.logger">logger (API attribute)</a>
+
+      <ul>
+        <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.logger">(AppointmentsDBM attribute)</a>
+</li>
+        <li><a href="teos.block_processor.html#teos.block_processor.BlockProcessor.logger">(BlockProcessor attribute)</a>
+</li>
+        <li><a href="teos.carrier.html#teos.carrier.Carrier.logger">(Carrier attribute)</a>
+</li>
+        <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.logger">(ChainMonitor attribute)</a>
+</li>
+        <li><a href="teos.internal_api.html#teos.internal_api.InternalAPI.logger">(InternalAPI attribute)</a>
+</li>
+        <li><a href="teos.watcher.html#teos.watcher.LocatorCache.logger">(LocatorCache attribute)</a>
+</li>
+        <li><a href="teos.responder.html#teos.responder.Responder.logger">(Responder attribute)</a>
+</li>
+        <li><a href="teos.rpc.html#teos.rpc.RPC.logger">(RPC attribute)</a>
+</li>
+        <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM.logger">(UsersDBM attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.logger.html#teos.logger.LogRecordSocketReceiver">LogRecordSocketReceiver (class in teos.logger)</a>
+</li>
+      <li><a href="teos.logger.html#teos.logger.LogRecordStreamHandler">LogRecordStreamHandler (class in teos.logger)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -542,20 +796,95 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.main">main() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.main">main() (in module contrib.client.teos_client)</a>
 
       <ul>
+        <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.main">(in module teos.cli.teos_cli)</a>
+</li>
         <li><a href="teos.teosd.html#teos.teosd.main">(in module teos.teosd)</a>
 </li>
       </ul></li>
+      <li><a href="teos.logger.html#teos.logger.JsonMsgLogger.makeRecord">makeRecord() (JsonMsgLogger method)</a>
+</li>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.max_appointments">max_appointments (Watcher attribute)</a>
 </li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.max_block_window_size">max_block_window_size (ChainMonitor attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.responder.html#teos.responder.Responder.missed_confirmations">missed_confirmations (Responder attribute)</a>
 </li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="common.html#module-common">common</a>
+</li>
+        <li><a href="common.appointment.html#module-common.appointment">common.appointment</a>
+</li>
+        <li><a href="common.config_loader.html#module-common.config_loader">common.config_loader</a>
+</li>
+        <li><a href="common.cryptographer.html#module-common.cryptographer">common.cryptographer</a>
+</li>
+        <li><a href="common.db_manager.html#module-common.db_manager">common.db_manager</a>
+</li>
+        <li><a href="common.exceptions.html#module-common.exceptions">common.exceptions</a>
+</li>
+        <li><a href="common.receipts.html#module-common.receipts">common.receipts</a>
+</li>
+        <li><a href="common.tools.html#module-common.tools">common.tools</a>
+</li>
+        <li><a href="contrib.html#module-contrib">contrib</a>
+</li>
+        <li><a href="contrib.client.html#module-contrib.client">contrib.client</a>
+</li>
+        <li><a href="contrib.client.teos_client.html#module-contrib.client.teos_client">contrib.client.teos_client</a>
+</li>
+        <li><a href="teos.html#module-teos">teos</a>
+</li>
+        <li><a href="teos.api.html#module-teos.api">teos.api</a>
+</li>
+        <li><a href="teos.appointments_dbm.html#module-teos.appointments_dbm">teos.appointments_dbm</a>
+</li>
+        <li><a href="teos.block_processor.html#module-teos.block_processor">teos.block_processor</a>
+</li>
+        <li><a href="teos.builder.html#module-teos.builder">teos.builder</a>
+</li>
+        <li><a href="teos.carrier.html#module-teos.carrier">teos.carrier</a>
+</li>
+        <li><a href="teos.chain_monitor.html#module-teos.chain_monitor">teos.chain_monitor</a>
+</li>
+        <li><a href="teos.cleaner.html#module-teos.cleaner">teos.cleaner</a>
+</li>
+        <li><a href="teos.cli.html#module-teos.cli">teos.cli</a>
+</li>
+        <li><a href="teos.cli.teos_cli.html#module-teos.cli.teos_cli">teos.cli.teos_cli</a>
+</li>
+        <li><a href="teos.extended_appointment.html#module-teos.extended_appointment">teos.extended_appointment</a>
+</li>
+        <li><a href="teos.gatekeeper.html#module-teos.gatekeeper">teos.gatekeeper</a>
+</li>
+        <li><a href="teos.inspector.html#module-teos.inspector">teos.inspector</a>
+</li>
+        <li><a href="teos.internal_api.html#module-teos.internal_api">teos.internal_api</a>
+</li>
+        <li><a href="teos.logger.html#module-teos.logger">teos.logger</a>
+</li>
+        <li><a href="teos.responder.html#module-teos.responder">teos.responder</a>
+</li>
+        <li><a href="teos.rpc.html#module-teos.rpc">teos.rpc</a>
+</li>
+        <li><a href="teos.teosd.html#module-teos.teosd">teos.teosd</a>
+</li>
+        <li><a href="teos.tools.html#module-teos.tools">teos.tools</a>
+</li>
+        <li><a href="teos.users_dbm.html#module-teos.users_dbm">teos.users_dbm</a>
+</li>
+        <li><a href="teos.watcher.html#module-teos.watcher">teos.watcher</a>
+</li>
+        <li><a href="test.html#module-test">test</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.monitor_chain">monitor_chain() (ChainMonitor method)</a>
 </li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.monitor_chain_polling">monitor_chain_polling() (ChainMonitor method)</a>
@@ -568,6 +897,16 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.n_registered_users">n_registered_users() (Watcher property)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.n_responder_trackers">n_responder_trackers() (Watcher property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.n_watcher_appointments">n_watcher_appointments() (Watcher property)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.NotEnoughSlots">NotEnoughSlots</a>
+</li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.notify_subscribers">notify_subscribers() (ChainMonitor method)</a>
 </li>
   </ul></td>
@@ -584,7 +923,7 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.parse_add_appointment_args">parse_add_appointment_args() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.parse_add_appointment_args">parse_add_appointment_args() (in module contrib.client.teos_client)</a>
 </li>
       <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.polling_delta">polling_delta (ChainMonitor attribute)</a>
 </li>
@@ -592,9 +931,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.builder.html#teos.builder.Builder.populate_block_queue">populate_block_queue() (Builder static method)</a>
 </li>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.post_appointment">post_appointment() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.post_request">post_request() (in module contrib.client.teos_client)</a>
 </li>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.process_post_appointment_response">process_post_appointment_response() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.process_post_response">process_post_response() (in module contrib.client.teos_client)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.queue">queue (ChainMonitor attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -608,13 +955,37 @@
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.recover_pk">recover_pk() (Cryptographer static method)</a>
 </li>
+      <li><a href="teos.api.html#teos.api.API.register">register() (API method)</a>
+
+      <ul>
+        <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.register">(in module contrib.client.teos_client)</a>
+</li>
+        <li><a href="teos.watcher.html#teos.watcher.Watcher.register">(Watcher method)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.registered_users">registered_users (Gatekeeper attribute)</a>
+</li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.remove_oldest_block">remove_oldest_block() (LocatorCache method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.responder.html#teos.responder.Responder">Responder (class in teos.responder)</a>
 </li>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.responder">responder (Watcher attribute)</a>
 </li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.responder_queue">responder_queue (ChainMonitor attribute)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.responder_thread">responder_thread (TeosDaemon attribute)</a>
+</li>
+      <li><a href="teos.rpc.html#teos.rpc.RPC">RPC (class in teos.rpc)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.self.rpc_process">rpc_process (TeosDaemon.self attribute)</a>
+</li>
+      <li><a href="teos.internal_api.html#teos.internal_api.InternalAPI.rpc_server">rpc_server (InternalAPI attribute)</a>
+
+      <ul>
+        <li><a href="teos.rpc.html#teos.rpc.RPC.rpc_server">(RPC attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient">RPCClient (class in teos.cli.teos_cli)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -622,47 +993,69 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="cli.teos_cli.html#cli.teos_cli.save_appointment_receipt">save_appointment_receipt() (in module cli.teos_cli)</a>
+      <li><a href="contrib.client.teos_client.html#contrib.client.teos_client.save_appointment_receipt">save_appointment_receipt() (in module contrib.client.teos_client)</a>
 </li>
-      <li><a href="generate_keys.html#generate_keys.save_pk">save_pk() (in module generate_keys)</a>
-</li>
-      <li><a href="generate_keys.html#generate_keys.save_sk">save_sk() (in module generate_keys)</a>
+      <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.save_key_file">save_key_file() (Cryptographer static method)</a>
 </li>
       <li><a href="teos.carrier.html#teos.carrier.Carrier.send_transaction">send_transaction() (Carrier method)</a>
 </li>
       <li><a href="common.appointment.html#common.appointment.Appointment.serialize">serialize() (Appointment method)</a>
 </li>
+      <li><a href="teos.api.html#teos.api.serve">serve() (in module teos.api)</a>
+
+      <ul>
+        <li><a href="teos.logger.html#teos.logger.serve">(in module teos.logger)</a>
+</li>
+        <li><a href="teos.rpc.html#teos.rpc.serve">(in module teos.rpc)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.logger.html#teos.logger.LogRecordSocketReceiver.serve_forever">serve_forever() (LogRecordSocketReceiver method)</a>
+</li>
       <li><a href="common.tools.html#common.tools.setup_data_folder">setup_data_folder() (in module common.tools)</a>
 </li>
-      <li><a href="common.tools.html#common.tools.setup_logging">setup_logging() (in module common.tools)</a>
+      <li><a href="teos.logger.html#teos.logger.setup_logging">setup_logging() (in module teos.logger)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.sha256d">sha256d() (in module common.cryptographer)</a>
 </li>
-      <li><a href="cli.help.html#cli.help.show_usage">show_usage() (in module cli.help)</a>
-
-      <ul>
-        <li><a href="teos.help.html#teos.help.show_usage">(in module teos.help)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.sign">sign() (Cryptographer static method)</a>
+</li>
+      <li><a href="common.exceptions.html#common.exceptions.SignatureError">SignatureError</a>
 </li>
       <li><a href="teos.watcher.html#teos.watcher.Watcher.signing_key">signing_key (Watcher attribute)</a>
 </li>
       <li><a href="common.cryptographer.html#common.cryptographer.sigrec_decode">sigrec_decode() (in module common.cryptographer)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="common.cryptographer.html#common.cryptographer.sigrec_encode">sigrec_encode() (in module common.cryptographer)</a>
 </li>
-      <li><a href="teos.api.html#teos.api.API.start">start() (API method)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.start">start() (TeosDaemon method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.store_last_block_hash_responder">store_last_block_hash_responder() (DBManager method)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.start_services">start_services() (TeosDaemon method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.store_last_block_hash_watcher">store_last_block_hash_watcher() (DBManager method)</a>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.status">status (ChainMonitor attribute)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.store_responder_tracker">store_responder_tracker() (DBManager method)</a>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.stop">stop() (RPCClient method)</a>
 </li>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.store_watcher_appointment">store_watcher_appointment() (DBManager method)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.stop_command_event">stop_command_event (TeosDaemon attribute)</a>
+</li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.stop_event">stop_event (TeosDaemon attribute)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_last_block_hash_responder">store_last_block_hash_responder() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_last_block_hash_watcher">store_last_block_hash_watcher() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_responder_tracker">store_responder_tracker() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM.store_user">store_user() (UsersDBM method)</a>
+</li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.store_watcher_appointment">store_watcher_appointment() (AppointmentsDBM method)</a>
+</li>
+      <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.RPCClient.stub">stub (RPCClient attribute)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.subscription_duration">subscription_duration (Gatekeeper attribute)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.subscription_slots">subscription_slots (Gatekeeper attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -670,54 +1063,194 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.html#module-teos">teos (module)</a>
+      <li><a href="teos.rpc.html#teos.rpc.RPC.teardown">teardown() (RPC method)</a>
+
+      <ul>
+        <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.teardown">(TeosDaemon method)</a>
 </li>
-      <li><a href="teos.api.html#module-teos.api">teos.api (module)</a>
+      </ul></li>
+      <li>
+    teos
+
+      <ul>
+        <li><a href="teos.html#module-teos">module</a>
 </li>
-      <li><a href="teos.block_processor.html#module-teos.block_processor">teos.block_processor (module)</a>
+      </ul></li>
+      <li>
+    teos.api
+
+      <ul>
+        <li><a href="teos.api.html#module-teos.api">module</a>
 </li>
-      <li><a href="teos.builder.html#module-teos.builder">teos.builder (module)</a>
+      </ul></li>
+      <li>
+    teos.appointments_dbm
+
+      <ul>
+        <li><a href="teos.appointments_dbm.html#module-teos.appointments_dbm">module</a>
 </li>
-      <li><a href="teos.carrier.html#module-teos.carrier">teos.carrier (module)</a>
+      </ul></li>
+      <li>
+    teos.block_processor
+
+      <ul>
+        <li><a href="teos.block_processor.html#module-teos.block_processor">module</a>
 </li>
-      <li><a href="teos.chain_monitor.html#module-teos.chain_monitor">teos.chain_monitor (module)</a>
+      </ul></li>
+      <li>
+    teos.builder
+
+      <ul>
+        <li><a href="teos.builder.html#module-teos.builder">module</a>
 </li>
-      <li><a href="teos.cleaner.html#module-teos.cleaner">teos.cleaner (module)</a>
+      </ul></li>
+      <li>
+    teos.carrier
+
+      <ul>
+        <li><a href="teos.carrier.html#module-teos.carrier">module</a>
 </li>
-      <li><a href="teos.db_manager.html#module-teos.db_manager">teos.db_manager (module)</a>
+      </ul></li>
+      <li>
+    teos.chain_monitor
+
+      <ul>
+        <li><a href="teos.chain_monitor.html#module-teos.chain_monitor">module</a>
 </li>
-      <li><a href="teos.errors.html#module-teos.errors">teos.errors (module)</a>
+      </ul></li>
+      <li>
+    teos.cleaner
+
+      <ul>
+        <li><a href="teos.cleaner.html#module-teos.cleaner">module</a>
 </li>
-      <li><a href="teos.help.html#module-teos.help">teos.help (module)</a>
+      </ul></li>
+      <li>
+    teos.cli
+
+      <ul>
+        <li><a href="teos.cli.html#module-teos.cli">module</a>
 </li>
-      <li><a href="teos.inspector.html#module-teos.inspector">teos.inspector (module)</a>
+      </ul></li>
+      <li>
+    teos.cli.teos_cli
+
+      <ul>
+        <li><a href="teos.cli.teos_cli.html#module-teos.cli.teos_cli">module</a>
 </li>
-      <li><a href="teos.responder.html#module-teos.responder">teos.responder (module)</a>
+      </ul></li>
+      <li>
+    teos.extended_appointment
+
+      <ul>
+        <li><a href="teos.extended_appointment.html#module-teos.extended_appointment">module</a>
 </li>
+      </ul></li>
+      <li>
+    teos.gatekeeper
+
+      <ul>
+        <li><a href="teos.gatekeeper.html#module-teos.gatekeeper">module</a>
+</li>
+      </ul></li>
+      <li>
+    teos.inspector
+
+      <ul>
+        <li><a href="teos.inspector.html#module-teos.inspector">module</a>
+</li>
+      </ul></li>
+      <li>
+    teos.internal_api
+
+      <ul>
+        <li><a href="teos.internal_api.html#module-teos.internal_api">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.rpc_errors.html#module-teos.rpc_errors">teos.rpc_errors (module)</a>
+      <li>
+    teos.logger
+
+      <ul>
+        <li><a href="teos.logger.html#module-teos.logger">module</a>
 </li>
-      <li><a href="teos.teosd.html#module-teos.teosd">teos.teosd (module)</a>
+      </ul></li>
+      <li>
+    teos.responder
+
+      <ul>
+        <li><a href="teos.responder.html#module-teos.responder">module</a>
 </li>
-      <li><a href="teos.tools.html#module-teos.tools">teos.tools (module)</a>
+      </ul></li>
+      <li>
+    teos.rpc
+
+      <ul>
+        <li><a href="teos.rpc.html#module-teos.rpc">module</a>
 </li>
-      <li><a href="teos.watcher.html#module-teos.watcher">teos.watcher (module)</a>
+      </ul></li>
+      <li>
+    teos.teosd
+
+      <ul>
+        <li><a href="teos.teosd.html#module-teos.teosd">module</a>
 </li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.terminate">terminate (ChainMonitor attribute)</a>
+      </ul></li>
+      <li>
+    teos.tools
+
+      <ul>
+        <li><a href="teos.tools.html#module-teos.tools">module</a>
 </li>
+      </ul></li>
+      <li>
+    teos.users_dbm
+
+      <ul>
+        <li><a href="teos.users_dbm.html#module-teos.users_dbm">module</a>
+</li>
+      </ul></li>
+      <li>
+    teos.watcher
+
+      <ul>
+        <li><a href="teos.watcher.html#module-teos.watcher">module</a>
+</li>
+      </ul></li>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon">TeosDaemon (class in teos.teosd)</a>
+</li>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.terminate">terminate() (ChainMonitor method)</a>
+</li>
+      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitorStatus.TERMINATED">TERMINATED (ChainMonitorStatus attribute)</a>
+</li>
+      <li>
+    test
+
+      <ul>
+        <li><a href="test.html#module-test">module</a>
+</li>
+      </ul></li>
       <li><a href="common.appointment.html#common.appointment.Appointment.to_dict">to_dict() (Appointment method)</a>
 
       <ul>
         <li><a href="teos.responder.html#teos.responder.TransactionTracker.to_dict">(TransactionTracker method)</a>
 </li>
-      </ul></li>
-      <li><a href="common.appointment.html#common.appointment.Appointment.to_json">to_json() (Appointment method)</a>
-
-      <ul>
-        <li><a href="teos.responder.html#teos.responder.TransactionTracker.to_json">(TransactionTracker method)</a>
+        <li><a href="teos.gatekeeper.html#teos.gatekeeper.UserInfo.to_dict">(UserInfo method)</a>
 </li>
       </ul></li>
+      <li><a href="common.exceptions.html#common.exceptions.BasicException.to_json">to_json() (BasicException method)</a>
+
+      <ul>
+        <li><a href="teos.cli.teos_cli.html#teos.cli.teos_cli.to_json">(in module teos.cli.teos_cli)</a>
+</li>
+      </ul></li>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher.tower_id">tower_id() (Watcher property)</a>
+</li>
+      <li><a href="common.exceptions.html#common.exceptions.TowerConnectionError">TowerConnectionError</a>
+</li>
+      <li><a href="common.exceptions.html#common.exceptions.TowerResponseError">TowerResponseError</a>
+</li>
       <li><a href="teos.responder.html#teos.responder.Responder.trackers">trackers (Responder attribute)</a>
 </li>
       <li><a href="teos.responder.html#teos.responder.TransactionTracker">TransactionTracker (class in teos.responder)</a>
@@ -732,23 +1265,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="teos.responder.html#teos.responder.Responder.unconfirmed_txs">unconfirmed_txs (Responder attribute)</a>
 </li>
+      <li><a href="teos.watcher.html#teos.watcher.LocatorCache.update">update() (LocatorCache method)</a>
+</li>
       <li><a href="teos.cleaner.html#teos.cleaner.Cleaner.update_delete_db_locator_map">update_delete_db_locator_map() (Cleaner static method)</a>
 </li>
+      <li><a href="teos.appointments_dbm.html#teos.appointments_dbm.AppointmentsDBM.update_locator_map">update_locator_map() (AppointmentsDBM method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.db_manager.html#teos.db_manager.DBManager.update_locator_map">update_locator_map() (DBManager method)</a>
-</li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.update_state">update_state() (ChainMonitor method)</a>
-</li>
       <li><a href="teos.builder.html#teos.builder.Builder.update_states">update_states() (Builder static method)</a>
 </li>
-  </ul></td>
-</tr></table>
-
-<h2 id="V">V</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="common.cryptographer.html#common.cryptographer.Cryptographer.verify_rpk">verify_rpk() (Cryptographer static method)</a>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.Gatekeeper.user_db">user_db (Gatekeeper attribute)</a>
+</li>
+      <li><a href="teos.gatekeeper.html#teos.gatekeeper.UserInfo">UserInfo (class in teos.gatekeeper)</a>
+</li>
+      <li><a href="teos.users_dbm.html#teos.users_dbm.UsersDBM">UsersDBM (class in teos.users_dbm)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -756,13 +1287,13 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="common.logger.html#common.logger.Logger.warning">warning() (Logger method)</a>
+      <li><a href="teos.watcher.html#teos.watcher.Watcher">Watcher (class in teos.watcher)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="teos.watcher.html#teos.watcher.Watcher">Watcher (class in teos.watcher)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.watcher">watcher (TeosDaemon attribute)</a>
 </li>
-      <li><a href="teos.chain_monitor.html#teos.chain_monitor.ChainMonitor.watcher_queue">watcher_queue (ChainMonitor attribute)</a>
+      <li><a href="teos.teosd.html#teos.teosd.TeosDaemon.watcher_thread">watcher_thread (TeosDaemon attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -787,11 +1318,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -802,7 +1341,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -146,45 +149,66 @@
            <div itemprop="articleBody">
             
   <h1>Source code for common.cryptographer</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pyzbase32</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
+<span></span><span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">pyzbase32</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span><span class="p">,</span> <span class="n">new</span>
 <span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">unhexlify</span><span class="p">,</span> <span class="n">hexlify</span>
 <span class="kn">from</span> <span class="nn">coincurve.utils</span> <span class="kn">import</span> <span class="n">int_to_bytes</span>
 <span class="kn">from</span> <span class="nn">coincurve</span> <span class="kn">import</span> <span class="n">PrivateKey</span><span class="p">,</span> <span class="n">PublicKey</span>
 <span class="kn">from</span> <span class="nn">cryptography.exceptions</span> <span class="kn">import</span> <span class="n">InvalidTag</span>
 <span class="kn">from</span> <span class="nn">cryptography.hazmat.primitives.ciphers.aead</span> <span class="kn">import</span> <span class="n">ChaCha20Poly1305</span>
 
-<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">check_sha256_hex_format</span>
+<span class="kn">from</span> <span class="nn">common.tools</span> <span class="kn">import</span> <span class="n">is_256b_hex_str</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">InvalidKey</span><span class="p">,</span> <span class="n">InvalidParameter</span><span class="p">,</span> <span class="n">SignatureError</span><span class="p">,</span> <span class="n">EncryptionError</span>
 
 <span class="n">LN_MESSAGE_PREFIX</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Lightning Signed Message:&quot;</span>
 
 
 <div class="viewcode-block" id="sha256d"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.sha256d">[docs]</a><span class="k">def</span> <span class="nf">sha256d</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the sha245d (double sha256) of a given by message.</span>
+<span class="sd">    Computes the double sha256 of a given message.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message(:obj:`bytes`): the message to be used as input to the hash function.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`bytes`: the sha256d of the given message.</span>
+<span class="sd">        :obj:`bytes`: The sha256d of the given message.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">sha256</span><span class="p">(</span><span class="n">sha256</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="hash_160"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.hash_160">[docs]</a><span class="k">def</span> <span class="nf">hash_160</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculates the RIPEMD-160 hash of a given message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message (:obj:`str`): the message to be hashed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`str`: The ripemd160 hash of the given message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Calculate the RIPEMD-160 hash of the given data.</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="s2">&quot;ripemd160&quot;</span><span class="p">)</span>
+    <span class="n">md</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+    <span class="n">h160</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">h160</span></div>
+
+
+<span class="c1"># NOTCOVERED</span>
 <div class="viewcode-block" id="sigrec_encode"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.sigrec_encode">[docs]</a><span class="k">def</span> <span class="nf">sigrec_encode</span><span class="p">(</span><span class="n">rsig_rid</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Encodes a pk-recoverable signature to be used in LN. ```rsig_rid`` can be obtained trough</span>
+<span class="sd">    Encodes a pk-recoverable signature to be used in LN. ``rsig_rid`` can be obtained trough</span>
 <span class="sd">    ``PrivateKey.sign_recoverable``. The required format has the recovery id as the last byte, and for signing LN</span>
-<span class="sd">    messages we need it as the first.</span>
-<span class="sd">    From: https://twitter.com/rusty_twit/status/1182102005914800128</span>
+<span class="sd">    messages we need it as the first. From: https://twitter.com/rusty_twit/status/1182102005914800128</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rsig_rid(:obj:`bytes`): the signature to be encoded.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`bytes`: the encoded signature.</span>
+<span class="sd">        :obj:`bytes`: The encoded signature.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">rsig</span><span class="p">,</span> <span class="n">rid</span> <span class="o">=</span> <span class="n">rsig_rid</span><span class="p">[:</span><span class="mi">64</span><span class="p">],</span> <span class="n">rsig_rid</span><span class="p">[</span><span class="mi">64</span><span class="p">]</span>
@@ -193,6 +217,7 @@
     <span class="k">return</span> <span class="n">sigrec</span></div>
 
 
+<span class="c1"># NOTCOVERED</span>
 <div class="viewcode-block" id="sigrec_decode"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.sigrec_decode">[docs]</a><span class="k">def</span> <span class="nf">sigrec_decode</span><span class="p">(</span><span class="n">sigrec</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decodes a pk-recoverable signature in the format used by LN to be input to ``PublicKey.from_signature_and_message``.</span>
@@ -201,81 +226,72 @@
 <span class="sd">        sigrec(:obj:`bytes`): the signature to be decoded.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`bytes`: the decoded signature.</span>
+<span class="sd">        :obj:`bytes`: The decoded signature.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        :obj:`ValueError`: if the SigRec is not properly encoded (first byte is not 31 + recovery id)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">rid</span><span class="p">,</span> <span class="n">rsig</span> <span class="o">=</span> <span class="n">int_to_bytes</span><span class="p">(</span><span class="n">sigrec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">31</span><span class="p">),</span> <span class="n">sigrec</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="n">rsig_rid</span> <span class="o">=</span> <span class="n">rsig</span> <span class="o">+</span> <span class="n">rid</span>
+    <span class="n">int_rid</span><span class="p">,</span> <span class="n">rsig</span> <span class="o">=</span> <span class="n">sigrec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">31</span><span class="p">,</span> <span class="n">sigrec</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">int_rid</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong SigRec&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rid</span> <span class="o">=</span> <span class="n">int_to_bytes</span><span class="p">(</span><span class="n">int_rid</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">rsig_rid</span></div>
-
-
-<span class="c1"># FIXME: Common has not log file, so it needs to log in the same log as the caller. This is a temporary fix.</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">rsig</span> <span class="o">+</span> <span class="n">rid</span></div>
 
 
 <div class="viewcode-block" id="Cryptographer"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer">[docs]</a><span class="k">class</span> <span class="nc">Cryptographer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The :class:`Cryptographer` is the class in charge of all the cryptography in the tower.</span>
+<span class="sd">    The :class:`Cryptographer` is in charge of all the cryptography in the tower.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Cryptographer.check_data_key_format"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.check_data_key_format">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">check_data_key_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks that the data and secret that will be used to by ``encrypt`` / ``decrypt`` are properly</span>
-<span class="sd">        formatted.</span>
+<span class="sd">        Checks that the data and secret that will be used to by ``encrypt`` / ``decrypt`` are properly formatted.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">              data(:mod:`str`): the data to be encrypted.</span>
-<span class="sd">              secret(:mod:`str`): the secret used to derive the encryption key.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">              :obj:`bool`: Whether or not the ``key`` and ``data`` are properly formatted.</span>
+<span class="sd">              data(:obj:`str`): the data to be encrypted.</span>
+<span class="sd">              secret(:obj:`str`): the secret used to derive the encryption key.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">              ValueError: if either the ``key`` or ``data`` is not properly formatted.</span>
+<span class="sd">              :obj:`InvalidParameter`: if either the ``key`` and/or ``data`` are not properly formatted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Incorrect (Odd-length) value&quot;</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Incorrect (Odd-length) data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_sha256_hex_format</span><span class="p">(</span><span class="n">secret</span><span class="p">):</span>
-            <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Secret must be a 32-byte hex value (64 hex chars)&quot;</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">True</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_256b_hex_str</span><span class="p">(</span><span class="n">secret</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Secret must be a 32-byte hex value (64 hex chars)&quot;</span><span class="p">,</span> <span class="n">secret</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Cryptographer.encrypt"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.encrypt">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Encrypts a given :mod:`Blob &lt;common.cli.blob.Blob&gt;` data using ``CHACHA20POLY1305``.</span>
+<span class="sd">        Encrypts a given message data using ``CHACHA20POLY1305``.</span>
 
 <span class="sd">        ``SHA256(secret)`` is used as ``key``, and ``0 (12-byte)`` as ``iv``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">              blob (:mod:`Blob &lt;common.cli.blob.Blob&gt;`): a ``Blob`` object containing a raw penalty transaction.</span>
-<span class="sd">              secret (:mod:`str`): a value to used to derive the encryption key. Should be the dispute txid.</span>
+<span class="sd">              message (:obj:`str`): a message to be encrypted. Should be the hex-encoded commitment_tx.</span>
+<span class="sd">              secret (:obj:`str`): a value to used to derive the encryption key. Should be the dispute txid.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">              :obj:`str`: The encrypted data (hex encoded).</span>
+<span class="sd">              :obj:`str`: The encrypted data (hex-encoded).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">              :obj:`InvalidParameter`: if either the ``key`` and/or ``data`` are not properly formatted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">Cryptographer</span><span class="o">.</span><span class="n">check_data_key_format</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
-
-        <span class="c1"># Transaction to be encrypted</span>
-        <span class="c1"># FIXME: The blob data should contain more things that just the transaction. Leaving like this for now.</span>
-        <span class="n">tx</span> <span class="o">=</span> <span class="n">unhexlify</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Cryptographer</span><span class="o">.</span><span class="n">check_data_key_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
 
         <span class="c1"># sk is the H(txid) (32-byte) and nonce is set to 0 (12-byte)</span>
         <span class="n">sk</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">secret</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
         <span class="n">nonce</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encrypting blob&quot;</span><span class="p">,</span> <span class="n">sk</span><span class="o">=</span><span class="n">hexlify</span><span class="p">(</span><span class="n">sk</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">nonce</span><span class="o">=</span><span class="n">hexlify</span><span class="p">(</span><span class="n">nonce</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">blob</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
         <span class="c1"># Encrypt the data</span>
         <span class="n">cipher</span> <span class="o">=</span> <span class="n">ChaCha20Poly1305</span><span class="p">(</span><span class="n">sk</span><span class="p">)</span>
-        <span class="n">encrypted_blob</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">nonce</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">associated_data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">encrypted_blob</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">nonce</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="n">associated_data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">encrypted_blob</span> <span class="o">=</span> <span class="n">hexlify</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">encrypted_blob</span></div>
@@ -284,45 +300,79 @@
     <span class="c1"># ToDo: #20-test-tx-decrypting-edge-cases</span>
     <span class="k">def</span> <span class="nf">decrypt</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">secret</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Decrypts a given :mod:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;` using ``CHACHA20POLY1305``.</span>
+<span class="sd">        Decrypts a given encrypted_blob using ``CHACHA20POLY1305``.</span>
 
 <span class="sd">        ``SHA256(secret)`` is used as ``key``, and ``0 (12-byte)`` as ``iv``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">              encrypted_blob(:mod:`EncryptedBlob &lt;common.encrypted_blob.EncryptedBlob&gt;`): an ``EncryptedBlob`` potentially</span>
-<span class="sd">                containing a penalty transaction.</span>
-<span class="sd">              secret (:mod:`str`): a value to used to derive the decryption key. Should be the dispute txid.</span>
+<span class="sd">            encrypted_blob(:obj:`str`): an encrypted blob of data potentially containing a penalty transaction.</span>
+<span class="sd">            secret (:obj:`str`): a value used to derive the decryption key. Should be the dispute txid.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">              :obj:`str`: The decrypted data (hex encoded).</span>
+<span class="sd">              :obj:`str`: The decrypted data (hex-encoded).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">              :obj:`InvalidParameter`: if either the ``key`` and/or ``data`` are not properly formatted.</span>
+<span class="sd">              :obj:`EncryptionError`: if the data cannot be decrypted with the given key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">Cryptographer</span><span class="o">.</span><span class="n">check_data_key_format</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
+        <span class="n">Cryptographer</span><span class="o">.</span><span class="n">check_data_key_format</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">secret</span><span class="p">)</span>
 
         <span class="c1"># sk is the H(txid) (32-byte) and nonce is set to 0 (12-byte)</span>
         <span class="n">sk</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">unhexlify</span><span class="p">(</span><span class="n">secret</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
         <span class="n">nonce</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Decrypting blob&quot;</span><span class="p">,</span>
-            <span class="n">sk</span><span class="o">=</span><span class="n">hexlify</span><span class="p">(</span><span class="n">sk</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
-            <span class="n">nonce</span><span class="o">=</span><span class="n">hexlify</span><span class="p">(</span><span class="n">nonce</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
-            <span class="n">encrypted_blob</span><span class="o">=</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-        <span class="p">)</span>
-
         <span class="c1"># Decrypt</span>
         <span class="n">cipher</span> <span class="o">=</span> <span class="n">ChaCha20Poly1305</span><span class="p">(</span><span class="n">sk</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">unhexlify</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">unhexlify</span><span class="p">(</span><span class="n">encrypted_blob</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">blob</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">nonce</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">associated_data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">blob</span> <span class="o">=</span> <span class="n">hexlify</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">InvalidTag</span><span class="p">:</span>
-            <span class="n">blob</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t decrypt blob with the provided key&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">EncryptionError</span><span class="p">(</span><span class="s2">&quot;Cannot decrypt blob with the provided key&quot;</span><span class="p">,</span> <span class="n">blob</span><span class="o">=</span><span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">blob</span></div>
+
+<div class="viewcode-block" id="Cryptographer.generate_key"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.generate_key">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">generate_key</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates an ECDSA private key (over secp256k1).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`PrivateKey`: A private key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PrivateKey</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Cryptographer.save_key_file"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.save_key_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save_key_file</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves a key to disk in DER format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (:obj:`bytes`): the key to be saved to disk.</span>
+<span class="sd">            name (:obj:`str`): the name of the key file to be generated.</span>
+<span class="sd">            data_dir (:obj:`str`): the data directory where the file will be saved.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`InvalidParameter`: If the given key is not bytes or the name or data_dir are not strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Key must be bytes, </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Key name must be str, </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Data dir must be str, </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)))</span>
+
+        <span class="c1"># Create the output folder it it does not exist (and all the parents if they don&#39;t either)</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.der&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">der_out</span><span class="p">:</span>
+            <span class="n">der_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Cryptographer.load_key_file"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.load_key_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_key_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
@@ -333,12 +383,15 @@
 <span class="sd">            file_path (:obj:`str`): the path to the key file to be loaded.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`bytes` or :obj:`None`: the key file data if the file can be found and read. ``None`` otherwise.</span>
+<span class="sd">            :obj:`bytes`: The key file data if the file can be found and read.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             :obj:`InvalidParameter`: if the file_path has wrong format or cannot be found.</span>
+<span class="sd">             :obj:`InvalidKey`: if the key cannot be loaded from the file. It covers temporary I/O errors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Key file path was expected, </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Key file path was expected, </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)))</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">key_file</span><span class="p">:</span>
@@ -346,64 +399,66 @@
             <span class="k">return</span> <span class="n">key</span>
 
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Key file not found. Please check your settings&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Key file not found at </span><span class="si">{}</span><span class="s2">. Please check your settings&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
 
         <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;I/O error(</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">errno</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">strerror</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
+            <span class="k">raise</span> <span class="n">InvalidKey</span><span class="p">(</span><span class="s2">&quot;Key file cannot be loaded&quot;</span><span class="p">,</span> <span class="n">exception</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Cryptographer.load_private_key_der"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.load_private_key_der">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_private_key_der</span><span class="p">(</span><span class="n">sk_der</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a :mod:`PrivateKey` object from a given ``DER`` encoded private key.</span>
+<span class="sd">        Creates a :obj:`PrivateKey` from a given ``DER`` encoded private key.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">             sk_der(:mod:`str`): a private key encoded in ``DER`` format.</span>
+<span class="sd">             sk_der(:obj:`str`): a private key encoded in ``DER`` format.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">             :mod:`PrivateKey`: A ``PrivateKey`` object.</span>
+<span class="sd">             :obj:`PrivateKey`: A :obj:`PrivateKey` object if the private key can be loaded.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: if the provided ``pk_der`` data cannot be deserialized (wrong size or format).</span>
-<span class="sd">            TypeError: if the provided ``pk_der`` data is not a string.</span>
+<span class="sd">            :obj:`InvalidKey`: if a :obj:`PrivateKey` cannot be loaded from the given data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">sk</span> <span class="o">=</span> <span class="n">PrivateKey</span><span class="o">.</span><span class="n">from_der</span><span class="p">(</span><span class="n">sk_der</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">sk</span>
 
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The provided data cannot be deserialized (wrong size or format)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidKey</span><span class="p">(</span><span class="s2">&quot;The provided key data cannot be deserialized (wrong size or format)&quot;</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The provided data cannot be deserialized (wrong type)&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="kc">None</span></div>
+            <span class="k">raise</span> <span class="n">InvalidKey</span><span class="p">(</span><span class="s2">&quot;The provided key data cannot be deserialized (wrong type)&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Cryptographer.sign"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.sign">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">sign</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">sk</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Signs a given data using a given secret key using ECDSA.</span>
+<span class="sd">        Signs a given message with a given secret key using ECDSA over secp256k1.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            message(:obj:`bytes`): the data to be signed.</span>
-<span class="sd">            sk(:obj:`PrivateKey`): the ECDSA secret key used to signed the data.</span>
+<span class="sd">            sk(:obj:`PrivateKey`): the ECDSA secret key to be used to sign the data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">           :obj:`str`: The zbase32 signature of the given message.</span>
+<span class="sd">           :obj:`str`: The zbase32 signature of the given message is it can be signed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             :obj:`InvalidParameter`: if the message and/or secret key have a wrong value.</span>
+<span class="sd">             :obj:`SignatureError`: if there is an error during the signing process.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The message must be bytes. </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Wrong value passed as message. Received </span><span class="si">{}</span><span class="s2">, expected (bytes)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sk</span><span class="p">,</span> <span class="n">PrivateKey</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The value passed as sk is not a private key (EllipticCurvePrivateKey)&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Wrong value passed as sk. Received </span><span class="si">{}</span><span class="s2">, expected (PrivateKey)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
 
-        <span class="n">rsig_rid</span> <span class="o">=</span> <span class="n">sk</span><span class="o">.</span><span class="n">sign_recoverable</span><span class="p">(</span><span class="n">LN_MESSAGE_PREFIX</span> <span class="o">+</span> <span class="n">message</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">sha256d</span><span class="p">)</span>
-        <span class="n">sigrec</span> <span class="o">=</span> <span class="n">sigrec_encode</span><span class="p">(</span><span class="n">rsig_rid</span><span class="p">)</span>
-        <span class="n">zb32_sig</span> <span class="o">=</span> <span class="n">pyzbase32</span><span class="o">.</span><span class="n">encode_bytes</span><span class="p">(</span><span class="n">sigrec</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rsig_rid</span> <span class="o">=</span> <span class="n">sk</span><span class="o">.</span><span class="n">sign_recoverable</span><span class="p">(</span><span class="n">LN_MESSAGE_PREFIX</span> <span class="o">+</span> <span class="n">message</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">sha256d</span><span class="p">)</span>
+            <span class="n">sigrec</span> <span class="o">=</span> <span class="n">sigrec_encode</span><span class="p">(</span><span class="n">rsig_rid</span><span class="p">)</span>
+            <span class="n">zb32_sig</span> <span class="o">=</span> <span class="n">pyzbase32</span><span class="o">.</span><span class="n">encode_bytes</span><span class="p">(</span><span class="n">sigrec</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SignatureError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t sign the message. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">zb32_sig</span></div>
 
@@ -413,56 +468,68 @@
 <span class="sd">        Recovers an ECDSA public key from a given message and zbase32 signature.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            message(:obj:`bytes`): the data to be signed.</span>
+<span class="sd">            message(:obj:`bytes`): original message from where the signature was generated.</span>
 <span class="sd">            zb32_sig(:obj:`str`): the zbase32 signature of the message.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">           :obj:`PublicKey`: The recovered public key.</span>
+<span class="sd">           :obj:`PublicKey`: The public key if it can be recovered.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             :obj:`InvalidParameter`: if the message and/or signature have a wrong value.</span>
+<span class="sd">             :obj:`SignatureError`: if a public key cannot be recovered from the given signature.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The message must be bytes. </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Wrong value passed as message. Received </span><span class="si">{}</span><span class="s2">, expected (bytes)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">zb32_sig</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The zbase32_sig must be str. </span><span class="si">{}</span><span class="s2"> received&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">zb32_sig</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span>
+                <span class="s2">&quot;Wrong value passed as zbase32_sig. Received </span><span class="si">{}</span><span class="s2">, expected (str)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">zb32_sig</span><span class="p">))</span>
+            <span class="p">)</span>
 
         <span class="n">sigrec</span> <span class="o">=</span> <span class="n">pyzbase32</span><span class="o">.</span><span class="n">decode_bytes</span><span class="p">(</span><span class="n">zb32_sig</span><span class="p">)</span>
-        <span class="n">rsig_recid</span> <span class="o">=</span> <span class="n">sigrec_decode</span><span class="p">(</span><span class="n">sigrec</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">rsig_recid</span> <span class="o">=</span> <span class="n">sigrec_decode</span><span class="p">(</span><span class="n">sigrec</span><span class="p">)</span>
             <span class="n">pk</span> <span class="o">=</span> <span class="n">PublicKey</span><span class="o">.</span><span class="n">from_signature_and_message</span><span class="p">(</span><span class="n">rsig_recid</span><span class="p">,</span> <span class="n">LN_MESSAGE_PREFIX</span> <span class="o">+</span> <span class="n">message</span><span class="p">,</span> <span class="n">hasher</span><span class="o">=</span><span class="n">sha256d</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">pk</span>
 
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># Several errors fit here: Signature length != 65, wrong recover id and failed to parse signature.</span>
             <span class="c1"># All of them return raise ValueError.</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">SignatureError</span><span class="p">(</span><span class="s2">&quot;Cannot recover a public key from the given signature. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;failed to recover ECDSA public key&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot recover public key from signature&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">rsig_recid</span><span class="p">)))</span>
+                <span class="k">raise</span> <span class="n">SignatureError</span><span class="p">(</span><span class="s2">&quot;Cannot recover a public key from the given signature&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unknown exception&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">SignatureError</span><span class="p">(</span><span class="s2">&quot;Unknown exception. &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
 
-            <span class="k">return</span> <span class="kc">None</span></div>
-
-<div class="viewcode-block" id="Cryptographer.verify_rpk"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.verify_rpk">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">verify_rpk</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">rpk</span><span class="p">):</span>
+<div class="viewcode-block" id="Cryptographer.get_compressed_pk"><a class="viewcode-back" href="../../common.cryptographer.html#common.cryptographer.Cryptographer.get_compressed_pk">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_compressed_pk</span><span class="p">(</span><span class="n">pk</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Verifies that that a recovered public key matches a given one.</span>
+<span class="sd">        Computes a compressed, hex-encoded, public key given a :obj:`PublicKey` .</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            pk(:obj:`PublicKey`): a given public key (provided by the user).</span>
-<span class="sd">            rpk(:obj:`PublicKey`): a public key recovered via ``recover_pk``.</span>
+<span class="sd">            pk(:obj:`PublicKey`): a given public key.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`bool`: True if the public keys match, False otherwise.</span>
+<span class="sd">            :obj:`str`: A compressed, hex-encoded, public key (33-byte long) if it can be compressed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">             :obj:`InvalidParameter`: if the value passed as public key is not a PublicKey object.</span>
+<span class="sd">             :obj:`InvalidKey`: if the public key has not been properly created.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">pk</span><span class="o">.</span><span class="n">point</span><span class="p">()</span> <span class="o">==</span> <span class="n">rpk</span><span class="o">.</span><span class="n">point</span><span class="p">()</span></div></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">PublicKey</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidParameter</span><span class="p">(</span><span class="s2">&quot;Wrong value passed as pk. Received </span><span class="si">{}</span><span class="s2">, expected (PublicKey)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pk</span><span class="p">)))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">compressed_pk</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">compressed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hexlify</span><span class="p">(</span><span class="n">compressed_pk</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidKey</span><span class="p">(</span><span class="s2">&quot;PublicKey has invalid initializer&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>
@@ -475,11 +542,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -490,7 +565,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

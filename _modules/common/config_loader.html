@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -160,44 +163,45 @@
 <span class="sd">        default_conf (:obj:`dict`): a dictionary populated with the default configuration params and the expected types.</span>
 <span class="sd">            The format is as follows:</span>
 
-<span class="sd">            {&quot;field0&quot;: {&quot;value&quot;: value_from_conf_file, &quot;type&quot;: expected_type, ...}}</span>
+<span class="sd">            ``{&quot;field0&quot;: {&quot;value&quot;: value_from_conf_file, &quot;type&quot;: expected_type, ...}}``</span>
 
 <span class="sd">        command_line_conf (:obj:`dict`): a dictionary containing the command line parameters that may replace the</span>
 <span class="sd">            ones in default / config file.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        data_dir (:obj:`str`): the path to the data directory where the configuration file may be found.</span>
-<span class="sd">        conf_file_path (:obj:`str`): the path to the config file (the file may not exist).</span>
-<span class="sd">        conf_fields (:obj:`dict`): a dictionary populated with the configuration params and the expected types.</span>
-<span class="sd">            follows the same format as default_conf.</span>
-<span class="sd">        command_line_conf (:obj:`dict`): a dictionary containing the command line parameters that may replace the</span>
+<span class="sd">        data_dir (:obj:`str`): The path to the data directory where the configuration file may be found.</span>
+<span class="sd">        conf_file_path (:obj:`str`): The path to the config file (the file may not exist).</span>
+<span class="sd">        conf_fields (:obj:`dict`): A dictionary populated with the configuration params and the expected types.</span>
+<span class="sd">            It follows the same format as ``default_conf``.</span>
+<span class="sd">        command_line_conf (:obj:`dict`): A dictionary containing the command line parameters that may replace the</span>
 <span class="sd">            ones in default / config file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">conf_file_name</span><span class="p">,</span> <span class="n">default_conf</span><span class="p">,</span> <span class="n">command_line_conf</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="n">conf_file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">conf_file_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span> <span class="o">=</span> <span class="n">default_conf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_line_conf</span> <span class="o">=</span> <span class="n">command_line_conf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwritten_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ConfigLoader.build_config"><a class="viewcode-back" href="../../common.config_loader.html#common.config_loader.ConfigLoader.build_config">[docs]</a>    <span class="k">def</span> <span class="nf">build_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a config dictionary from command line, config file and default configuration parameters.</span>
 
-<span class="sd">        The priority if as follows:</span>
+<span class="sd">        The priority is as follows:</span>
 <span class="sd">            - command line</span>
 <span class="sd">            - config file</span>
 <span class="sd">            - defaults</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            obj:`dict`: a dictionary containing all the configuration parameters.</span>
-
+<span class="sd">            :obj:`dict`: A dictionary containing all the configuration parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">):</span>
             <span class="n">file_config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
             <span class="n">file_config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf_file_path</span><span class="p">)</span>
 
+            <span class="c1"># Load parameters and cast them to int if necessary</span>
             <span class="k">if</span> <span class="n">file_config</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">file_config</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">file_config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">sec</span><span class="p">):</span>
@@ -212,28 +216,32 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">k_upper</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
+                            <span class="bp">self</span><span class="o">.</span><span class="n">overwritten_fields</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k_upper</span><span class="p">)</span>
+
         <span class="c1"># Override the command line parameters to the defaults / conf file</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_line_conf</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">overwritten_fields</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
         <span class="c1"># Extend relative paths</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extend_paths</span><span class="p">()</span>
+        <span class="n">expanded_data_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extend_paths</span><span class="p">()</span>
 
         <span class="c1"># Sanity check fields and build config dictionary</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_config_dict</span><span class="p">()</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">expanded_data_dir</span>
 
         <span class="k">return</span> <span class="n">config</span></div>
 
 <div class="viewcode-block" id="ConfigLoader.create_config_dict"><a class="viewcode-back" href="../../common.config_loader.html#common.config_loader.ConfigLoader.create_config_dict">[docs]</a>    <span class="k">def</span> <span class="nf">create_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks that the configuration fields (self.conf_fields) have the right type and creates a config dict if so.</span>
+<span class="sd">        Checks that the configuration fields (``self.conf_fields``) have the right type and creates a config dict if so.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`dict`: A dictionary with the same keys as the provided one, but containing only the &quot;value&quot; field as</span>
-<span class="sd">            value if the provided ``conf_fields`` where correct.</span>
+<span class="sd">            value if the provided ``conf_fields`` are correct.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: If any of the dictionary elements does not have the expected type</span>
+<span class="sd">            ValueError: If any of the dictionary elements does not have the expected type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">conf_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -252,14 +260,25 @@
 
 <div class="viewcode-block" id="ConfigLoader.extend_paths"><a class="viewcode-back" href="../../common.config_loader.html#common.config_loader.ConfigLoader.extend_paths">[docs]</a>    <span class="k">def</span> <span class="nf">extend_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Extends the relative paths of  the ``conf_fields`` dictionary with ``data_dir``.</span>
+<span class="sd">        Extends the relative paths of the ``conf_fields`` dictionary with ``data_dir``.</span>
 
-<span class="sd">        If an absolute path is given, it&#39;ll remain the same.</span>
+<span class="sd">        If an absolute path is given, it will remain the same.</span>
+
+<span class="sd">        If the config contains a BTC_NETWORK field whose value is not &quot;mainnet&quot;, it is also appended to the path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># if there is a BTC_NETWORK parameter whose value is not &quot;mainnet&quot;, we append it to the data_dir when expanding</span>
+        <span class="n">network_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_NETWORK&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">network_field</span> <span class="ow">and</span> <span class="n">network_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;mainnet&quot;</span><span class="p">:</span>
+            <span class="n">expanded_data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">network_field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expanded_data_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span>
+
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span></div></div>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expanded_data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf_fields</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">expanded_data_dir</span></div></div>
 </pre></div>
 
            </div>
@@ -272,11 +291,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -287,7 +314,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

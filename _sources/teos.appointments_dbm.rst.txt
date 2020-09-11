@@ -1,0 +1,7 @@
+teos.appointments\_dbm
+======================
+
+.. automodule:: teos.appointments_dbm
+   :members:
+   :undoc-members:
+   :show-inheritance:

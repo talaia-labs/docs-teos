@@ -1,0 +1,14 @@
+contrib.client package
+======================
+
+.. automodule:: contrib.client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   contrib.client.teos_client

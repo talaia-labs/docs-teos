@@ -4,7 +4,9 @@ python-teos
 .. toctree::
    :maxdepth: 4
 
-   cli
    common
-   generate_keys
+   contrib
    teos
+   test
+   wire
+   wire-listen

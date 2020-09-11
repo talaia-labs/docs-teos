@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.internal_api &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.internal_api</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.internal_api</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">grpc</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">readerwriterlock</span> <span class="kn">import</span> <span class="n">rwlock</span>
+<span class="kn">from</span> <span class="nn">google.protobuf.struct_pb2</span> <span class="kn">import</span> <span class="n">Struct</span>
+
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">common.appointment</span> <span class="kn">import</span> <span class="n">Appointment</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">InvalidParameter</span>
+
+<span class="kn">from</span> <span class="nn">teos.protobuf.appointment_pb2</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Appointment</span> <span class="k">as</span> <span class="n">AppointmentProto</span><span class="p">,</span>
+    <span class="n">Tracker</span> <span class="k">as</span> <span class="n">TrackerProto</span><span class="p">,</span>
+    <span class="n">AppointmentData</span><span class="p">,</span>
+    <span class="n">AddAppointmentResponse</span><span class="p">,</span>
+    <span class="n">GetAppointmentResponse</span><span class="p">,</span>
+    <span class="n">GetAllAppointmentsResponse</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.user_pb2</span> <span class="kn">import</span> <span class="n">RegisterResponse</span><span class="p">,</span> <span class="n">GetUserResponse</span><span class="p">,</span> <span class="n">GetUsersResponse</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.tower_services_pb2</span> <span class="kn">import</span> <span class="n">GetTowerInfoResponse</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.tower_services_pb2_grpc</span> <span class="kn">import</span> <span class="n">TowerServicesServicer</span><span class="p">,</span> <span class="n">add_TowerServicesServicer_to_server</span>
+<span class="kn">from</span> <span class="nn">teos.gatekeeper</span> <span class="kn">import</span> <span class="n">NotEnoughSlots</span><span class="p">,</span> <span class="n">AuthenticationFailure</span>
+<span class="kn">from</span> <span class="nn">teos.watcher</span> <span class="kn">import</span> <span class="n">AppointmentLimitReached</span><span class="p">,</span> <span class="n">AppointmentAlreadyTriggered</span><span class="p">,</span> <span class="n">AppointmentNotFound</span>
+<span class="kn">from</span> <span class="nn">google.protobuf.empty_pb2</span> <span class="kn">import</span> <span class="n">Empty</span>
+
+
+<div class="viewcode-block" id="InternalAPI"><a class="viewcode-back" href="../../teos.internal_api.html#teos.internal_api.InternalAPI">[docs]</a><span class="k">class</span> <span class="nc">InternalAPI</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :obj:`InternalAPI` is the interface to interact with the tower backend. It offers methods than can be accessed</span>
+<span class="sd">    by the CLI or the client via the :class:`API &lt;teos.api.API&gt;` (HTTP proxy) or the :class:`RPC &lt;teos.rpc.RPC&gt;`</span>
+<span class="sd">    (gRPC proxy).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        watcher (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`): a :obj:`Watcher` instance to pass the requests to. The Watcher</span>
+<span class="sd">            is the main backend class of the tower and can interact with the rest.</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): the endpoint where the internal api will be served (gRPC server).</span>
+<span class="sd">        stop_command_event (:obj:`multiprocessing.Event`): an event to be set when a ``stop`` command is issued.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): The logger for this component.</span>
+<span class="sd">        endpoint (:obj:`str`): The endpoint where the internal api will be served (gRPC server).</span>
+<span class="sd">        rpc_server (:obj:`grpc.Server &lt;grpc.Server&gt;`): The non-started gRPC server instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watcher</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">,</span> <span class="n">stop_command_event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">InternalAPI</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span> <span class="o">=</span> <span class="n">watcher</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">internal_api_endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span> <span class="o">=</span> <span class="n">stop_command_event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">server</span><span class="p">(</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span>
+        <span class="n">add_TowerServicesServicer_to_server</span><span class="p">(</span><span class="n">_InternalAPI</span><span class="p">(</span><span class="n">watcher</span><span class="p">,</span> <span class="n">stop_command_event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_InternalAPI</span><span class="p">(</span><span class="n">TowerServicesServicer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This represents the internal api service provider and implements all the gRPC methods offered by the API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        watcher (:obj:`Watcher &lt;teos.watcher.Watcher&gt;`): a ``Watcher`` instance to pass the requests to. The Watcher is</span>
+<span class="sd">            the main backend class of the tower and can interact with the rest.</span>
+<span class="sd">        stop_command_event (:obj:`multiprocessing.Event`): an Event to be set when a `stop` command is issued.</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): the logger for this component.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        rw_lock (:obj:`RWLockWrite &lt;rwlock.RWLockWrite&gt;`): a reader-writer lock to manage concurrent access to the</span>
+<span class="sd">            backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watcher</span><span class="p">,</span> <span class="n">stop_command_event</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span> <span class="o">=</span> <span class="n">watcher</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span> <span class="o">=</span> <span class="n">stop_command_event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span> <span class="o">=</span> <span class="n">rwlock</span><span class="o">.</span><span class="n">RWLockWrite</span><span class="p">()</span>  <span class="c1"># lock to be acquired before interacting with the watchtower&#39;s state</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Registers a user to the tower.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_wlock</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">available_slots</span><span class="p">,</span> <span class="n">subscription_expiry</span><span class="p">,</span> <span class="n">subscription_signature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">RegisterResponse</span><span class="p">(</span>
+                    <span class="n">user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+                    <span class="n">available_slots</span><span class="o">=</span><span class="n">available_slots</span><span class="p">,</span>
+                    <span class="n">subscription_expiry</span><span class="o">=</span><span class="n">subscription_expiry</span><span class="p">,</span>
+                    <span class="n">subscription_signature</span><span class="o">=</span><span class="n">subscription_signature</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">InvalidParameter</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">INVALID_ARGUMENT</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">RegisterResponse</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">add_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Processes the request to add an appointment from a user.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_wlock</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">appointment</span> <span class="o">=</span> <span class="n">Appointment</span><span class="p">(</span>
+                    <span class="n">request</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">encrypted_blob</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">appointment</span><span class="o">.</span><span class="n">to_self_delay</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">AddAppointmentResponse</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">add_appointment</span><span class="p">(</span><span class="n">appointment</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">signature</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="p">(</span><span class="n">AuthenticationFailure</span><span class="p">,</span> <span class="n">NotEnoughSlots</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid signature or user does not have enough slots available&quot;</span>
+                <span class="n">status_code</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNAUTHENTICATED</span>
+
+            <span class="k">except</span> <span class="n">AppointmentLimitReached</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Appointment limit reached&quot;</span>
+                <span class="n">status_code</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">RESOURCE_EXHAUSTED</span>
+
+            <span class="k">except</span> <span class="n">AppointmentAlreadyTriggered</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The provided appointment has already been triggered&quot;</span>
+                <span class="n">status_code</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">ALREADY_EXISTS</span>
+
+            <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">status_code</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">AddAppointmentResponse</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_appointment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an appointment stored in the tower, if it exists.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_rlock</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">get_appointment</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">signature</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;being_watched&quot;</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">AppointmentData</span><span class="p">(</span>
+                        <span class="n">appointment</span><span class="o">=</span><span class="n">AppointmentProto</span><span class="p">(</span>
+                            <span class="n">locator</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">),</span>
+                            <span class="n">encrypted_blob</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encrypted_blob&quot;</span><span class="p">),</span>
+                            <span class="n">to_self_delay</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;to_self_delay&quot;</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">AppointmentData</span><span class="p">(</span>
+                        <span class="n">tracker</span><span class="o">=</span><span class="n">TrackerProto</span><span class="p">(</span>
+                            <span class="n">locator</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">),</span>
+                            <span class="n">dispute_txid</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dispute_txid&quot;</span><span class="p">),</span>
+                            <span class="n">penalty_txid</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">),</span>
+                            <span class="n">penalty_rawtx</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_rawtx&quot;</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">return</span> <span class="n">GetAppointmentResponse</span><span class="p">(</span><span class="n">appointment_data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="p">(</span><span class="n">AuthenticationFailure</span><span class="p">,</span> <span class="n">AppointmentNotFound</span><span class="p">):</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Appointment not found&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">NOT_FOUND</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">GetAppointmentResponse</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_all_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all the appointments in the tower.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_rlock</span><span class="p">():</span>
+            <span class="n">watcher_appointments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">get_all_watcher_appointments</span><span class="p">()</span>
+            <span class="n">responder_trackers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">get_all_responder_trackers</span><span class="p">()</span>
+
+        <span class="n">appointments</span> <span class="o">=</span> <span class="n">Struct</span><span class="p">()</span>
+        <span class="n">appointments</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;watcher_appointments&quot;</span><span class="p">:</span> <span class="n">watcher_appointments</span><span class="p">,</span> <span class="s2">&quot;responder_trackers&quot;</span><span class="p">:</span> <span class="n">responder_trackers</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">GetAllAppointmentsResponse</span><span class="p">(</span><span class="n">appointments</span><span class="o">=</span><span class="n">appointments</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_tower_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns generic information about the tower.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_rlock</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">GetTowerInfoResponse</span><span class="p">(</span>
+                <span class="n">tower_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">tower_id</span><span class="p">,</span>
+                <span class="n">n_registered_users</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">n_registered_users</span><span class="p">,</span>
+                <span class="n">n_watcher_appointments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">n_watcher_appointments</span><span class="p">,</span>
+                <span class="n">n_responder_trackers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">n_responder_trackers</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the list of all registered user ids.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_rlock</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">GetUsersResponse</span><span class="p">(</span><span class="n">user_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">get_registered_user_ids</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns information about a user, given its user id.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">rw_lock</span><span class="o">.</span><span class="n">gen_rlock</span><span class="p">():</span>
+            <span class="n">user_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">watcher</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user_id</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">user_info</span><span class="p">:</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;User not found&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">NOT_FOUND</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">GetUserResponse</span><span class="p">()</span>
+
+            <span class="n">user_struct</span> <span class="o">=</span> <span class="n">Struct</span><span class="p">()</span>
+            <span class="n">user_struct</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;subscription_expiry&quot;</span><span class="p">:</span> <span class="n">user_info</span><span class="o">.</span><span class="n">subscription_expiry</span><span class="p">,</span>
+                    <span class="s2">&quot;available_slots&quot;</span><span class="p">:</span> <span class="n">user_info</span><span class="o">.</span><span class="n">available_slots</span><span class="p">,</span>
+                    <span class="s2">&quot;appointments&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">user_info</span><span class="o">.</span><span class="n">appointments</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">GetUserResponse</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user_struct</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initiates a graceful shutdown of the tower.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_command_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Empty</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

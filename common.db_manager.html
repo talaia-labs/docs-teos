@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>common.db_manager &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="common.exceptions" href="common.exceptions.html" />
+    <link rel="prev" title="common.cryptographer" href="common.cryptographer.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="common.appointment.html">common.appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.config_loader.html">common.config_loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.cryptographer.html">common.cryptographer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">common.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.exceptions.html">common.exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.receipts.html">common.receipts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.tools.html">common.tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="common.html">common package</a> &raquo;</li>
+        
+      <li>common.db_manager</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/common.db_manager.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-common.db_manager">
+<span id="common-db-manager"></span><h1>common.db_manager<a class="headerlink" href="#module-common.db_manager" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="common.db_manager.DBManager">
+<em class="property">class </em><code class="sig-name descname">DBManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/db_manager.html#DBManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.db_manager.DBManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <a class="reference internal" href="#common.db_manager.DBManager" title="common.db_manager.DBManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBManager</span></code></a> is in charge of interacting with a database (<code class="docutils literal notranslate"><span class="pre">LevelDB</span></code>).
+Keys and values are stored as bytes in the database but processed as strings by the manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the path (relative or absolute) to the system folder containing the database. A fresh
+database will be create if the specified path does not contain one.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – if the provided <code class="docutils literal notranslate"><span class="pre">db_path</span></code> is not a string.</p></li>
+<li><p><strong>plyvel.Error</strong> – if the db is currently unavailable (being used by another process).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="common.db_manager.DBManager.create_entry">
+<code class="sig-name descname">create_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/db_manager.html#DBManager.create_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.db_manager.DBManager.create_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new entry in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key of the new entry, used to identify it.</p></li>
+<li><p><strong>value</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the data stored under the given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an optional prefix added to the <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if key, value or prefix are not strings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="common.db_manager.DBManager.delete_entry">
+<code class="sig-name descname">delete_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/db_manager.html#DBManager.delete_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.db_manager.DBManager.delete_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an entry from the database given an <code class="docutils literal notranslate"><span class="pre">key</span></code> (and optionally a <code class="docutils literal notranslate"><span class="pre">prefix</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key that identifies the data to be deleted.</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an optional prefix to be prepended to the <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if key or prefix are not strings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="common.db_manager.DBManager.load_entry">
+<code class="sig-name descname">load_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/db_manager.html#DBManager.load_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.db_manager.DBManager.load_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads an entry from the database given a <code class="docutils literal notranslate"><span class="pre">key</span></code> (and optionally a <code class="docutils literal notranslate"><span class="pre">prefix</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the key that identifies the entry to be loaded.</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – an optional prefix added to the <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>A byte-array containing the requested data.</p>
+<p>Returns <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> if the entry is not found.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if key or prefix are not strings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="common.exceptions.html" class="btn btn-neutral float-right" title="common.exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="common.cryptographer.html" class="btn btn-neutral float-left" title="common.cryptographer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

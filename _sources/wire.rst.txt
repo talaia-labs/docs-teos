@@ -1,0 +1,7 @@
+wire
+====
+
+.. automodule:: wire
+   :members:
+   :undoc-members:
+   :show-inheritance:

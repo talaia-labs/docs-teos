@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.rpc &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>teos.rpc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for teos.rpc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">grpc</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">signal</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">SIGINT</span><span class="p">,</span> <span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">SIGTERM</span>
+
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span>
+
+<span class="kn">from</span> <span class="nn">teos.constants</span> <span class="kn">import</span> <span class="n">SHUTDOWN_GRACE_TIME</span>
+<span class="kn">from</span> <span class="nn">teos.protobuf.tower_services_pb2_grpc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TowerServicesStub</span><span class="p">,</span>
+    <span class="n">TowerServicesServicer</span><span class="p">,</span>
+    <span class="n">add_TowerServicesServicer_to_server</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="RPC"><a class="viewcode-back" href="../../teos.rpc.html#teos.rpc.RPC">[docs]</a><span class="k">class</span> <span class="nc">RPC</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The :obj:`RPC` is an external RPC server offered by tower to receive requests from the CLI.</span>
+<span class="sd">    This acts as a proxy between the internal api and the CLI.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rpc_bind (:obj:`str`): the IP or host where the RPC server will be hosted.</span>
+<span class="sd">        rpc_port (:obj:`int`): the port where the RPC server will be hosted.</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): the endpoint where to reach the internal (gRPC) api.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): The logger for this component.</span>
+<span class="sd">        endpoint (:obj:`str`): The endpoint where the RPC api will be served (external gRPC server).</span>
+<span class="sd">        rpc_server (:obj:`grpc.Server &lt;grpc.Server&gt;`): The non-started gRPC server instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rpc_bind</span><span class="p">,</span> <span class="n">rpc_port</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">RPC</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rpc_bind</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">rpc_port</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">server</span><span class="p">(</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">add_insecure_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span>
+        <span class="n">add_TowerServicesServicer_to_server</span><span class="p">(</span><span class="n">_RPC</span><span class="p">(</span><span class="n">internal_api_endpoint</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RPC.handle_signals"><a class="viewcode-back" href="../../teos.rpc.html#teos.rpc.RPC.handle_signals">[docs]</a>    <span class="k">def</span> <span class="nf">handle_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ignores CTRL + C since and let&#39;s the main process manage the teardown.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RPC.teardown"><a class="viewcode-back" href="../../teos.rpc.html#teos.rpc.RPC.teardown">[docs]</a>    <span class="k">def</span> <span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping&quot;</span><span class="p">)</span>
+        <span class="n">stopped_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">SHUTDOWN_GRACE_TIME</span><span class="p">)</span>
+        <span class="n">stopped_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopped&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="forward_errors"><a class="viewcode-back" href="../../teos.rpc.html#teos.rpc.forward_errors">[docs]</a><span class="k">def</span> <span class="nf">forward_errors</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms ``func`` in order to forward any ``grpc.RPCError`` returned by the upstream grpc as the result of the</span>
+<span class="sd">    current grpc call.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">details</span><span class="p">())</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<span class="k">class</span> <span class="nc">_RPC</span><span class="p">(</span><span class="n">TowerServicesServicer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This represents the RPC server provider and implements all the methods that can be accessed using the CLI.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): the endpoint where to reach the internal (gRPC) api.</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): the logger for this component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span> <span class="o">=</span> <span class="n">internal_api_endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_api_endpoint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stub</span> <span class="o">=</span> <span class="n">TowerServicesStub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
+
+    <span class="nd">@forward_errors</span>
+    <span class="k">def</span> <span class="nf">get_all_appointments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_all_appointments</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="nd">@forward_errors</span>
+    <span class="k">def</span> <span class="nf">get_tower_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_tower_info</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="nd">@forward_errors</span>
+    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_users</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="nd">@forward_errors</span>
+    <span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="nd">@forward_errors</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stub</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="serve"><a class="viewcode-back" href="../../teos.rpc.html#teos.rpc.serve">[docs]</a><span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">rpc_bind</span><span class="p">,</span> <span class="n">rpc_port</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">,</span> <span class="n">log_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serves the external RPC API at the given endpoint and connects it to the internal api.</span>
+
+<span class="sd">    This method will serve and hold until the main process is stop or a stop signal is received.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rpc_bind (:obj:`str`): the IP or host where the RPC server will be hosted.</span>
+<span class="sd">        rpc_port (:obj:`int`): the port where the RPC server will be hosted.</span>
+<span class="sd">        internal_api_endpoint (:obj:`str`): the endpoint where to reach the internal (gRPC) api.</span>
+<span class="sd">        stop_event (:obj:`multiprocessing.Event`) the Event that this service will monitor. The rpc server will</span>
+<span class="sd">            initiate a graceful shutdown once this event is set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">setup_logging</span><span class="p">()</span>
+    <span class="n">rpc</span> <span class="o">=</span> <span class="n">RPC</span><span class="p">(</span><span class="n">rpc_bind</span><span class="p">,</span> <span class="n">rpc_port</span><span class="p">,</span> <span class="n">internal_api_endpoint</span><span class="p">)</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">rpc</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">rpc</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">rpc</span><span class="o">.</span><span class="n">handle_signals</span><span class="p">)</span>
+    <span class="n">rpc</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">rpc</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized. Serving at </span><span class="si">{</span><span class="n">rpc</span><span class="o">.</span><span class="n">endpoint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+    <span class="n">rpc</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping&quot;</span><span class="p">)</span>
+    <span class="n">stopped_event</span> <span class="o">=</span> <span class="n">rpc</span><span class="o">.</span><span class="n">rpc_server</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="n">SHUTDOWN_GRACE_TIME</span><span class="p">)</span>
+    <span class="n">stopped_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">rpc</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopped&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

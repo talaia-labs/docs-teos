@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -151,6 +154,8 @@
 
 <span class="kn">from</span> <span class="nn">teos.utils.auth_proxy</span> <span class="kn">import</span> <span class="n">AuthServiceProxy</span><span class="p">,</span> <span class="n">JSONRPCException</span>
 
+<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">MAINNET_RPC_PORT</span><span class="p">,</span> <span class="n">TESTNET_RPC_PORT</span><span class="p">,</span> <span class="n">REGTEST_RPC_PORT</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Tools is a module with general methods that can used by different entities in the codebase.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -163,7 +168,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        btc_connect_params (:obj:`dict`): a dictionary with the parameters to connect to bitcoind</span>
-<span class="sd">            (rpc user, rpc passwd, host and port)</span>
+<span class="sd">            (``rpc user, rpc password, host and port``)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :obj:`AuthServiceProxy &lt;teos.utils.auth_proxy.AuthServiceProxy&gt;`: An authenticated service proxy to ``bitcoind``</span>
@@ -174,7 +179,7 @@
         <span class="s2">&quot;http://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">@</span><span class="si">%s</span><span class="s2">:</span><span class="si">%d</span><span class="s2">&quot;</span>
         <span class="o">%</span> <span class="p">(</span>
             <span class="n">btc_connect_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_RPC_USER&quot;</span><span class="p">),</span>
-            <span class="n">btc_connect_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_RPC_PASSWD&quot;</span><span class="p">),</span>
+            <span class="n">btc_connect_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_RPC_PASSWORD&quot;</span><span class="p">),</span>
             <span class="n">btc_connect_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_RPC_CONNECT&quot;</span><span class="p">),</span>
             <span class="n">btc_connect_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BTC_RPC_PORT&quot;</span><span class="p">),</span>
         <span class="p">)</span>
@@ -188,9 +193,9 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        btc_connect_params (:obj:`dict`): a dictionary with the parameters to connect to bitcoind</span>
-<span class="sd">            (rpc user, rpc passwd, host and port)</span>
+<span class="sd">            (``rpc user, rpc password, host and port``).</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`bool`: ``True`` if the connection can be established. ``False`` otherwise.</span>
+<span class="sd">        :obj:`bool`: True if the connection can be established. False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">can_connect</span> <span class="o">=</span> <span class="kc">True</span>
@@ -210,11 +215,11 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        btc_connect_params (:obj:`dict`): a dictionary with the parameters to connect to bitcoind</span>
-<span class="sd">            (rpc user, rpc passwd, host and port)</span>
+<span class="sd">            (rpc user, rpc password, host and port)</span>
 <span class="sd">        network (:obj:`str`): the network the tower is connected to.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        :obj:`bool`: ``True`` if the network configuration matches. ``False`` otherwise.</span>
+<span class="sd">        :obj:`bool`: True if the network configuration matches. False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">mainnet_genesis_block_hash</span> <span class="o">=</span> <span class="s2">&quot;000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f&quot;</span>
@@ -231,6 +236,30 @@
         <span class="n">correct_network</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">return</span> <span class="n">correct_network</span></div>
+
+
+<div class="viewcode-block" id="get_default_rpc_port"><a class="viewcode-back" href="../../teos.tools.html#teos.tools.get_default_rpc_port">[docs]</a><span class="k">def</span> <span class="nf">get_default_rpc_port</span><span class="p">(</span><span class="n">network</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the default RPC port given a network name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        network (:obj:`str`): the network name. Either ``mainnet``, ``testnet`` or ``regtest``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`int`: The default RPC port depending on the given network name.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        :obj:`ValueError`: If the network is not mainnet, testnet or regtest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">network</span> <span class="o">==</span> <span class="s2">&quot;mainnet&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MAINNET_RPC_PORT</span>
+    <span class="k">elif</span> <span class="n">network</span> <span class="o">==</span> <span class="s2">&quot;testnet&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">TESTNET_RPC_PORT</span>
+    <span class="k">elif</span> <span class="n">network</span> <span class="o">==</span> <span class="s2">&quot;regtest&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">REGTEST_RPC_PORT</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong Bitcoin network. Expected: mainnet, testnet or regtest. Received: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">network</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -243,11 +272,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -258,7 +295,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

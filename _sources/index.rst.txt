@@ -11,8 +11,8 @@ Welcome to python-teos's documentation!
    :caption: Contents:
 
    teos
-   cli
    common
+   contrib
    
 
 

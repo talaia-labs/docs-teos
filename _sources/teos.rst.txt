@@ -6,22 +6,34 @@ teos package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+   teos.cli
+
 Submodules
 ----------
 
 .. toctree::
 
    teos.api
+   teos.appointments_dbm
    teos.block_processor
    teos.builder
    teos.carrier
    teos.chain_monitor
    teos.cleaner
-   teos.db_manager
-   teos.errors
+   teos.extended_appointment
+   teos.gatekeeper
    teos.inspector
+   teos.internal_api
+   teos.lightning_server
+   teos.logger
    teos.responder
-   teos.rpc_errors
+   teos.rpc
    teos.teosd
    teos.tools
+   teos.users_dbm
    teos.watcher

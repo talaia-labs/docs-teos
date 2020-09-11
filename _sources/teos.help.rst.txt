@@ -1,7 +1,0 @@
-teos.help
-=========
-
-.. automodule:: teos.help
-   :members:
-   :undoc-members:
-   :show-inheritance:

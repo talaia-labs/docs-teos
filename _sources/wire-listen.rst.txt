@@ -1,0 +1,7 @@
+wire\-listen
+============
+
+.. automodule:: wire-listen
+   :members:
+   :undoc-members:
+   :show-inheritance:

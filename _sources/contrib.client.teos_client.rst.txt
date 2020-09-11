@@ -1,0 +1,7 @@
+contrib.client.teos\_client
+===========================
+
+.. automodule:: contrib.client.teos_client
+   :members:
+   :undoc-members:
+   :show-inheritance:

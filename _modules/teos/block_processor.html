@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -146,13 +149,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for teos.block_processor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span></span><span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">common.exceptions</span> <span class="kn">import</span> <span class="n">BasicException</span>
 
-<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
 <span class="kn">from</span> <span class="nn">teos.tools</span> <span class="kn">import</span> <span class="n">bitcoin_cli</span>
 <span class="kn">from</span> <span class="nn">teos.utils.auth_proxy</span> <span class="kn">import</span> <span class="n">JSONRPCException</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;BlockProcessor&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InvalidTransactionFormat"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.InvalidTransactionFormat">[docs]</a><span class="k">class</span> <span class="nc">InvalidTransactionFormat</span><span class="p">(</span><span class="n">BasicException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Raised when a transaction is not properly formatted.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="BlockProcessor"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor">[docs]</a><span class="k">class</span> <span class="nc">BlockProcessor</span><span class="p">:</span>
@@ -162,23 +167,27 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        btc_connect_params (:obj:`dict`): a dictionary with the parameters to connect to bitcoind</span>
-<span class="sd">            (rpc user, rpc passwd, host and port)</span>
+<span class="sd">            (``rpc user, rpc password, host and port``).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): the logger for this component.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">btc_connect_params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">BlockProcessor</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">btc_connect_params</span> <span class="o">=</span> <span class="n">btc_connect_params</span>
 
 <div class="viewcode-block" id="BlockProcessor.get_block"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor.get_block">[docs]</a>    <span class="k">def</span> <span class="nf">get_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gives a block given a block hash by querying ``bitcoind``.</span>
+<span class="sd">        Gets a block given a block hash by querying ``bitcoind``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            block_hash (:obj:`str`): The block hash to be queried.</span>
+<span class="sd">            block_hash (:obj:`str`): the block hash to be queried.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`dict` or :obj:`None`: A dictionary containing the requested block data if the block is found.</span>
 
-<span class="sd">            Returns ``None`` otherwise.</span>
+<span class="sd">            Returns :obj:`None` otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -186,18 +195,18 @@
 
         <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">block</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block from bitcoind&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block from bitcoind&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">block</span></div>
 
 <div class="viewcode-block" id="BlockProcessor.get_best_block_hash"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor.get_best_block_hash">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_block_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the hash of the current best chain tip.</span>
+<span class="sd">        Gets the hash of the current best chain tip.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`str` or :obj:`None`: The hash of the block if it can be found.</span>
 
-<span class="sd">            Returns ``None`` otherwise (not even sure this can actually happen).</span>
+<span class="sd">            Returns :obj:`None` otherwise (not even sure this can actually happen).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -205,18 +214,18 @@
 
         <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">block_hash</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block hash&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block hash&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">block_hash</span></div>
 
 <div class="viewcode-block" id="BlockProcessor.get_block_count"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor.get_block_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_block_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the block height of the best chain.</span>
+<span class="sd">        Gets the block count of the best chain.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`int` or :obj:`None`: The block height if it can be computed.</span>
+<span class="sd">            :obj:`int` or :obj:`None`: The count of the best chain if it can be computed.</span>
 
-<span class="sd">            Returns ``None`` otherwise (not even sure this can actually happen).</span>
+<span class="sd">            Returns :obj:`None` otherwise (not even sure this can actually happen).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -224,7 +233,7 @@
 
         <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">block_count</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block count&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t get block count&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">block_count</span></div>
 
@@ -234,20 +243,22 @@
 <span class="sd">        associated metadata given by ``bitcoind`` (e.g. confirmation count).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            raw_tx (:obj:`str`): The hex representation of the transaction.</span>
+<span class="sd">            raw_tx (:obj:`str`): the hex representation of the transaction.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`dict` or :obj:`None`: The decoding of the given ``raw_tx`` if the transaction is well formatted.</span>
+<span class="sd">            :obj:`dict`: The decoding of the given ``raw_tx`` if the transaction is well formatted.</span>
 
-<span class="sd">            Returns ``None`` otherwise.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :obj:`InvalidTransactionFormat`: If the `provided ``raw_tx`` has invalid format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tx</span> <span class="o">=</span> <span class="n">bitcoin_cli</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">btc_connect_params</span><span class="p">)</span><span class="o">.</span><span class="n">decoderawtransaction</span><span class="p">(</span><span class="n">raw_tx</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">JSONRPCException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">tx</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t build transaction from decoded data&quot;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot build transaction from decoded data&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidTransactionFormat</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">tx</span></div>
 
@@ -262,7 +273,7 @@
 <span class="sd">            :obj:`int` or :obj:`None`: The distance between the target and the best chain tip is the target block can be</span>
 <span class="sd">            found on the blockchain.</span>
 
-<span class="sd">            Returns ``None`` otherwise.</span>
+<span class="sd">            Returns :obj:`None` otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">distance</span> <span class="o">=</span> <span class="kc">None</span>
@@ -281,7 +292,7 @@
 
 <div class="viewcode-block" id="BlockProcessor.get_missed_blocks"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor.get_missed_blocks">[docs]</a>    <span class="k">def</span> <span class="nf">get_missed_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_know_block_hash</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the blocks between the current best chain tip and a given block hash (``last_know_block_hash``).</span>
+<span class="sd">        Gets the blocks between the current best chain tip and a given block hash (``last_know_block_hash``).</span>
 
 <span class="sd">        This method is used to fetch all the missed information when recovering from a crash.</span>
 
@@ -306,7 +317,7 @@
 
 <div class="viewcode-block" id="BlockProcessor.is_block_in_best_chain"><a class="viewcode-back" href="../../teos.block_processor.html#teos.block_processor.BlockProcessor.is_block_in_best_chain">[docs]</a>    <span class="k">def</span> <span class="nf">is_block_in_best_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks whether or not a given block is on the best chain. Blocks are identified by block_hash.</span>
+<span class="sd">        Checks whether a given block is on the best chain or not. Blocks are identified by block_hash.</span>
 
 <span class="sd">        A block that is not in the best chain will either not exists (block = None) or have a confirmation count of</span>
 <span class="sd">        -1 (implying that the block was forked out or the chain never grew from that one).</span>
@@ -315,7 +326,7 @@
 <span class="sd">            block_hash(:obj:`str`): the hash of the block to be checked.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`bool`: ``True`` if the block is on the best chain, ``False`` otherwise.</span>
+<span class="sd">            :obj:`bool`: True if the block is on the best chain, False otherwise.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            KeyError: If the block cannot be found in the blockchain.</span>
@@ -343,9 +354,9 @@
 <span class="sd">            last_known_block_hash(:obj:`str`): the hash of the last know block.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`tuple`: A tuple (:obj:`str`:, :obj:`list`:) where the first item contains the hash of the last common</span>
-<span class="sd">                ancestor and the second item contains the list of transactions from ``last_known_block_hash`` to</span>
-<span class="sd">                ``last_common_ancestor``.</span>
+<span class="sd">            :obj:`tuple`: A tuple (:obj:`str`, :obj:`list`) where the first item contains the hash of the last common</span>
+<span class="sd">            ancestor and the second item contains the list of transactions from ``last_known_block_hash`` to</span>
+<span class="sd">            ``last_common_ancestor``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">target_block_hash</span> <span class="o">=</span> <span class="n">last_known_block_hash</span>
@@ -369,11 +380,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -384,7 +403,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

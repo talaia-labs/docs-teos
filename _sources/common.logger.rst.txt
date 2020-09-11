@@ -1,7 +1,0 @@
-common.logger
-=============
-
-.. automodule:: common.logger
-   :members:
-   :undoc-members:
-   :show-inheritance:

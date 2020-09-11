@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="common.blob" href="common.blob.html" />
+    <link rel="next" title="common.config_loader" href="common.config_loader.html" />
     <link rel="prev" title="common package" href="common.html" /> 
 </head>
 
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,25 +85,26 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="common.html">common package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="common.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">common.appointment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.blob.html">common.blob</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.config_loader.html">common.config_loader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.cryptographer.html">common.cryptographer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.encrypted_blob.html">common.encrypted_blob</a></li>
-<li class="toctree-l3"><a class="reference internal" href="common.logger.html">common.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.db_manager.html">common.db_manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.exceptions.html">common.exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="common.receipts.html">common.receipts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="common.tools.html">common.tools</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -140,7 +143,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="common.html">common package</a> &raquo;</li>
         
@@ -165,41 +168,37 @@
             
   <div class="section" id="module-common.appointment">
 <span id="common-appointment"></span><h1>common.appointment<a class="headerlink" href="#module-common.appointment" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="common.appointment.Appointment">
-<em class="property">class </em><code class="sig-name descname">Appointment</code><span class="sig-paren">(</span><em class="sig-param">locator</em>, <em class="sig-param">start_time</em>, <em class="sig-param">end_time</em>, <em class="sig-param">to_self_delay</em>, <em class="sig-param">encrypted_blob</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Appointment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">locator</span></em>, <em class="sig-param"><span class="n">encrypted_blob</span></em>, <em class="sig-param"><span class="n">to_self_delay</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The <a class="reference internal" href="#common.appointment.Appointment" title="common.appointment.Appointment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Appointment</span></code></a> contains the information regarding an appointment between a client and the Watchtower.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>locator</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">str</span></code>) – A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a trigger
-for the tower to decrypt and broadcast the penalty transaction.</p></li>
-<li><p><strong>start_time</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">int</span></code>) – The block height where the tower is hired to start watching for breaches.</p></li>
-<li><p><strong>end_time</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">int</span></code>) – The block height where the tower will stop watching for breaches.</p></li>
-<li><p><strong>to_self_delay</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">int</span></code>) – The <code class="docutils literal notranslate"><span class="pre">to_self_delay</span></code> encoded in the <code class="docutils literal notranslate"><span class="pre">csv</span></code> of the <code class="docutils literal notranslate"><span class="pre">htlc</span></code> that this appointment is
-covering.</p></li>
-<li><p><strong>encrypted_blob</strong> (<a class="reference internal" href="common.encrypted_blob.html#common.encrypted_blob.EncryptedBlob" title="common.encrypted_blob.EncryptedBlob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EncryptedBlob</span></code></a>) – An <code class="docutils literal notranslate"><span class="pre">EncryptedBlob</span></code> object
-containing an encrypted penalty transaction. The tower will decrypt it and broadcast the penalty transaction
-upon seeing a breach on the blockchain.</p></li>
+<li><p><strong>locator</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a
+trigger for the tower to decrypt and broadcast the penalty transaction.</p></li>
+<li><p><strong>encrypted_blob</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – An encrypted blob of data containing a penalty transaction. The tower will decrypt
+it and broadcast the penalty transaction upon seeing a breach on the blockchain.</p></li>
+<li><p><strong>to_self_delay</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – The <code class="docutils literal notranslate"><span class="pre">to_self_delay</span></code> encoded in the <code class="docutils literal notranslate"><span class="pre">csv</span></code> of the <code class="docutils literal notranslate"><span class="pre">to_remote</span></code> output of the
+commitment transaction that this appointment is covering.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="common.appointment.Appointment.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">appointment_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">appointment_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds an appointment from a dictionary.</p>
-<p>This method is useful to load data from a database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>appointment_data</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing the following keys:
-<code class="docutils literal notranslate"><span class="pre">{locator,</span> <span class="pre">start_time,</span> <span class="pre">end_time,</span> <span class="pre">to_self_delay,</span> <span class="pre">encrypted_blob}</span></code></p>
+<dd class="field-odd"><p><strong>appointment_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – a dictionary containing the following keys:
+<code class="docutils literal notranslate"><span class="pre">{locator,</span> <span class="pre">to_self_delay,</span> <span class="pre">encrypted_blob}</span></code></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An appointment initialized using the provided data.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="#common.appointment.Appointment" title="common.appointment.Appointment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code></a></p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If one of the mandatory keys is missing in <code class="docutils literal notranslate"><span class="pre">appointment_data</span></code>.</p>
@@ -207,51 +206,35 @@ upon seeing a breach on the blockchain.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="common.appointment.Appointment.serialize">
 <code class="sig-name descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment.serialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Serializes an appointment to be signed.</p>
-<dl class="simple">
-<dt>The serialization follows the same ordering as the fields in the appointment:</dt><dd><p>locator:start_time:end_time:to_self_delay:encrypted_blob</p>
-</dd>
-</dl>
+<p>The serialization follows the same ordering as the fields in the appointment:</p>
+<blockquote>
+<div><p>locator | encrypted_blob | to_self_delay</p>
+</div></blockquote>
 <p>All values are big endian.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialized data to be signed.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">bytes</span></code></p>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="common.appointment.Appointment.to_dict">
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports an appointment as a dictionary.</p>
+<dd><p>Encodes an appointment as a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A dictionary containing the appointment attributes.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="common.appointment.Appointment.to_json">
-<code class="sig-name descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/common/appointment.html#Appointment.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.appointment.Appointment.to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports an appointment as a deterministic json encoded string.</p>
-<p>This method ensures that multiple invocations with the same data yield the same value. This is the format used
-to store appointments in the database.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A json-encoded str representing the appointment.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -268,7 +251,7 @@ to store appointments in the database.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="common.blob.html" class="btn btn-neutral float-right" title="common.blob" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="common.config_loader.html" class="btn btn-neutral float-right" title="common.config_loader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="common.html" class="btn btn-neutral float-left" title="common package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -280,11 +263,19 @@ to store appointments in the database.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -295,7 +286,6 @@ to store appointments in the database.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

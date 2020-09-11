@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pyton-teos
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -81,13 +83,14 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../teos.html">teos package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -146,23 +149,21 @@
            <div itemprop="articleBody">
             
   <h1>Source code for teos.responder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span></span><span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 
-<span class="kn">from</span> <span class="nn">teos</span> <span class="kn">import</span> <span class="n">LOG_PREFIX</span>
-<span class="kn">from</span> <span class="nn">common.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span> <span class="nn">teos.cleaner</span> <span class="kn">import</span> <span class="n">Cleaner</span>
+
+<span class="kn">from</span> <span class="nn">teos.logger</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">common.constants</span> <span class="kn">import</span> <span class="n">IRREVOCABLY_RESOLVED</span>
 
 <span class="n">CONFIRMATIONS_BEFORE_RETRY</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">MIN_CONFIRMATIONS</span> <span class="o">=</span> <span class="mi">6</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="s2">&quot;Responder&quot;</span><span class="p">,</span> <span class="n">log_name_prefix</span><span class="o">=</span><span class="n">LOG_PREFIX</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="TransactionTracker"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.TransactionTracker">[docs]</a><span class="k">class</span> <span class="nc">TransactionTracker</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A :class:`TransactionTracker` is used to monitor a ``penalty_tx``. Once the dispute is  seen by the</span>
+<span class="sd">    A :class:`TransactionTracker` is used to monitor a ``penalty_tx``. Once the dispute is seen by the</span>
 <span class="sd">    :obj:`Watcher &lt;teos.watcher.Watcher&gt;` the penalty transaction is decrypted and the relevant appointment data is</span>
 <span class="sd">    passed along to the :obj:`Responder`.</span>
 
@@ -170,27 +171,26 @@
 <span class="sd">    :obj:`TransactionTracker` and monitor the blockchain until the end of the appointment.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        locator (:obj:`str`): A 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a</span>
+<span class="sd">        locator (:obj:`str`): a 16-byte hex-encoded value used by the tower to detect channel breaches. It serves as a</span>
 <span class="sd">            trigger for the tower to decrypt and broadcast the penalty transaction.</span>
 <span class="sd">        dispute_txid (:obj:`str`): the id of the transaction that created the channel breach and triggered the penalty.</span>
 <span class="sd">        penalty_txid (:obj:`str`): the id of the transaction that was encrypted under ``dispute_txid``.</span>
 <span class="sd">        penalty_rawtx (:obj:`str`): the raw transaction that was broadcast as a consequence of the channel breach.</span>
-<span class="sd">        appointment_end (:obj:`int`): the block at which the tower will stop monitoring the blockchain for this</span>
-<span class="sd">            appointment.</span>
+<span class="sd">        user_id(:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">locator</span> <span class="o">=</span> <span class="n">locator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dispute_txid</span> <span class="o">=</span> <span class="n">dispute_txid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">penalty_txid</span> <span class="o">=</span> <span class="n">penalty_txid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">penalty_rawtx</span> <span class="o">=</span> <span class="n">penalty_rawtx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">appointment_end</span> <span class="o">=</span> <span class="n">appointment_end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
 
 <div class="viewcode-block" id="TransactionTracker.from_dict"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.TransactionTracker.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tx_tracker_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a :obj:`TransactionTracker` instance from a dictionary. Requires that all the fields are populated</span>
-<span class="sd">        (``not None``).</span>
+<span class="sd">        (not :obj:`None`).</span>
 
 <span class="sd">        Useful to load data from the database.</span>
 
@@ -199,29 +199,29 @@
 <span class="sd">                :obj:`TransactionTracker`.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`TransactionTracker`: A ``TransactionTracker`` instantiated with the provided data.</span>
+<span class="sd">            :obj:`TransactionTracker`: A transaction tracker instantiated with the provided data.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: if any of the required fields is missing.</span>
+<span class="sd">            :obj:`ValueError`: if any of the required fields is missing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">locator</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;locator&quot;</span><span class="p">)</span>
         <span class="n">dispute_txid</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dispute_txid&quot;</span><span class="p">)</span>
         <span class="n">penalty_txid</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span>
         <span class="n">penalty_rawtx</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_rawtx&quot;</span><span class="p">)</span>
-        <span class="n">appointment_end</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointment_end&quot;</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">tx_tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong transaction tracker data, some fields are missing&quot;</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tx_tracker</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">)</span>
+            <span class="n">tx_tracker</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">tx_tracker</span></div>
 
 <div class="viewcode-block" id="TransactionTracker.to_dict"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.TransactionTracker.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports a :obj:`TransactionTracker` as a dictionary.</span>
+<span class="sd">        Encodes a :obj:`TransactionTracker` as a dictionary.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            :obj:`dict`: A dictionary containing the :obj:`TransactionTracker` data.</span>
@@ -232,74 +232,88 @@
             <span class="s2">&quot;dispute_txid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispute_txid</span><span class="p">,</span>
             <span class="s2">&quot;penalty_txid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">,</span>
             <span class="s2">&quot;penalty_rawtx&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty_rawtx</span><span class="p">,</span>
-            <span class="s2">&quot;appointment_end&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">appointment_end</span><span class="p">,</span>
+            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">tx_tracker</span></div>
 
-<div class="viewcode-block" id="TransactionTracker.to_json"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.TransactionTracker.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TransactionTracker.get_summary"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.TransactionTracker.get_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports a :obj:`TransactionTracker` as a json-encoded dictionary.</span>
+<span class="sd">        Returns the summary of a tracker, consisting on the locator, the user_id and the penalty_txid.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`str`: A json-encoded dictionary containing the :obj:`TransactionTracker` data.</span>
+<span class="sd">            :obj:`dict`: The appointment summary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></div></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">locator</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="s2">&quot;penalty_txid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="Responder"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder">[docs]</a><span class="k">class</span> <span class="nc">Responder</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The :class:`Responder` is the class in charge of ensuring that channel breaches are dealt with. It does so handling</span>
+<span class="sd">    The :class:`Responder` is in charge of ensuring that channel breaches are dealt with. It does so handling</span>
 <span class="sd">    the decrypted ``penalty_txs`` handed by the :obj:`Watcher &lt;teos.watcher.Watcher&gt;` and ensuring the they make it to</span>
 <span class="sd">    the blockchain.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): a ``DBManager`` instance to interact with the</span>
-<span class="sd">            database.</span>
+<span class="sd">        db_manager (:obj:`AppointmentsDBM &lt;teos.appointments_dbm.AppointmentsDBM&gt;`): an instance of the appointment</span>
+<span class="sd">                database manager to interact with the database.</span>
+<span class="sd">        carrier (:obj:`Carrier &lt;teos.carrier.Carrier&gt;`): a carrier instance to send transactions to bitcoind.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): a block processor instance to</span>
+<span class="sd">            get data from bitcoind.</span>
 
 <span class="sd">    Attributes:</span>
+<span class="sd">        logger (:obj:`Logger &lt;teos.logger.Logger&gt;`): The logger for this component.</span>
 <span class="sd">        trackers (:obj:`dict`): A dictionary containing the minimum information about the :obj:`TransactionTracker`</span>
-<span class="sd">            required by the :obj:`Responder` (``penalty_txid``, ``locator`` and ``end_time``).</span>
-<span class="sd">            Each entry is identified by a ``uuid``.</span>
+<span class="sd">            required by the :obj:`Responder` (``penalty_txid``, ``locator`` and ``user_id``). Each entry is identified</span>
+<span class="sd">            by a ``uuid``.</span>
 <span class="sd">        tx_tracker_map (:obj:`dict`): A ``penalty_txid:uuid`` map used to allow the :obj:`Responder` to deal with</span>
 <span class="sd">            several trackers triggered by the same ``penalty_txid``.</span>
 <span class="sd">        unconfirmed_txs (:obj:`list`): A list that keeps track of all unconfirmed ``penalty_txs``.</span>
 <span class="sd">        missed_confirmations (:obj:`dict`): A dictionary that keeps count of how many confirmations each ``penalty_tx``</span>
 <span class="sd">            has missed. Used to trigger rebroadcast if needed.</span>
 <span class="sd">        block_queue (:obj:`Queue`): A queue used by the :obj:`Responder` to receive block hashes from ``bitcoind``. It</span>
-<span class="sd">        is populated by the :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</span>
-<span class="sd">        db_manager (:obj:`DBManager &lt;teos.db_manager.DBManager&gt;`): A ``DBManager`` instance to interact with the</span>
-<span class="sd">            database.</span>
-<span class="sd">        carrier (:obj:`Carrier &lt;teos.carrier.Carrier&gt;`): a ``Carrier`` instance to send transactions to bitcoind.</span>
-<span class="sd">        block_processor (:obj:`DBManager &lt;teos.block_processor.BlockProcessor&gt;`): a ``BlockProcessor`` instance to get</span>
-<span class="sd">            data from bitcoind.</span>
-<span class="sd">        last_known_block (:obj:`str`): the last block known by the ``Responder``.</span>
-
+<span class="sd">            is populated by the :obj:`ChainMonitor &lt;teos.chain_monitor.ChainMonitor&gt;`.</span>
+<span class="sd">        db_manager (:obj:`AppointmentsDBM &lt;teos.appointments_dbm.AppointmentsDBM&gt;`): An instance of the appointment</span>
+<span class="sd">                database manager to interact with the database.</span>
+<span class="sd">        gatekeeper (:obj:`Gatekeeper &lt;teos.gatekeeper.Gatekeeper&gt;`): A `Gatekeeper` instance in charge to control the</span>
+<span class="sd">            user access and subscription expiry.</span>
+<span class="sd">        carrier (:obj:`Carrier &lt;teos.carrier.Carrier&gt;`): A carrier instance to send transactions to bitcoind.</span>
+<span class="sd">        block_processor (:obj:`BlockProcessor &lt;teos.block_processor.BlockProcessor&gt;`): A block processor instance to</span>
+<span class="sd">            get data from bitcoind.</span>
+<span class="sd">        last_known_block (:obj:`str`): The last block known by the :obj:`Responder`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">,</span> <span class="n">carrier</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_manager</span><span class="p">,</span> <span class="n">gatekeeper</span><span class="p">,</span> <span class="n">carrier</span><span class="p">,</span> <span class="n">block_processor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">Responder</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span> <span class="o">=</span> <span class="n">db_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gatekeeper</span> <span class="o">=</span> <span class="n">gatekeeper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">carrier</span> <span class="o">=</span> <span class="n">carrier</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span> <span class="o">=</span> <span class="n">block_processor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span> <span class="o">=</span> <span class="n">db_manager</span><span class="o">.</span><span class="n">load_last_block_hash_responder</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Responder.awake"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.awake">[docs]</a>    <span class="k">def</span> <span class="nf">awake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Starts a new thread to monitor the blockchain to make sure triggered appointments get enough depth.</span>
+<span class="sd">            The thread will run until the :obj:`ChainMonitor` adds the ``&quot;END&quot;`` message to the queue.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                :obj:`Thread &lt;multithreading.Thread&gt;`: The thread object that was just created and is already running.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">responder_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_watch</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">responder_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">responder_thread</span></div>
 
 <div class="viewcode-block" id="Responder.on_sync"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.on_sync">[docs]</a>    <span class="k">def</span> <span class="nf">on_sync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whether the :obj:`Responder` is on sync with ``bitcoind`` or not. Used when recovering from a crash.</span>
 
-<span class="sd">        The Watchtower can be instantiated with fresh or with backed up data. In the later,  some triggers may have been</span>
+<span class="sd">        The Watchtower can be instantiated with fresh or with backed up data. In the later, some triggers may have been</span>
 <span class="sd">        missed. In order to go back on sync both the :obj:`Watcher &lt;teos.watcher.Watcher&gt;` and the :obj:`Responder`</span>
 <span class="sd">        need to perform the state transitions until they catch up.</span>
 
@@ -325,7 +339,7 @@
 
         <span class="k">return</span> <span class="n">synchronized</span></div>
 
-<div class="viewcode-block" id="Responder.handle_breach"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.handle_breach">[docs]</a>    <span class="k">def</span> <span class="nf">handle_breach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
+<div class="viewcode-block" id="Responder.handle_breach"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.handle_breach">[docs]</a>    <span class="k">def</span> <span class="nf">handle_breach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Requests the :obj:`Responder` to handle a channel breach. This is the entry point of the :obj:`Responder`.</span>
 
@@ -335,38 +349,34 @@
 <span class="sd">            dispute_txid (:obj:`str`): the id of the transaction that created the channel breach.</span>
 <span class="sd">            penalty_txid (:obj:`str`): the id of the decrypted transaction included in the appointment.</span>
 <span class="sd">            penalty_rawtx (:obj:`str`): the raw transaction to be broadcast in response of the breach.</span>
-<span class="sd">            appointment_end (:obj:`int`): the block height at which the :obj:`Responder` will stop monitoring for this</span>
-<span class="sd">                penalty transaction.</span>
+<span class="sd">            user_id(:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
 <span class="sd">            block_hash (:obj:`str`): the block hash at which the breach was seen (used to see if we are on sync).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`Receipt &lt;teos.carrier.Receipt&gt;`: A ``Receipt`` indicating whether or not the ``penalty_tx`` made it</span>
+<span class="sd">            :obj:`Receipt &lt;teos.carrier.Receipt&gt;`: A receipt indicating whether or not the ``penalty_tx`` made it</span>
 <span class="sd">            into the blockchain.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">receipt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">carrier</span><span class="o">.</span><span class="n">send_transaction</span><span class="p">(</span><span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">receipt</span><span class="o">.</span><span class="n">delivered</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_tracker</span><span class="p">(</span>
-                <span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">,</span> <span class="n">receipt</span><span class="o">.</span><span class="n">confirmations</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">receipt</span><span class="o">.</span><span class="n">confirmations</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># TODO: Add the missing reasons (e.g. RPC_VERIFY_REJECTED)</span>
             <span class="c1"># TODO: Use self.on_sync(block_hash) to check whether or not we failed because we are out of sync</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Tracker cannot be created&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">receipt</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">uuid</span><span class="o">=</span><span class="n">uuid</span><span class="p">,</span> <span class="n">on_sync</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_sync</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">receipt</span></div>
 
-<div class="viewcode-block" id="Responder.add_tracker"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.add_tracker">[docs]</a>    <span class="k">def</span> <span class="nf">add_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">,</span> <span class="n">confirmations</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Responder.add_tracker"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.add_tracker">[docs]</a>    <span class="k">def</span> <span class="nf">add_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">confirmations</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a :obj:`TransactionTracker` after successfully broadcasting a ``penalty_tx``.</span>
 
-<span class="sd">        A reduction of :obj:`TransactionTracker` is stored in ``trackers`` and ``tx_tracker_map`` and the</span>
-<span class="sd">        ``penalty_txid`` added to ``unconfirmed_txs`` if ``confirmations=0``. Finally, all the data is stored in the</span>
-<span class="sd">        database.</span>
+<span class="sd">        A summary of :obj:`TransactionTracker` is stored in ``trackers`` and ``tx_tracker_map`` and the ``penalty_txid``</span>
+<span class="sd">        added to ``unconfirmed_txs`` if ``confirmations=0``. Finally, all the data is stored in the database.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uuid (:obj:`str`): a unique identifier for the appointment.</span>
@@ -374,20 +384,15 @@
 <span class="sd">            dispute_txid (:obj:`str`): the id of the transaction that created the channel breach.</span>
 <span class="sd">            penalty_txid (:obj:`str`): the id of the decrypted transaction included in the appointment.</span>
 <span class="sd">            penalty_rawtx (:obj:`str`): the raw transaction to be broadcast.</span>
-<span class="sd">            appointment_end (:obj:`int`): the block height at which the :obj:`Responder` will stop monitoring for the</span>
-<span class="sd">                tracker.</span>
+<span class="sd">            user_id(:obj:`str`): the public key that identifies the user (33-bytes hex str).</span>
 <span class="sd">            confirmations (:obj:`int`): the confirmation count of the ``penalty_tx``. In normal conditions it will be</span>
 <span class="sd">                zero, but if the transaction is already on the blockchain this won&#39;t be the case.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">tracker</span> <span class="o">=</span> <span class="n">TransactionTracker</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">appointment_end</span><span class="p">)</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">TransactionTracker</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="p">,</span> <span class="n">penalty_rawtx</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
 
-        <span class="c1"># We only store the penalty_txid, locator and appointment_end in memory. The rest is dumped into the db.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;penalty_txid&quot;</span><span class="p">:</span> <span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">,</span>
-            <span class="s2">&quot;locator&quot;</span><span class="p">:</span> <span class="n">locator</span><span class="p">,</span>
-            <span class="s2">&quot;appointment_end&quot;</span><span class="p">:</span> <span class="n">appointment_end</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="c1"># We only store the penalty_txid, locator and user_id in memory. The rest is dumped into the db.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">get_summary</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">penalty_txid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">penalty_txid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
@@ -399,15 +404,13 @@
         <span class="k">if</span> <span class="n">penalty_txid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span> <span class="ow">and</span> <span class="n">confirmations</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">penalty_txid</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_responder_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">tracker</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_responder_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">tracker</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;New tracker added&quot;</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="o">=</span><span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">penalty_txid</span><span class="p">,</span> <span class="n">appointment_end</span><span class="o">=</span><span class="n">appointment_end</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New tracker added&quot;</span><span class="p">,</span> <span class="n">dispute_txid</span><span class="o">=</span><span class="n">dispute_txid</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">penalty_txid</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Responder.do_watch"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.do_watch">[docs]</a>    <span class="k">def</span> <span class="nf">do_watch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Monitors the blockchain whilst there are pending trackers.</span>
+<span class="sd">        Monitors the blockchain for reorgs and appointment ends.</span>
 
 <span class="sd">        This is the main method of the :obj:`Responder` and triggers tracker cleaning, rebroadcasting, reorg managing,</span>
 <span class="sd">        etc.</span>
@@ -416,30 +419,49 @@
         <span class="c1"># Distinguish fresh bootstraps from bootstraps from db</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_best_block_hash</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_last_block_hash_responder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">block_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="c1"># When the ChainMonitor is stopped, a final &quot;END&quot; message is sent</span>
+            <span class="k">if</span> <span class="n">block_hash</span> <span class="o">==</span> <span class="s2">&quot;END&quot;</span><span class="p">:</span>
+                <span class="k">break</span>
+
             <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_processor</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New block received&quot;</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="n">block_hash</span><span class="p">,</span> <span class="n">prev_block_hash</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;previousblockhash&quot;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;New block received&quot;</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="n">block_hash</span><span class="p">,</span> <span class="n">prev_block_hash</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;previousblockhash&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">txids</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tx&quot;</span><span class="p">)</span>
 
+                <span class="n">completed_trackers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_completed_trackers</span><span class="p">()</span>
+                <span class="n">expired_trackers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_expired_trackers</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">))</span>
+                <span class="n">trackers_to_delete_gatekeeper</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">uuid</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="n">completed_trackers</span> <span class="o">+</span> <span class="n">expired_trackers</span>
+                <span class="p">}</span>
+
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span> <span class="o">==</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;previousblockhash&quot;</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">check_confirmations</span><span class="p">(</span><span class="n">txids</span><span class="p">)</span>
-
-                    <span class="n">height</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">)</span>
-                    <span class="n">completed_trackers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_completed_trackers</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
-                    <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_completed_trackers</span><span class="p">(</span>
-                        <span class="n">completed_trackers</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span>
+                    <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_trackers</span><span class="p">(</span>
+                        <span class="n">completed_trackers</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span>
                     <span class="p">)</span>
+                    <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_trackers</span><span class="p">(</span>
+                        <span class="n">expired_trackers</span><span class="p">,</span>
+                        <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="p">,</span>
+                        <span class="n">expired</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">Cleaner</span><span class="o">.</span><span class="n">delete_gatekeeper_appointments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gatekeeper</span><span class="p">,</span> <span class="n">trackers_to_delete_gatekeeper</span><span class="p">)</span>
 
-                    <span class="n">txs_to_rebroadcast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_txs_to_rebroadcast</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">rebroadcast</span><span class="p">(</span><span class="n">txs_to_rebroadcast</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rebroadcast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_txs_to_rebroadcast</span><span class="p">())</span>
 
                 <span class="c1"># NOTCOVERED</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;Reorg found&quot;</span><span class="p">,</span>
                         <span class="n">local_prev_block_hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">last_known_block</span><span class="p">,</span>
                         <span class="n">remote_prev_block_hash</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;previousblockhash&quot;</span><span class="p">),</span>
@@ -451,8 +473,8 @@
                 <span class="c1"># Clear the receipts issued in this block</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">carrier</span><span class="o">.</span><span class="n">issued_receipts</span> <span class="o">=</span> <span class="p">{}</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No more pending trackers&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No more pending trackers&quot;</span><span class="p">)</span>
 
             <span class="c1"># Register the last processed block for the responder</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">store_last_block_hash_responder</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span>
@@ -475,18 +497,19 @@
             <span class="k">if</span> <span class="n">tx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span> <span class="ow">and</span> <span class="n">tx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span>
 
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Confirmation received for transaction&quot;</span><span class="p">,</span> <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Confirmation received for transaction&quot;</span><span class="p">,</span> <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">)</span>
 
         <span class="c1"># We also add a missing confirmation to all those txs waiting to be confirmed that have not been confirmed in</span>
         <span class="c1"># the current block</span>
         <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Transaction missed a confirmation&quot;</span><span class="p">,</span> <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">missed_confirmations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span><span class="p">[</span><span class="n">tx</span><span class="p">])</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Transaction missed a confirmation&quot;</span><span class="p">,</span> <span class="n">tx</span><span class="o">=</span><span class="n">tx</span><span class="p">,</span> <span class="n">missed_confirmations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">missed_confirmations</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Responder.get_txs_to_rebroadcast"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.get_txs_to_rebroadcast">[docs]</a>    <span class="k">def</span> <span class="nf">get_txs_to_rebroadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -505,26 +528,24 @@
 
         <span class="k">return</span> <span class="n">txs_to_rebroadcast</span></div>
 
-<div class="viewcode-block" id="Responder.get_completed_trackers"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.get_completed_trackers">[docs]</a>    <span class="k">def</span> <span class="nf">get_completed_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<div class="viewcode-block" id="Responder.get_completed_trackers"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.get_completed_trackers">[docs]</a>    <span class="k">def</span> <span class="nf">get_completed_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the trackers that has already been fulfilled based on a given height (``end_time`` was reached with a</span>
-<span class="sd">        minimum confirmation count).</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            height (:obj:`int`): the height of the last received block.</span>
+<span class="sd">        Gets the trackers that has already been fulfilled based on a given height (the justice transaction is</span>
+<span class="sd">        irrevocably resolved).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`dict`: a dict (``uuid:confirmations``) of the completed trackers.</span>
+<span class="sd">            :obj:`list`: A list of completed trackers uuids.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">completed_trackers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">completed_trackers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># FIXME: This is here for duplicated penalties, we should be able to get rid of it once we prevent duplicates in</span>
+        <span class="c1">#        the responder.</span>
         <span class="n">checked_txs</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">tracker_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">appointment_end</span> <span class="o">=</span> <span class="n">tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointment_end&quot;</span><span class="p">)</span>
-            <span class="n">penalty_txid</span> <span class="o">=</span> <span class="n">tracker_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">appointment_end</span> <span class="o">&lt;=</span> <span class="n">height</span> <span class="ow">and</span> <span class="n">penalty_txid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="p">:</span>
-
+        <span class="c1"># Avoiding dictionary changed size during iteration</span>
+        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">penalty_txid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">penalty_txid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">penalty_txid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">checked_txs</span><span class="p">:</span>
                     <span class="n">tx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">carrier</span><span class="o">.</span><span class="n">get_transaction</span><span class="p">(</span><span class="n">penalty_txid</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -534,18 +555,39 @@
                     <span class="n">confirmations</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confirmations&quot;</span><span class="p">)</span>
                     <span class="n">checked_txs</span><span class="p">[</span><span class="n">penalty_txid</span><span class="p">]</span> <span class="o">=</span> <span class="n">tx</span>
 
-                    <span class="k">if</span> <span class="n">confirmations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">confirmations</span> <span class="o">&gt;=</span> <span class="n">MIN_CONFIRMATIONS</span><span class="p">:</span>
-                        <span class="c1"># The end of the appointment has been reached</span>
-                        <span class="n">completed_trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">confirmations</span>
+                    <span class="k">if</span> <span class="n">confirmations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">confirmations</span> <span class="o">&gt;=</span> <span class="n">IRREVOCABLY_RESOLVED</span><span class="p">:</span>
+                        <span class="n">completed_trackers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">completed_trackers</span></div>
 
+<div class="viewcode-block" id="Responder.get_expired_trackers"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.get_expired_trackers">[docs]</a>    <span class="k">def</span> <span class="nf">get_expired_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets trackers than are expired due to the user subscription expiring.</span>
+
+<span class="sd">        Only gets those trackers which penalty transaction is not going trough (probably because of low fees), the rest</span>
+<span class="sd">        will be eventually completed once they are irrevocably resolved.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            height (:obj:`int`): the height of the last received block.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :obj:`list`: A list of the expired trackers uuids.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">expired_trackers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">uuid</span>
+            <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gatekeeper</span><span class="o">.</span><span class="n">get_expired_appointments</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="p">[</span><span class="n">uuid</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;penalty_txid&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">expired_trackers</span></div>
+
 <div class="viewcode-block" id="Responder.rebroadcast"><a class="viewcode-back" href="../../teos.responder.html#teos.responder.Responder.rebroadcast">[docs]</a>    <span class="k">def</span> <span class="nf">rebroadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txs_to_rebroadcast</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Rebroadcasts a ``penalty_tx`` that has missed too many confirmations. In the current approach this would loop</span>
-<span class="sd">        forever si the transaction keeps not getting it.</span>
+<span class="sd">        Rebroadcasts a ``penalty_tx`` that has missed too many confirmations. In the current approach this will loop</span>
+<span class="sd">        until the tracker expires if the penalty transactions keeps getting rejected due to fees.</span>
 
-<span class="sd">        Potentially the fees could be bumped here if the transaction has some tower dedicated outputs (or allows it</span>
+<span class="sd">        Potentially, the fees could be bumped here if the transaction has some tower dedicated outputs (or allows it</span>
 <span class="sd">        trough ``ANYONECANPAY`` or something similar).</span>
 
 <span class="sd">        Args:</span>
@@ -568,7 +610,7 @@
             <span class="c1">#   should we do it only once?</span>
             <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_tracker_map</span><span class="p">[</span><span class="n">txid</span><span class="p">]:</span>
                 <span class="n">tracker</span> <span class="o">=</span> <span class="n">TransactionTracker</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;Transaction has missed many confirmations. Rebroadcasting&quot;</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span>
                 <span class="p">)</span>
 
@@ -577,7 +619,7 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">receipt</span><span class="o">.</span><span class="n">delivered</span><span class="p">:</span>
                     <span class="c1"># FIXME: Can this actually happen?</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transaction failed&quot;</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transaction failed&quot;</span><span class="p">,</span> <span class="n">penalty_txid</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">receipts</span></div>
 
@@ -592,7 +634,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="c1"># Avoiding dictionary changed size during iteration</span>
+        <span class="k">for</span> <span class="n">uuid</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trackers</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="n">tracker</span> <span class="o">=</span> <span class="n">TransactionTracker</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_manager</span><span class="o">.</span><span class="n">load_responder_tracker</span><span class="p">(</span><span class="n">uuid</span><span class="p">))</span>
 
             <span class="c1"># First we check if the dispute transaction is known (exists either in mempool or blockchain)</span>
@@ -608,7 +651,7 @@
                     <span class="k">if</span> <span class="n">penalty_tx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;confirmations&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_txs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">)</span>
 
-                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                             <span class="s2">&quot;Penalty transaction back in mempool. Updating unconfirmed transactions&quot;</span><span class="p">,</span>
                             <span class="n">penalty_txid</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">,</span>
                         <span class="p">)</span>
@@ -621,11 +664,11 @@
                         <span class="n">tracker</span><span class="o">.</span><span class="n">dispute_txid</span><span class="p">,</span>
                         <span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span><span class="p">,</span>
                         <span class="n">tracker</span><span class="o">.</span><span class="n">penalty_rawtx</span><span class="p">,</span>
-                        <span class="n">tracker</span><span class="o">.</span><span class="n">appointment_end</span><span class="p">,</span>
+                        <span class="n">tracker</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
                         <span class="n">block_hash</span><span class="p">,</span>
                     <span class="p">)</span>
 
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="s2">&quot;Penalty transaction banished. Resetting the tracker&quot;</span><span class="p">,</span> <span class="n">penalty_tx</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">penalty_txid</span>
                     <span class="p">)</span>
 
@@ -633,8 +676,8 @@
                 <span class="c1"># ToDo: #24-properly-handle-reorgs</span>
                 <span class="c1"># FIXME: if the dispute is not on chain (either in mempool or not there at all), we need to call the</span>
                 <span class="c1">#        reorg manager</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dispute and penalty transaction missing. Calling the reorg manager&quot;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Reorg manager not yet implemented&quot;</span><span class="p">)</span></div></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dispute and penalty transaction missing. Calling the reorg manager&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Reorg manager not yet implemented&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -647,11 +690,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -662,7 +713,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

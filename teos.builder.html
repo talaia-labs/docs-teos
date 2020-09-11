@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="teos.carrier" href="teos.carrier.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> pyton-teos
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,32 +85,39 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="teos.html#subpackages">Subpackages</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.appointments_dbm.html">teos.appointments_dbm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">teos.builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.db_manager.html">teos.db_manager</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.errors.html">teos.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.extended_appointment.html">teos.extended_appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.gatekeeper.html">teos.gatekeeper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.internal_api.html">teos.internal_api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.lightning_server.html">teos.lightning_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.logger.html">teos.logger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="teos.rpc_errors.html">teos.rpc_errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc.html">teos.rpc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.users_dbm.html">teos.users_dbm</a></li>
 <li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -147,7 +156,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="teos.html">teos package</a> &raquo;</li>
         
@@ -172,30 +181,30 @@
             
   <div class="section" id="module-teos.builder">
 <span id="teos-builder"></span><h1>teos.builder<a class="headerlink" href="#module-teos.builder" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="teos.builder.Builder">
 <em class="property">class </em><code class="sig-name descname">Builder</code><a class="reference internal" href="_modules/teos/builder.html#Builder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The <a class="reference internal" href="#teos.builder.Builder" title="teos.builder.Builder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Builder</span></code></a> class is in charge of reconstructing data loaded from the database and build the data
-structures of the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
-<dl class="method">
+<p>The <a class="reference internal" href="#teos.builder.Builder" title="teos.builder.Builder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Builder</span></code></a> class is in charge of reconstructing data loaded from the appointments database and build the
+data structures of the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code></a>.</p>
+<dl class="py method">
 <dt id="teos.builder.Builder.build_appointments">
-<em class="property">static </em><code class="sig-name descname">build_appointments</code><span class="sig-paren">(</span><em class="sig-param">appointments_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.build_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.build_appointments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds an appointments dictionary (<code class="docutils literal notranslate"><span class="pre">uuid:</span> <span class="pre">Appointment</span></code>) and a locator_uuid_map (<code class="docutils literal notranslate"><span class="pre">locator:</span> <span class="pre">uuid</span></code>) given a
-dictionary of appointments from the database.</p>
+<em class="property">static </em><code class="sig-name descname">build_appointments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">appointments_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.build_appointments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.build_appointments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds an appointments dictionary (<code class="docutils literal notranslate"><span class="pre">uuid:extended_appointment</span></code>) and a locator_uuid_map (<code class="docutils literal notranslate"><span class="pre">locator:uuid</span></code>)
+given a dictionary of appointments from the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>appointments_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – <p>a dictionary of dictionaries representing all the
 <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a> appointments stored in the database. The structure is as follows:</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">{uuid:</span> <span class="pre">{locator:</span> <span class="pre">str,</span> <span class="pre">start_time:</span> <span class="pre">int,</span> <span class="pre">...},</span> <span class="pre">uuid:</span> <span class="pre">{locator:...}}</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">{uuid:</span> <span class="pre">{locator:</span> <span class="pre">str,</span> <span class="pre">...},</span> <span class="pre">uuid:</span> <span class="pre">{locator:...}}</span></code></p>
 </div></blockquote>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A tuple with two dictionaries. <code class="docutils literal notranslate"><span class="pre">appointments</span></code> containing the appointment information in
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Appointment</span></code> objects and <code class="docutils literal notranslate"><span class="pre">locator_uuid_map</span></code> containing a map of
-appointment (<code class="docutils literal notranslate"><span class="pre">uuid:locator</span></code>).</p>
+<a class="reference internal" href="teos.extended_appointment.html#teos.extended_appointment.ExtendedAppointment" title="teos.extended_appointment.ExtendedAppointment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExtendedAppointment</span></code></a> objects and <code class="docutils literal notranslate"><span class="pre">locator_uuid_map</span></code>
+containing a map of appointment (<code class="docutils literal notranslate"><span class="pre">uuid:locator</span></code>).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -203,10 +212,10 @@ appointment (<code class="docutils literal notranslate"><span class="pre">uuid:l
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="teos.builder.Builder.build_trackers">
-<em class="property">static </em><code class="sig-name descname">build_trackers</code><span class="sig-paren">(</span><em class="sig-param">tracker_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.build_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.build_trackers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds a tracker dictionary (<code class="docutils literal notranslate"><span class="pre">uuid:</span> <span class="pre">TransactionTracker</span></code>) and a tx_tracker_map (<code class="docutils literal notranslate"><span class="pre">penalty_txid:</span> <span class="pre">uuid</span></code>) given
+<em class="property">static </em><code class="sig-name descname">build_trackers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tracker_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.build_trackers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.build_trackers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a tracker dictionary (<code class="docutils literal notranslate"><span class="pre">uuid:TransactionTracker</span></code>) and a tx_tracker_map (<code class="docutils literal notranslate"><span class="pre">penalty_txid:uuid</span></code>) given
 a dictionary of trackers from the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -229,20 +238,20 @@ the map of trackers (<code class="docutils literal notranslate"><span class="pre
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="teos.builder.Builder.populate_block_queue">
-<em class="property">static </em><code class="sig-name descname">populate_block_queue</code><span class="sig-paren">(</span><em class="sig-param">block_queue</em>, <em class="sig-param">missed_blocks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.populate_block_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.populate_block_queue" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">populate_block_queue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">block_queue</span></em>, <em class="sig-param"><span class="n">missed_blocks</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.populate_block_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.populate_block_queue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Populates a <code class="docutils literal notranslate"><span class="pre">Queue</span></code> of block hashes to initialize the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Watcher</span></code></a> or the
 <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Responder</span></code></a> using backed up data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>block_queue</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code>) – a <code class="docutils literal notranslate"><span class="pre">Queue</span></code></p></li>
-<li><p><strong>missed_blocks</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – list of block hashes missed by the Watchtower (do to a crash or shutdown).</p></li>
+<li><p><strong>block_queue</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code>) – a queue.</p></li>
+<li><p><strong>missed_blocks</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – list of block hashes missed by the Watchtower (due to a crash or shutdown).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">Queue</span></code> containing all the missed blocks hashes.</p>
+<dd class="field-even"><p>A queue containing all the missed blocks hashes.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Queue</span></code></p>
@@ -250,22 +259,23 @@ the map of trackers (<code class="docutils literal notranslate"><span class="pre
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="teos.builder.Builder.update_states">
-<em class="property">static </em><code class="sig-name descname">update_states</code><span class="sig-paren">(</span><em class="sig-param">watcher</em>, <em class="sig-param">missed_blocks_watcher</em>, <em class="sig-param">missed_blocks_responder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.update_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.update_states" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the states of both the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the <a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Responder</span></code></a>.
-If both have pending blocks to process they need to be updates at the same time, block by block.</p>
+<em class="property">static </em><code class="sig-name descname">update_states</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">watcher</span></em>, <em class="sig-param"><span class="n">missed_blocks_watcher</span></em>, <em class="sig-param"><span class="n">missed_blocks_responder</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/builder.html#Builder.update_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.builder.Builder.update_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the states of both the <a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Watcher</span></code></a> and the
+<a class="reference internal" href="teos.responder.html#teos.responder.Responder" title="teos.responder.Responder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Responder</span></code></a>. If both have pending blocks to process they need to be updated at
+the same time, block by block.</p>
 <p>If only one instance has to be updated, <code class="docutils literal notranslate"><span class="pre">populate_block_queue</span></code> should be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>watcher</strong> (<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) – a <code class="docutils literal notranslate"><span class="pre">Watcher</span></code> instance (including a <code class="docutils literal notranslate"><span class="pre">Responder</span></code>).</p></li>
-<li><p><strong>missed_blocks_watcher</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the list of block missed by the <code class="docutils literal notranslate"><span class="pre">Watcher</span></code>.</p></li>
-<li><p><strong>missed_blocks_responder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the list of block missed by the <code class="docutils literal notranslate"><span class="pre">Responder</span></code>.</p></li>
+<li><p><strong>watcher</strong> (<a class="reference internal" href="teos.watcher.html#teos.watcher.Watcher" title="teos.watcher.Watcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code></a>) – a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code> instance (including a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code>).</p></li>
+<li><p><strong>missed_blocks_watcher</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the list of block missed by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Watcher</span></code>.</p></li>
+<li><p><strong>missed_blocks_responder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>) – the list of block missed by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Responder</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – is one of the provided list is empty.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – if one of the provided list is empty.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -294,11 +304,19 @@ If both have pending blocks to process they need to be updates at the same time,
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Talaia Labs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -309,7 +327,6 @@ If both have pending blocks to process they need to be updates at the same time,
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

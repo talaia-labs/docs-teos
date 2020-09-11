@@ -1,0 +1,7 @@
+teos.logger
+===========
+
+.. automodule:: teos.logger
+   :members:
+   :undoc-members:
+   :show-inheritance:

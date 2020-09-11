@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>teos.logger &mdash; pyton-teos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="teos.responder" href="teos.responder.html" />
+    <link rel="prev" title="teos.lightning_server" href="teos.lightning_server.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pyton-teos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="teos.html">teos package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="teos.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="teos.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="teos.api.html">teos.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.appointments_dbm.html">teos.appointments_dbm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.block_processor.html">teos.block_processor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.builder.html">teos.builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.carrier.html">teos.carrier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.chain_monitor.html">teos.chain_monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.cleaner.html">teos.cleaner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.extended_appointment.html">teos.extended_appointment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.gatekeeper.html">teos.gatekeeper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.inspector.html">teos.inspector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.internal_api.html">teos.internal_api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.lightning_server.html">teos.lightning_server</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">teos.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.responder.html">teos.responder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.rpc.html">teos.rpc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.teosd.html">teos.teosd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.tools.html">teos.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.users_dbm.html">teos.users_dbm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teos.watcher.html">teos.watcher</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="common.html">common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">contrib package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyton-teos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="teos.html">teos package</a> &raquo;</li>
+        
+      <li>teos.logger</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/teos.logger.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-teos.logger">
+<span id="teos-logger"></span><h1>teos.logger<a class="headerlink" href="#module-teos.logger" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="teos.logger.JsonMsgLogger">
+<em class="property">class </em><code class="sig-name descname">JsonMsgLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#JsonMsgLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.JsonMsgLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code></p>
+<p>Works exactly like <code class="docutils literal notranslate"><span class="pre">logging.Logger</span></code> but represents dict messages as json. Useful to prevent dicts being cast
+to strings via <code class="docutils literal notranslate"><span class="pre">str()</span></code>.</p>
+<dl class="py method">
+<dt id="teos.logger.JsonMsgLogger.makeRecord">
+<code class="sig-name descname">makeRecord</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#JsonMsgLogger.makeRecord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.JsonMsgLogger.makeRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a record where the message is json encoded.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="teos.logger.LogRecordSocketReceiver">
+<em class="property">class </em><code class="sig-name descname">LogRecordSocketReceiver</code><span class="sig-paren">(</span><em class="sig-param">host='localhost'</em>, <em class="sig-param">port=9020</em>, <em class="sig-param">handler=&lt;class 'teos.logger.LogRecordStreamHandler'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#LogRecordSocketReceiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.LogRecordSocketReceiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">socketserver.ThreadingTCPServer</span></code></p>
+<p>Simple TCP socket-based logging receiver.</p>
+<dl class="py attribute">
+<dt id="teos.logger.LogRecordSocketReceiver.allow_reuse_address">
+<code class="sig-name descname">allow_reuse_address</code><em class="property"> = True</em><a class="headerlink" href="#teos.logger.LogRecordSocketReceiver.allow_reuse_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="teos.logger.LogRecordSocketReceiver.serve_forever">
+<code class="sig-name descname">serve_forever</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">poll_interval</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#LogRecordSocketReceiver.serve_forever"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.LogRecordSocketReceiver.serve_forever" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serves the logger server until the tower is stopped.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="teos.logger.LogRecordStreamHandler">
+<em class="property">class </em><code class="sig-name descname">LogRecordStreamHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">client_address</span></em>, <em class="sig-param"><span class="n">server</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#LogRecordStreamHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.LogRecordStreamHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">socketserver.StreamRequestHandler</span></code></p>
+<p>Handler for a streaming logging request. Sends to the logger any received log message, after some preprocessing.</p>
+<dl class="py method">
+<dt id="teos.logger.LogRecordStreamHandler.handle">
+<code class="sig-name descname">handle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#LogRecordStreamHandler.handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.LogRecordStreamHandler.handle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle multiple requests - each expected to be a 4-byte length, followed by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">LogRecord</span></code> in pickle
+format. Logs the record according to whatever policy is configured locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="teos.logger.LogRecordStreamHandler.handle_log_record">
+<em class="property">static </em><code class="sig-name descname">handle_log_record</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#LogRecordStreamHandler.handle_log_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.LogRecordStreamHandler.handle_log_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes log records received via the socket. The record’s <code class="docutils literal notranslate"><span class="pre">msg</span></code> field is expected to be an encoded
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> produced by <code class="xref py py-obj docutils literal notranslate"><span class="pre">StructLog</span></code>. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> is encoded to a string using <code class="docutils literal notranslate"><span class="pre">encode_event_dict</span></code> and
+sent to the logger with the name specified in the record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>record</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">logging.LogRecord</span></code>) – a log record.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.logger.encode_event_dict">
+<code class="sig-name descname">encode_event_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#encode_event_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.encode_event_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes an event dictionary in a nicely formatted string, following the general format:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">timestamp</span> <span class="pre">[component]</span> <span class="pre">event</span> <span class="pre">(attr1=value1,</span> <span class="pre">attr2=value2,</span> <span class="pre">...)</span></code></p>
+</div></blockquote>
+<p>Where values that are not present are omitted. See unit tests for a more precise specification.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.logger.get_logger">
+<code class="sig-name descname">get_logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">component</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#get_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.get_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Logger</span></code>, that has the given <cite>component</cite> in all future log entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A proxy obtained from <code class="docutils literal notranslate"><span class="pre">structlog.get_logger</span></code> with the <code class="docutils literal notranslate"><span class="pre">component</span></code> as bound variable.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>component</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the value of the <code class="docutils literal notranslate"><span class="pre">component</span></code> field that will be attached to all the logs issued by this
+logger.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.logger.ignore_signal">
+<code class="sig-name descname">ignore_signal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_</span></em>, <em class="sig-param"><span class="n">__</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#ignore_signal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.ignore_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignores stop signals so the teardown can be handled by the main process.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.logger.serve">
+<code class="sig-name descname">serve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_file_path</span></em>, <em class="sig-param"><span class="n">silent</span></em>, <em class="sig-param"><span class="n">ready</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#serve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.serve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up logging on console and file, and serves the tcp logging server on <code class="docutils literal notranslate"><span class="pre">localhost:TCP_LOGGING_PORT</span></code>.
+This method is meant to be run in a separate process and provides the logging service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_file_path</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – the full path and log file name.</p></li>
+<li><p><strong>silent</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – if True, only <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code> errors are shown to console; otherwise <code class="docutils literal notranslate"><span class="pre">INFO</span></code> and above.</p></li>
+<li><p><strong>ready</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">multiprocessing.Event</span></code>) – an event that is set once the logging server is ready.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="teos.logger.setup_logging">
+<code class="sig-name descname">setup_logging</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/teos/logger.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#teos.logger.setup_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures the logging options. It must be called only once, before using get_logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – if <code class="docutils literal notranslate"><span class="pre">setup_logging</span></code> had already been called.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teos.responder.html" class="btn btn-neutral float-right" title="teos.responder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teos.lightning_server.html" class="btn btn-neutral float-left" title="teos.lightning_server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Talaia Labs
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

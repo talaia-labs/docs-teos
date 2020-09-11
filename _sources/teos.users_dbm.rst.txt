@@ -1,0 +1,7 @@
+teos.users\_dbm
+===============
+
+.. automodule:: teos.users_dbm
+   :members:
+   :undoc-members:
+   :show-inheritance:
